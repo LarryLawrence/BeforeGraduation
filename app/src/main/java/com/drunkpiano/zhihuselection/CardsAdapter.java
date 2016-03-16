@@ -3,33 +3,27 @@ package com.drunkpiano.zhihuselection;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.List;
-
 public class CardsAdapter extends BaseAdapter {
 
-    private List<String> items;
-    private final OnClickListener itemButtonClickListener;
+    ListCellData [] data ;
+//    private List<String> items;
+//    private final OnClickListener itemButtonClickListener;
     private final Context context;
 
-    public CardsAdapter(Context context, List<String> items, OnClickListener itemButtonClickListener) {
+    public CardsAdapter(Context context, ListCellData[] data) {
         this.context = context;
-        this.items = items;
-        this.itemButtonClickListener = itemButtonClickListener;
+        this.data = data ;
+//        this.itemButtonClickListener = itemButtonClickListener;
     }
-    private ListCellData[] data = new ListCellData[]{
-            new ListCellData("bb","如何看待BB....?","BB内容内容内容内容内容内容内容内容内容","img1","100"),
-            new ListCellData("cc","如何看待CC....?","CC内容内容内容内容内容内容内容内容内容","img2","100"),
-            new ListCellData("dd","如何看待DD....?","DD内容内容内容内容内容内容内容内容内容","img2","100"),
-    };
+
 
     @Override
     public int getCount() {
-        return items.size();
+        return data.length;
     }
 
 //    @Override
@@ -63,9 +57,9 @@ public class CardsAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        ListCellData data = getItem(position);
-        holder.title.setText(data.getTitle());
-        holder.info.setText(data.getSummary());
+//        ListCellData data = getItem(position);
+        holder.title.setText(data[position].getTitle());
+        holder.info.setText(data[position].getSummary());
 //        if (itemButtonClickListener != null) {
 //            holder.itemButton1.setOnClickListener(itemButtonClickListener);
 //            holder.itemButton2.setOnClickListener(itemButtonClickListener);

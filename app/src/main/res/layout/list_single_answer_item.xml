@@ -26,7 +26,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="answered question"
-            android:textColor="@color/action_color" />
+            />
     </LinearLayout>
 
     <TextView
@@ -38,7 +38,7 @@
         android:maxLines="2"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
-        android:textColor="@color/text_primary_dark"
+        android:text="title"
         />
 
     <TextView
@@ -48,7 +48,7 @@
         android:ellipsize="end"
         android:maxLines="4"
         android:paddingTop="4dp"
-        android:textColor="#8affffff"
+        android:text="summary info"
         />
 
 </LinearLayout>

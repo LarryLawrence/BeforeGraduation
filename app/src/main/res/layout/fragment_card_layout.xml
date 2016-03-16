@@ -16,5 +16,5 @@
         android:dividerHeight="10dp"
         android:padding="10dp"
         android:scrollbarStyle="outsideOverlay"
-        tools:listitem="@layout/list_item_card" />
+        tools:listitem="@layout/list_single_answer_item" />
 </LinearLayout>
