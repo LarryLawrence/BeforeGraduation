@@ -1,14 +1,12 @@
-package com.drunkpiano.zhihuselection;
+package com.drunkpiano.zhihuselection.utilities;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.drunkpiano.zhihuselection.Db;
+import com.drunkpiano.zhihuselection.ListCellData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,27 +23,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * Created by DrunkPiano on 16/3/9.
+ * Created by DrunkPiano on 16/3/17.
  */
-public class FmFirst extends Fragment{
-    TextView tv ;
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fm_first,container,false);
-
-        tv = (TextView)root.findViewById(R.id.tv1);
-        tv.setText("bb");
-        root.findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shouldUpdateDB()) {
-                    DownloadJSONAndUpdateDB();
-                }
-            }
-        });
-        return root ;
+public class Utilities {
+    Context context ;
+    String sheet = "";
+    public Utilities(Context context ,String chooseSheet) {
+        this.context = context ;
+        this.sheet = chooseSheet ;
     }
-    private void DownloadJSONAndUpdateDB(){
+
+    public void DownloadJSONAndUpdateDB(){
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
@@ -84,7 +72,7 @@ public class FmFirst extends Fragment{
                         LcData.setAvatar(jo.getString("avatar"));
                         LcData.setVote(jo.getString("vote"));
 
-                        insertToYesterday(LcData);
+                        insertToSheet(LcData);
                     }
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -97,12 +85,12 @@ public class FmFirst extends Fragment{
             }
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
 
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemData() + "/yesterday");//读今天的
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemData() + "/" + sheet);//读今天的
 
     }
 
-        private void insertToYesterday(ListCellData data){
-        Db db = new Db(getContext());
+    private void insertToSheet(ListCellData data ){
+        Db db = new Db(context);
         //WRITE
         SQLiteDatabase dbWrite = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -115,7 +103,7 @@ public class FmFirst extends Fragment{
         cv.put("sauthorhash",data.getAuthorhash());
         cv.put("savatar",data.getAvatar());
         cv.put("svote",data.getVote());
-        dbWrite.insert("yesterday", null, cv);
+        dbWrite.insert(sheet, null, cv);
 
         dbWrite.close();
     }
@@ -128,7 +116,7 @@ public class FmFirst extends Fragment{
         SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
         return justDate.format(Calendar.getInstance().getTime());
     }
-    private static boolean shouldUpdateDB(){
+    public static boolean shouldUpdateDB(){
         return true ;
     }
 }

@@ -1,29 +1,42 @@
 package com.drunkpiano.zhihuselection;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class CardsAdapter extends BaseAdapter {
 
-    ListCellData [] data ;
+    ListCellData [] data  ;
+    String table = "";
+    int id = 0 ;
+    int count = 0 ;
+    ArrayList<ListCellData> dataArrayList = new ArrayList<>();
+//    String title = "";
+//    String authorname = "";
+//    String summary = "" ;
+//    String vote = "" ;
 //    private List<String> items;
 //    private final OnClickListener itemButtonClickListener;
     private final Context context;
 
-    public CardsAdapter(Context context, ListCellData[] data) {
+    public CardsAdapter(Context context,  String table) {
         this.context = context;
-        this.data = data ;
+        this.table = table ;
 //        this.itemButtonClickListener = itemButtonClickListener;
     }
 
 
     @Override
     public int getCount() {
-        return data.length;
+//        return data.length;
+    return 32 ;
     }
 
 //    @Override
@@ -58,13 +71,11 @@ public class CardsAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 //        ListCellData data = getItem(position);
-        holder.title.setText(data[position].getTitle());
-        holder.info.setText(data[position].getSummary());
-//        if (itemButtonClickListener != null) {
-//            holder.itemButton1.setOnClickListener(itemButtonClickListener);
-//            holder.itemButton2.setOnClickListener(itemButtonClickListener);
-//        }
-//
+            QueryData();
+            if(data.length>2) {
+                holder.title.setText(data[position].getTitle());
+                holder.info.setText(data[position].getSummary());
+            }
         return convertView;
     }
 
@@ -72,6 +83,35 @@ public class CardsAdapter extends BaseAdapter {
         private TextView title;
         private TextView action;
         private TextView info;
+    }
+
+    private void QueryData(){
+        Db db = new Db(context);
+
+        //READ
+        SQLiteDatabase dbRead = db.getReadableDatabase();
+        //public Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
+        Cursor myCursor = dbRead.query(table, null, null, null, null, null, null);
+//        if(myCursor.moveToFirst()) {
+            //遍历游标
+//            for(count=0;count<myCursor.getCount();count++){
+//            for(count=0;count<myCursor.getCount();count++){
+                while(myCursor.moveToNext()){
+                ListCellData dataCell = new ListCellData(myCursor.getString(1),myCursor.getString(2),myCursor.getString(3),myCursor.getString(4),myCursor.getString(5),myCursor.getString(6),myCursor.getString(7),myCursor.getString(8),myCursor.getString(9));
+//                dataArrayList.add(i,dataCell);
+                dataArrayList.add(dataCell);
+                    count++;
+//                System.out.println(id+":"+authorname+":"+vote);
+             }
+            myCursor.close();
+            dbRead.close();
+
+        data = new ListCellData[count];
+        for(int i = 0 ; i <count ; i ++)
+        {
+            data[i] = dataArrayList.get(i);
+        }
+
     }
 
 }

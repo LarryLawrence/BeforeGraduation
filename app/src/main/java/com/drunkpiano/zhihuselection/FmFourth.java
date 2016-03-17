@@ -25,25 +25,25 @@ public class FmFourth extends Fragment {
         return rootView;
     }
     private void setupList(){
-        cardsList.setAdapter(createAdapter());
-        cardsList.setOnItemClickListener(new MyItemOnClickListener());
+//        cardsList.setAdapter(createAdapter());
+//        cardsList.setOnItemClickListener(new MyItemOnClickListener());
     }
 
-    private ListCellData[] data = new ListCellData[]{
-            new ListCellData("bb","如何看待BB....?","BB内容内容内容内容内容内容内容内容内容","img1","100"),
-            new ListCellData("cc","如何看待CC....?","CC内容内容内容内容内容内容内容内容内容","img2","100"),
-            new ListCellData("dd","如何看待DD....?","DD内容内容内容内容内容内容内容内容内容","img2","100"),
-    };
+//    private ListCellData[] data = new ListCellData[]{
+//            new ListCellData("bb","如何看待BB....?","BB内容内容内容内容内容内容内容内容内容","img1","100"),
+//            new ListCellData("cc","如何看待CC....?","CC内容内容内容内容内容内容内容内容内容","img2","100"),
+//            new ListCellData("dd","如何看待DD....?","DD内容内容内容内容内容内容内容内容内容","img2","100"),
+//    };
 
-    private CardsAdapter createAdapter(){
-        return new CardsAdapter(getActivity(),data);
+//    private CardsAdapter createAdapter(){
+//        return new CardsAdapter(getActivity(),data);
 //        ArrayList<String> items = new ArrayList<String>();
 //        for(int i = 0 ; i < 100 ; i ++)
 //        {
 //            items.add(i,"Text 4 list item" + i );
 //        }
 //        return new CardsAdapter(getActivity(), items, new ListItemButtonClickListener());
-    }
+//    }
 
 //    private final class ListItemButtonClickListener implements View.OnClickListener {
 //        @Override

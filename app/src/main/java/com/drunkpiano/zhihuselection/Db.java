@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 /**
  * Created by DrunkPiano on 16/3/16.
  */
@@ -23,12 +26,22 @@ public class Db extends SQLiteOpenHelper {
 //        Person person = new Person();
 //        person.name = "john";
 //        person.age = 30;
-        db.execSQL("CREATE TABLE answer (_id integer primary key autoincrement,sauthorname text,stitle text,ssummary text)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS yesterday (_id integer primary key autoincrement,stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS recent    (_id integer primary key autoincrement,stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS archive   (_id integer primary key autoincrement,stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS linger    (_id integer primary key autoincrement,stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+    public static String getSystemDataATime(){
+        //24小时制
+        SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //12小时制
+//      SimpleDateFormat dateFormat12 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        return dateFormat24.format(Calendar.getInstance().getTime());
     }
 
 }

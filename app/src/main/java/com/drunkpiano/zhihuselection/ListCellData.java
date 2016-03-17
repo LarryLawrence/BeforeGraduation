@@ -4,18 +4,29 @@ package com.drunkpiano.zhihuselection;
  * Created by DrunkPiano on 16/3/15.
  */
 public class ListCellData {
-    public ListCellData(String authorname, String title, String summary, String avatarId, String vote){
-        this.authorname = authorname ;
+    public ListCellData( String title,String time,String summary,String questionid, String answerid,
+                         String authorname, String authorhash, String avatar, String vote){
         this.title = title ;
-        this.avatarId = avatarId ;
-        this.vote = vote ;
+        this.time = time ;
         this.summary = summary ;
+        this.questionid = questionid ;
+        this.answerid = answerid ;
+        this.authorname = authorname ;
+        this.authorhash = authorhash ;
+        this.avatar = avatar ;
+        this.vote = vote ;
 
     }
-    private String authorname = "";
+    public ListCellData(){}//2nd cons哪里用到了
+
     private String title = "";
+    private String time = "";
     private String summary = "";
-    private String avatarId = "" ;
+    private String questionid = "";
+    private String answerid = "";
+    private String authorname = "";
+    private String authorhash = "";
+    private String avatar = "" ;
     private String vote = "0";
 
     public String getTitle() {
@@ -26,6 +37,14 @@ public class ListCellData {
         this.title = title;
     }
 
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     public String getSummary() {
         return summary;
     }
@@ -34,12 +53,44 @@ public class ListCellData {
         this.summary = summary;
     }
 
-    public String getAvatarId() {
-        return avatarId;
+    public String getQuestionid() {
+        return questionid;
     }
 
-    public void setAvatarId(String avatarId) {
-        this.avatarId = avatarId;
+    public void setQuestionid(String questionid) {
+        this.questionid = questionid;
+    }
+
+    public String getAnswerid() {
+        return answerid;
+    }
+
+    public void setAnswerid(String answerid) {
+        this.answerid = answerid;
+    }
+
+    public String getAuthorname() {
+        return authorname;
+    }
+
+    public void setAuthorname(String authorname) {
+        this.authorname = authorname;
+    }
+
+    public String getAuthorhash() {
+        return authorhash;
+    }
+
+    public void setAuthorhash(String authorhash) {
+        this.authorhash = authorhash;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getVote() {
@@ -48,15 +99,5 @@ public class ListCellData {
 
     public void setVote(String vote) {
         this.vote = vote;
-    }
-
-
-
-    public String getAuthorname() {
-        return authorname;
-    }
-
-    public void setAuthorname(String authorname) {
-        this.authorname = authorname;
     }
 }
