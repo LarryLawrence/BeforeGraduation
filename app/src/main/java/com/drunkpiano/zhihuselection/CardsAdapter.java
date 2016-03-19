@@ -14,9 +14,11 @@ import java.util.ArrayList;
 public class CardsAdapter extends BaseAdapter {
 
     ListCellData [] data  ;
-    String table = "";
     int id = 0 ;
     int count = 0 ;
+    String sheetName = "";
+
+
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
 //    String title = "";
 //    String authorname = "";
@@ -24,19 +26,21 @@ public class CardsAdapter extends BaseAdapter {
 //    String vote = "" ;
 //    private List<String> items;
 //    private final OnClickListener itemButtonClickListener;
-    private final Context context;
+    private  Context context;
 
-    public CardsAdapter(Context context,  String table) {
+    public CardsAdapter(Context context,  String sheetName) {
         this.context = context;
-        this.table = table ;
+        this.sheetName = sheetName ;
 //        this.itemButtonClickListener = itemButtonClickListener;
     }
+    public CardsAdapter(){}//Timer中调用
 
 
     @Override
     public int getCount() {
 //        return data.length;
-    return 32 ;
+
+        return 30 ;
     }
 
 //    @Override
@@ -72,7 +76,8 @@ public class CardsAdapter extends BaseAdapter {
         }
 //        ListCellData data = getItem(position);
             QueryData();
-            if(data.length>2) {
+            if(data.length>1) {
+                System.out.println("BB" + data[0]);
                 holder.title.setText(data[position].getTitle());
                 holder.info.setText(data[position].getSummary());
             }
@@ -85,13 +90,12 @@ public class CardsAdapter extends BaseAdapter {
         private TextView info;
     }
 
-    private void QueryData(){
+    public boolean QueryData(){
         Db db = new Db(context);
-
         //READ
         SQLiteDatabase dbRead = db.getReadableDatabase();
         //public Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
-        Cursor myCursor = dbRead.query(table, null, null, null, null, null, null);
+        Cursor myCursor = dbRead.query(sheetName, null, null, null, null, null, null);
 //        if(myCursor.moveToFirst()) {
             //遍历游标
 //            for(count=0;count<myCursor.getCount();count++){
@@ -111,7 +115,13 @@ public class CardsAdapter extends BaseAdapter {
         {
             data[i] = dataArrayList.get(i);
         }
+        if(count!=0) return true ;
+        else return false ;
+
+
 
     }
+
+
 
 }

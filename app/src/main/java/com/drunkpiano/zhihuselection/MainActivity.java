@@ -125,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return new FmFirst();
                 case 1:
-                    return new FmSecond();
+                    return new FragmentBridge() ;
+//                    return new FmSecond();
                 case 2:
                     return new FmThird();
                 case 3:

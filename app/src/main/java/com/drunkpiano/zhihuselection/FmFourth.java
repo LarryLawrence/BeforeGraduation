@@ -19,9 +19,7 @@ public class FmFourth extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_card_layout,container,false);//inflate一个listview
-        cardsList = (ListView)rootView.findViewById(R.id.cards_list);
-        setupList();
+        View rootView = inflater.inflate(R.layout.fragment_test,container,false);//inflate一个listview
         return rootView;
     }
     private void setupList(){

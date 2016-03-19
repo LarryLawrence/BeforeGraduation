@@ -1,12 +1,15 @@
-package com.drunkpiano.zhihuselection.utilities;
+package com.drunkpiano.zhihuselection;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-
-import com.drunkpiano.zhihuselection.Db;
-import com.drunkpiano.zhihuselection.ListCellData;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,15 +26,30 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * Created by DrunkPiano on 16/3/17.
+ * Created by DrunkPiano on 16/3/19.
  */
-public class Utilities {
-    Context context ;
-    String sheet = "";
-    public Utilities(Context context ,String chooseSheet) {
-        this.context = context ;
-        this.sheet = chooseSheet ;
+public class FragmentBridge extends Fragment {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View root = inflater.inflate(R.layout.progressbar_fragment,container,false);
+        root.findViewById(R.id.load).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(),"cao",Toast.LENGTH_SHORT).show();
+                getFragmentManager().beginTransaction().replace(R.id.container, new FmFourth()).commit();
+            }
+        });
+
+
+
+
+//        DownloadJSONAndUpdateDB();
+        return root ;
+
     }
+
 
     public void DownloadJSONAndUpdateDB(){
         new AsyncTask<String, Void, Void>() {
@@ -85,12 +103,12 @@ public class Utilities {
             }
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
 
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemData() + "/" + sheet);//读今天的
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemData() + "/" + "yesterday");//读今天的
 
     }
 
     private void insertToSheet(ListCellData data ){
-        Db db = new Db(context);
+        Db db = new Db(getContext());
         //WRITE
         SQLiteDatabase dbWrite = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -103,14 +121,14 @@ public class Utilities {
         cv.put("sauthorhash",data.getAuthorhash());
         cv.put("savatar",data.getAvatar());
         cv.put("svote", data.getVote());
-        dbWrite.insert(sheet, null, cv);
+        dbWrite.insert("yesterday", null, cv);
 
         dbWrite.close();
+//        notifyDataSetChanged();
 //        FmSecond fs = new FmSecond();
 //        fs.setupList();
 
     }
-
     private static String getSystemData(){
         //24小时制
 //        SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

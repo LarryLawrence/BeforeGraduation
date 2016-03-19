@@ -17,7 +17,7 @@ public class ListCellData {
         this.vote = vote ;
 
     }
-    public ListCellData(){}//2nd cons哪里用到了
+    public ListCellData(){}//2nd constructor哪里用到了
 
     private String title = "";
     private String time = "";
