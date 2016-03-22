@@ -9,7 +9,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.drunkpiano.zhihuselection.utilities.BBFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,12 +37,19 @@ public class FragmentBridge extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        Toast.makeText(getContext(), "FragmentBridge", Toast.LENGTH_SHORT).show();
+        System.out.println("FragmentBridge!");
+
+
         View root = inflater.inflate(R.layout.progressbar_fragment,container,false);
-        root.findViewById(R.id.load).setOnClickListener(new View.OnClickListener() {
+        final Button btn = (Button)root.findViewById(R.id.load);
+        final ProgressBar pb = (ProgressBar)root.findViewById(R.id.progressBar);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(),"cao",Toast.LENGTH_SHORT).show();
-                getFragmentManager().beginTransaction().replace(R.id.container, new FmFourth()).commit();
+                btn.setVisibility(View.GONE);
+                pb.setVisibility(View.GONE);
+                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new BBFragment()).commit();
             }
         });
 

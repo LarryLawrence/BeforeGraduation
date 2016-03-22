@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +33,8 @@ public class FmFirst extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fm_first,container,false);
-
+        Toast.makeText(getContext(), "Fragment1", Toast.LENGTH_SHORT).show();
+        System.out.println("Fragment1!");
         tv = (TextView)root.findViewById(R.id.tv1);
         tv.setText("bb");
         root.findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {

@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
+//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -60,28 +60,6 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-//        String authorname = "bb", title = "如何看待.." , summary = "内容内容";
-//        //CREATE
-//        Db db = new Db(this);
-//        //WRITE
-//        SQLiteDatabase dbWrite = db.getWritableDatabase();
-//        ContentValues cv = new ContentValues();
-//        cv.put("sauthorname",authorname);
-//        cv.put("stitle",title);
-//        cv.put("ssummary",summary);
-//        dbWrite.insert("answer", null, cv);
-//
-//        cv.put("sauthorname", "cc");
-//        cv.put("stitle","如何评价..");
-//        cv.put("ssummary","contentcontent");
-//        dbWrite.insert("answer", null, cv);
-//        dbWrite.close();
-
-//        //READ
-//        SQLiteDatabase dbRead = db.getReadableDatabase();
-//        //public Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
-//        Cursor myCursor = dbRead.query("answer", null, null, null, null, null, null);
     }
 
 
@@ -135,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
             }
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+//            return PlaceholderFragment.newInstance(position + 1);
+            return null ;
         }
 
         @Override
@@ -188,10 +167,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+//            return rootView;
+            return null;
         }
     }
 }

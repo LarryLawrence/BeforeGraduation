@@ -18,45 +18,11 @@ public class FmFourth extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        Toast.makeText(getContext(),"Fragment4",Toast.LENGTH_SHORT).show();
+        System.out.println("Fragment4!");
         View rootView = inflater.inflate(R.layout.fragment_test,container,false);//inflate一个listview
         return rootView;
     }
-    private void setupList(){
-//        cardsList.setAdapter(createAdapter());
-//        cardsList.setOnItemClickListener(new MyItemOnClickListener());
-    }
-
-//    private ListCellData[] data = new ListCellData[]{
-//            new ListCellData("bb","如何看待BB....?","BB内容内容内容内容内容内容内容内容内容","img1","100"),
-//            new ListCellData("cc","如何看待CC....?","CC内容内容内容内容内容内容内容内容内容","img2","100"),
-//            new ListCellData("dd","如何看待DD....?","DD内容内容内容内容内容内容内容内容内容","img2","100"),
-//    };
-
-//    private CardsAdapter createAdapter(){
-//        return new CardsAdapter(getActivity(),data);
-//        ArrayList<String> items = new ArrayList<String>();
-//        for(int i = 0 ; i < 100 ; i ++)
-//        {
-//            items.add(i,"Text 4 list item" + i );
-//        }
-//        return new CardsAdapter(getActivity(), items, new ListItemButtonClickListener());
-//    }
-
-//    private final class ListItemButtonClickListener implements View.OnClickListener {
-//        @Override
-//        public void onClick(View v) {
-//            for (int i = cardsList.getFirstVisiblePosition(); i <= cardsList.getLastVisiblePosition(); i++) {
-//                if (v == cardsList.getChildAt(i - cardsList.getFirstVisiblePosition()).findViewById(R.id.list_item_card_button_1)) {
-//                    // PERFORM AN ACTION WITH THE ITEM AT POSITION i
-//                    Toast.makeText(getActivity(), "Clicked on Left Action Button of List Item " + i, Toast.LENGTH_SHORT).show();
-//                } else if (v == cardsList.getChildAt(i - cardsList.getFirstVisiblePosition()).findViewById(R.id.list_item_card_button_2)) {
-//                    // PERFORM ANOTHER ACTION WITH THE ITEM AT POSITION i
-//                    Toast.makeText(getActivity(), "Clicked on Right Action Button of List Item " + i, Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        }
-//    }
 
 
     class MyItemOnClickListener implements AdapterView.OnItemClickListener{
