@@ -1,6 +1,7 @@
 package com.drunkpiano.zhihuselection;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,11 +10,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.drunkpiano.zhihuselection.utilities.BBFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +31,12 @@ import java.util.Calendar;
  * Created by DrunkPiano on 16/3/19.
  */
 public class FragmentBridge extends Fragment {
+    private HeyApplication application ;
+    ProgressBar pb ;
+    int numCount = 30;
+    Db db ;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,23 +44,21 @@ public class FragmentBridge extends Fragment {
         Toast.makeText(getContext(), "FragmentBridge", Toast.LENGTH_SHORT).show();
         System.out.println("FragmentBridge!");
 
-
         View root = inflater.inflate(R.layout.progressbar_fragment,container,false);
-        final Button btn = (Button)root.findViewById(R.id.load);
-        final ProgressBar pb = (ProgressBar)root.findViewById(R.id.progressBar);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btn.setVisibility(View.GONE);
-                pb.setVisibility(View.GONE);
-                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new BBFragment()).commit();
-            }
-        });
+//        final Button btn = (Button)root.findViewById(R.id.load);
+         pb = (ProgressBar)root.findViewById(R.id.progressBar);
 
 
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                btn.setVisibility(View.GONE);
+//                pb.setVisibility(View.GONE);
+//                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new BBFragment()).commit();
+//            }
+//        });
 
-
-//        DownloadJSONAndUpdateDB();
+        DownloadJSONAndUpdateDB();
         return root ;
 
     }
@@ -85,7 +87,39 @@ public class FragmentBridge extends Fragment {
                     br.close();
                     isr.close();
                     is.close();
+                    //获取答案数量
                     JSONObject root = new JSONObject(builder.toString());
+                    numCount = root.getInt("count");
+                    //存放到application里面
+                    application = (HeyApplication)getActivity().getApplication();
+                    application.setYesterdayCount(numCount);
+                    //写入日期到database
+                    db = new Db(getContext());
+                    SQLiteDatabase dbRead = db.getReadableDatabase();
+                    Cursor myCursor = dbRead.query("DatesAlreadyInView", null, null, null, null, null, null);
+                    int j = 0 ;//1?
+                    boolean isDuplicated = false ;
+                    while(myCursor.moveToNext()){
+                        if(getSystemDate() != myCursor.getString(j))
+                            j++;
+                        else
+                        {
+                            isDuplicated = true ;
+                            break ;
+                        }
+
+                    }
+                    if(!isDuplicated) {
+                        SQLiteDatabase dbWrite = db.getWritableDatabase();
+                        ContentValues cv = new ContentValues();
+                        cv.put("sYesterdayDate", getSystemDate());
+                        dbWrite.insert("DatesAlreadyInView", null, cv);
+                        dbWrite.close();
+                    }
+
+
+                    if(isDuplicated){
+                    System.out.println("Application中的yesterdayCount" + application.getYesterdayCount());
 //                            System.out.println("result="+root.getString("result"));//获取元素
                     JSONArray array = root.getJSONArray("answers");//获取数组
                     ListCellData LcData = new ListCellData();
@@ -102,6 +136,7 @@ public class FragmentBridge extends Fragment {
                         LcData.setVote(jo.getString("vote"));
 
                         insertToSheet(LcData);
+                        }
                     }
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -110,16 +145,26 @@ public class FragmentBridge extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                System.out.println("doInBackGround```````");
+
                 return null;
             }
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
 
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemData() + "/" + "yesterday");//读今天的
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                System.out.println("postExecute```````,numCount= "+ numCount);
+                pb.setVisibility(View.GONE);
+                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FmSecond()).commit();
+                super.onPostExecute(aVoid);
+            }
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemDate() + "/" + "yesterday");//读今天的
 
     }
 
     private void insertToSheet(ListCellData data ){
-        Db db = new Db(getContext());
+        db = new Db(getContext());
         //WRITE
         SQLiteDatabase dbWrite = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -140,7 +185,7 @@ public class FragmentBridge extends Fragment {
 //        fs.setupList();
 
     }
-    private static String getSystemData(){
+    private static String getSystemDate(){
         //24小时制
 //        SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //12小时制

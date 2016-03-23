@@ -20,27 +20,20 @@ public class CardsAdapter extends BaseAdapter {
 
 
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
-//    String title = "";
-//    String authorname = "";
-//    String summary = "" ;
-//    String vote = "" ;
-//    private List<String> items;
-//    private final OnClickListener itemButtonClickListener;
     private  Context context;
 
-    public CardsAdapter(Context context,  String sheetName) {
+    public CardsAdapter(Context context,  String sheetName ,int count) {
         this.context = context;
         this.sheetName = sheetName ;
-//        this.itemButtonClickListener = itemButtonClickListener;
+        this.count = count ;
+        System.out.println("---------------->this is the constructor");
     }
     public CardsAdapter(){}//Timer中调用
 
-
     @Override
     public int getCount() {
-//        return data.length;
-
-        return 30 ;
+        System.out.println("---------------->this is the getCount() and the count is: "+count);
+        return count ;
     }
 
 //    @Override
@@ -54,6 +47,7 @@ public class CardsAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
+        System.out.println("---------------->this is the getItemId");
         return position;
     }
 
@@ -117,11 +111,5 @@ public class CardsAdapter extends BaseAdapter {
         }
         if(count!=0) return true ;
         else return false ;
-
-
-
     }
-
-
-
 }

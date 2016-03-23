@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity {
 
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -99,14 +101,32 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
 
+//            PlaceholderFragment fragment = new PlaceholderFragment();
+//            Bundle args = new Bundle();
+//            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+//            fragment.setArguments(args);
+            Fragment bridge1 = new FragmentBridge();
+            Bundle args1 = new Bundle();
+            args1.putString("tabName","yesterday");
+            bridge1.setArguments(args1);
+
+            Fragment bridge2 = new FragmentBridge();
+            Bundle args2 = new Bundle();
+            args2.putString("tabName","recent");
+            bridge2.setArguments(args2);
+
+            Fragment bridge3 = new FragmentBridge();
+            Bundle args3 = new Bundle();
+            args3.putString("tabName","archive");
+            bridge3.setArguments(args3);
+
             switch (position){
                 case 0:
                     return new FmFirst();
                 case 1:
-                    return new FragmentBridge() ;
-//                    return new FmSecond();
+                    return bridge2 ;
                 case 2:
-                    return new FmThird();
+                    return new FragmentBridge();
                 case 3:
                     return new FmFourth();
 
