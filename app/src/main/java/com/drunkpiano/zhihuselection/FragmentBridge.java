@@ -35,6 +35,8 @@ public class FragmentBridge extends Fragment {
     ProgressBar pb ;
     int numCount = 30;
     Db db ;
+    String tabName = "";
+    String dateShouldBeReturned = "" ;
 
 
     @Nullable
@@ -48,17 +50,22 @@ public class FragmentBridge extends Fragment {
 //        final Button btn = (Button)root.findViewById(R.id.load);
          pb = (ProgressBar)root.findViewById(R.id.progressBar);
 
+        tabName = getArguments().getString("tabName") ;
+        if(tabName=="yesterday" && Integer.parseInt(getCurrentTime())<0501)
+            dateShouldBeReturned = getYesterdayDate() ;
+        else if(tabName=="yesterday" && Integer.parseInt(getCurrentTime())>=0501)
+            dateShouldBeReturned = getSystemDate() ;
+        else if(tabName=="recent" && Integer.parseInt(getCurrentTime())<1101)
+            dateShouldBeReturned = getYesterdayDate() ;
+        else if(tabName=="recent" && Integer.parseInt(getCurrentTime())>=1101)
+            dateShouldBeReturned = getSystemDate() ;
+        else if(tabName=="archive" && Integer.parseInt(getCurrentTime())<1701)
+            dateShouldBeReturned = getYesterdayDate() ;
+        else if(tabName=="archive" && Integer.parseInt(getCurrentTime())>=1701)
+            dateShouldBeReturned = getSystemDate() ;
 
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                btn.setVisibility(View.GONE);
-//                pb.setVisibility(View.GONE);
-//                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new BBFragment()).commit();
-//            }
-//        });
+            DownloadJSONAndUpdateDB();
 
-        DownloadJSONAndUpdateDB();
         return root ;
 
     }
@@ -97,29 +104,15 @@ public class FragmentBridge extends Fragment {
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getReadableDatabase();
                     Cursor myCursor = dbRead.query("DatesAlreadyInView", null, null, null, null, null, null);
-                    int j = 0 ;//1?
-                    boolean isDuplicated = false ;
-                    while(myCursor.moveToNext()){
-                        if(getSystemDate() != myCursor.getString(j))
-                            j++;
-                        else
-                        {
-                            isDuplicated = true ;
-                            break ;
-                        }
-
-                    }
-                    if(!isDuplicated) {
-                        SQLiteDatabase dbWrite = db.getWritableDatabase();
-                        ContentValues cv = new ContentValues();
-                        cv.put("sYesterdayDate", getSystemDate());
-                        dbWrite.insert("DatesAlreadyInView", null, cv);
-                        dbWrite.close();
-                    }
+                    boolean doesExist = false ;
+                    dbRead.close();
 
 
-                    if(isDuplicated){
-                    System.out.println("Application中的yesterdayCount" + application.getYesterdayCount());
+                    myCursor.moveToFirst() ;
+                    if( (myCursor.getString(1)=="virgin")
+                            || (myCursor.getString(2)=="virgin")
+                                || (myCursor.getString(3)=="virgin")){
+//                    System.out.println("Application中的yesterdayCount" + application.getYesterdayCount());
 //                            System.out.println("result="+root.getString("result"));//获取元素
                     JSONArray array = root.getJSONArray("answers");//获取数组
                     ListCellData LcData = new ListCellData();
@@ -135,9 +128,43 @@ public class FragmentBridge extends Fragment {
                         LcData.setAvatar(jo.getString("avatar"));
                         LcData.setVote(jo.getString("vote"));
 
-                        insertToSheet(LcData);
+                        insertToSheet(LcData , tabName);
                         }
                     }
+
+                    //..
+                    //刚开始,moveToFirst是假的,那么就可以写入数据;写什么?无论AlreadyInView还是answers都要根据tabName.
+                    //这个假的不能判断是不是其他几列都存在第一行.
+
+                    if(myCursor.moveToFirst()) {//确定第一行有,然后检查是否每列都有.这一行只是为了移动指针.
+                        //但是如果没有,getString不会返回null而是直接报错!
+                        // *未完成*所以要判断是否第一次打开,是的话在DateAlreadyInView的第一列全部赋予"virgin"
+                        if( (tabName=="yesterday") && (myCursor.getString(1)=="virgin") ) {
+                            SQLiteDatabase dbWrite = db.getWritableDatabase();
+                            ContentValues cv = new ContentValues();
+                            cv.put("sYesterdayDate", getSystemDate());
+                            dbWrite.insert("DatesAlreadyInView", null, cv);
+                            dbWrite.close();
+                        }
+                        if( (tabName=="recent") && (myCursor.getString(2)=="virgin") ) {
+                            SQLiteDatabase dbWrite = db.getWritableDatabase();
+                            ContentValues cv = new ContentValues();
+                            cv.put("sRecentDate", getSystemDate());
+                            dbWrite.insert("DatesAlreadyInView", null, cv);
+                            dbWrite.close();
+                        }
+                        if(( (tabName=="archive") && (myCursor.getString(3)=="virgin") )) {
+                            SQLiteDatabase dbWrite = db.getWritableDatabase();
+                            ContentValues cv = new ContentValues();
+                            cv.put("sArchiveDate", getSystemDate());
+                            dbWrite.insert("DatesAlreadyInView", null, cv);
+                            dbWrite.close();
+                        }
+                    }
+
+
+
+                    myCursor.close();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -145,7 +172,7 @@ public class FragmentBridge extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                System.out.println("doInBackGround```````");
+                System.out.println("----------------->doInBackGround");
 
                 return null;
             }
@@ -159,11 +186,12 @@ public class FragmentBridge extends Fragment {
                 getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FmSecond()).commit();
                 super.onPostExecute(aVoid);
             }
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemDate() + "/" + "yesterday");//读今天的
+//        }.execute("http://api.kanzhihu.com/getpostanswers/" + getSystemDate() + "/" + "yesterday");//读今天的
+          }.execute("http://api.kanzhihu.com/getpostanswers/" + dateShouldBeReturned + "/" + tabName);//读今天的
 
-    }
+        }
 
-    private void insertToSheet(ListCellData data ){
+    private void insertToSheet(ListCellData data , String tabName){
         db = new Db(getContext());
         //WRITE
         SQLiteDatabase dbWrite = db.getWritableDatabase();
@@ -177,7 +205,7 @@ public class FragmentBridge extends Fragment {
         cv.put("sauthorhash",data.getAuthorhash());
         cv.put("savatar",data.getAvatar());
         cv.put("svote", data.getVote());
-        dbWrite.insert("yesterday", null, cv);
+        dbWrite.insert(tabName, null, cv);
 
         dbWrite.close();
 //        notifyDataSetChanged();
@@ -185,6 +213,12 @@ public class FragmentBridge extends Fragment {
 //        fs.setupList();
 
     }
+
+    private static String getCurrentTime(){
+        SimpleDateFormat justTime = new SimpleDateFormat("HHmm");
+        return justTime.format(Calendar.getInstance().getTime());
+    }
+
     private static String getSystemDate(){
         //24小时制
 //        SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -193,6 +227,14 @@ public class FragmentBridge extends Fragment {
         SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
         return justDate.format(Calendar.getInstance().getTime());
     }
+
+    private static String getYesterdayDate(){
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        String yesterdayDate = new SimpleDateFormat( "yyyyMMdd ").format(cal.getTime());
+        return yesterdayDate ;
+    }
+
     public static boolean shouldUpdateDB(){
         return true ;
     }

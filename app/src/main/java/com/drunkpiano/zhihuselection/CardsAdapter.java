@@ -26,13 +26,13 @@ public class CardsAdapter extends BaseAdapter {
         this.context = context;
         this.sheetName = sheetName ;
         this.count = count ;
-        System.out.println("---------------->this is the constructor");
+//        System.out.println("---------------->this is the constructor");
     }
     public CardsAdapter(){}//Timer中调用
 
     @Override
     public int getCount() {
-        System.out.println("---------------->this is the getCount() and the count is: "+count);
+//        System.out.println("---------------->this is the getCount() and the count is: "+count);
         return count ;
     }
 
@@ -71,7 +71,7 @@ public class CardsAdapter extends BaseAdapter {
 //        ListCellData data = getItem(position);
             QueryData();
             if(data.length>1) {
-                System.out.println("BB" + data[0]);
+//                System.out.println("BB" + data[0]);
                 holder.title.setText(data[position].getTitle());
                 holder.info.setText(data[position].getSummary());
             }
@@ -98,7 +98,7 @@ public class CardsAdapter extends BaseAdapter {
                 ListCellData dataCell = new ListCellData(myCursor.getString(1),myCursor.getString(2),myCursor.getString(3),myCursor.getString(4),myCursor.getString(5),myCursor.getString(6),myCursor.getString(7),myCursor.getString(8),myCursor.getString(9));
 //                dataArrayList.add(i,dataCell);
                 dataArrayList.add(dataCell);
-                    count++;
+//                    count++;
 //                System.out.println(id+":"+authorname+":"+vote);
              }
             myCursor.close();

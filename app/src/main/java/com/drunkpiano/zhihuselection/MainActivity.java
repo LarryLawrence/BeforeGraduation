@@ -120,15 +120,16 @@ public class MainActivity extends AppCompatActivity {
             args3.putString("tabName","archive");
             bridge3.setArguments(args3);
 
+
             switch (position){
                 case 0:
-                    return new FmFirst();
+                    return bridge1 ;
                 case 1:
                     return bridge2 ;
                 case 2:
-                    return new FragmentBridge();
+                    return bridge3 ;
                 case 3:
-                    return new FmFourth();
+                    return new FmFourth() ;
 
             }
             // getItem is called to instantiate the fragment for the given page.
