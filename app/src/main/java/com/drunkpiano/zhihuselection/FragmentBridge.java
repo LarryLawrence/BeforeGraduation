@@ -34,7 +34,7 @@ public class FragmentBridge extends Fragment {
     private HeyApplication application ;
     ProgressBar pb ;
     int numCount = 30;
-    Db db ;
+    Db db = new Db(getContext());
     String tabName = "";
     String dateShouldBeReturned = "" ;
 
@@ -51,9 +51,11 @@ public class FragmentBridge extends Fragment {
          pb = (ProgressBar)root.findViewById(R.id.progressBar);
 
         tabName = getArguments().getString("tabName") ;
-        if(tabName=="yesterday" && Integer.parseInt(getCurrentTime())<0501)
+//        System.out.println("getArguments()获取的tabName-------->" + tabName);
+//        tabName = "recent" ;
+        if(tabName=="yesterday" && Integer.parseInt(getCurrentTime())<501)//注意要去掉开头的0;0501是一个极大的数
             dateShouldBeReturned = getYesterdayDate() ;
-        else if(tabName=="yesterday" && Integer.parseInt(getCurrentTime())>=0501)
+        else if(tabName=="yesterday" && Integer.parseInt(getCurrentTime())>=501)
             dateShouldBeReturned = getSystemDate() ;
         else if(tabName=="recent" && Integer.parseInt(getCurrentTime())<1101)
             dateShouldBeReturned = getYesterdayDate() ;
@@ -64,7 +66,7 @@ public class FragmentBridge extends Fragment {
         else if(tabName=="archive" && Integer.parseInt(getCurrentTime())>=1701)
             dateShouldBeReturned = getSystemDate() ;
 
-            DownloadJSONAndUpdateDB();
+        DownloadJSONAndUpdateDB();
 
         return root ;
 
@@ -100,18 +102,53 @@ public class FragmentBridge extends Fragment {
                     //存放到application里面
                     application = (HeyApplication)getActivity().getApplication();
                     application.setYesterdayCount(numCount);
+
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getReadableDatabase();
                     Cursor myCursor = dbRead.query("DatesAlreadyInView", null, null, null, null, null, null);
-                    boolean doesExist = false ;
-                    dbRead.close();
+                    SQLiteDatabase dbWrite = db.getWritableDatabase();
+                    ContentValues cv = new ContentValues();
 
+                    if(!myCursor.moveToFirst()) {//首次启动,第一行没有东西,注意是任何一列的第一行都没有东西
+                        //往第一行的每个column写东西,写的是virgin
+                        cv.put("sYesterdayDate","virgin");
+                        cv.put("sRecentDate", "virgin");
+                        cv.put("sArchiveDate", "virgin");
+                        dbWrite.insert("DatesAlreadyInView", null, cv);
+                    }
+//                    这时候第一行已经有virgin了,把virgin替换成日期
+                    myCursor.moveToFirst();
+                    if(myCursor.getString(1).equals("virgin")){//@wack
+                        System.out.println("may-your-blade-seeks-vagence");
+                    }
 
-                    myCursor.moveToFirst() ;
-                    if( (myCursor.getString(1)=="virgin")
-                            || (myCursor.getString(2)=="virgin")
-                                || (myCursor.getString(3)=="virgin")){
+                        if( (tabName.equals("yesterday")) && (myCursor.getString(1).equals("virgin")) ) {
+                            cv.put("sYesterdayDate", dateShouldBeReturned);
+                            String whereClause="_id=?";
+                            String [] whereArgs = {String.valueOf(1)};
+                            dbWrite.update("DatesAlreadyInView", cv, whereClause, whereArgs);
+                            System.out.println("yesterday---------->virginnnnnnnnnnnnn");
+                        }
+                        if( (tabName.equals("recent")) && (myCursor.getString(2).equals("virgin")) ) {
+                            cv.put("sRecentDate", dateShouldBeReturned);
+                            String whereClause="_id=?";
+                            String [] whereArgs = {String.valueOf(1)};
+                            dbWrite.update("DatesAlreadyInView", cv, whereClause, whereArgs);
+                            System.out.println("recent---------->virginnnnnnnnnnnnn");
+
+                        }
+                        if( (tabName.equals("archive")) && (myCursor.getString(3).equals("virgin")) ) {
+                            cv.put("sArchiveDate", dateShouldBeReturned);
+                            String whereClause="_id=?";
+                            String [] whereArgs = {String.valueOf(1)};
+                            dbWrite.update("DatesAlreadyInView", cv, whereClause, whereArgs);
+                        }
+                    dbWrite.close();
+
+                    if(  ( (myCursor.getString(1).equals("virgin")) && !myCursor.moveToNext() )
+                            || ( (myCursor.getString(2).equals("virgin")) && !myCursor.moveToNext() )
+                                || ( (myCursor.getString(2).equals("virgin")) && !myCursor.moveToNext() )) {
 //                    System.out.println("Application中的yesterdayCount" + application.getYesterdayCount());
 //                            System.out.println("result="+root.getString("result"));//获取元素
                     JSONArray array = root.getJSONArray("answers");//获取数组
@@ -132,38 +169,10 @@ public class FragmentBridge extends Fragment {
                         }
                     }
 
-                    //..
-                    //刚开始,moveToFirst是假的,那么就可以写入数据;写什么?无论AlreadyInView还是answers都要根据tabName.
-                    //这个假的不能判断是不是其他几列都存在第一行.
-
-                    if(myCursor.moveToFirst()) {//确定第一行有,然后检查是否每列都有.这一行只是为了移动指针.
-                        //但是如果没有,getString不会返回null而是直接报错!
-                        // *未完成*所以要判断是否第一次打开,是的话在DateAlreadyInView的第一列全部赋予"virgin"
-                        if( (tabName=="yesterday") && (myCursor.getString(1)=="virgin") ) {
-                            SQLiteDatabase dbWrite = db.getWritableDatabase();
-                            ContentValues cv = new ContentValues();
-                            cv.put("sYesterdayDate", getSystemDate());
-                            dbWrite.insert("DatesAlreadyInView", null, cv);
-                            dbWrite.close();
-                        }
-                        if( (tabName=="recent") && (myCursor.getString(2)=="virgin") ) {
-                            SQLiteDatabase dbWrite = db.getWritableDatabase();
-                            ContentValues cv = new ContentValues();
-                            cv.put("sRecentDate", getSystemDate());
-                            dbWrite.insert("DatesAlreadyInView", null, cv);
-                            dbWrite.close();
-                        }
-                        if(( (tabName=="archive") && (myCursor.getString(3)=="virgin") )) {
-                            SQLiteDatabase dbWrite = db.getWritableDatabase();
-                            ContentValues cv = new ContentValues();
-                            cv.put("sArchiveDate", getSystemDate());
-                            dbWrite.insert("DatesAlreadyInView", null, cv);
-                            dbWrite.close();
-                        }
-                    }
 
 
 
+                    dbRead.close();
                     myCursor.close();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -172,8 +181,6 @@ public class FragmentBridge extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                System.out.println("----------------->doInBackGround");
-
                 return null;
             }
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
@@ -217,6 +224,10 @@ public class FragmentBridge extends Fragment {
     private static String getCurrentTime(){
         SimpleDateFormat justTime = new SimpleDateFormat("HHmm");
         return justTime.format(Calendar.getInstance().getTime());
+        //如果返回的是10点之前的数字,首位的0在parseInt时会被去掉
+//        e.g.*String s="01100";
+//        e.g.*int i=Integer.parseInt(s);
+//        e.g.*System.out.println(i);//1100
     }
 
     private static String getSystemDate(){
