@@ -1,4 +1,4 @@
-package com.drunkpiano.zhihuselection;
+package com.drunkpiano.zhihuselection.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,10 +10,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.drunkpiano.zhihuselection.CardsAdapter;
+import com.drunkpiano.zhihuselection.HeyApplication;
+import com.drunkpiano.zhihuselection.R;
+
 /**
  * Created by DrunkPiano on 16/3/9.
  */
-public class FmSecond extends Fragment {
+public class FMArchive extends Fragment {
     HeyApplication application ;
     int count = 3 ;
     ListView cardsList ;
@@ -32,7 +36,7 @@ public class FmSecond extends Fragment {
         cardsList.setOnItemClickListener(new MyItemOnClickListener());
     }
         private CardsAdapter createAdapter(){
-            return new CardsAdapter(getActivity(),"recent",count);
+            return new CardsAdapter(getActivity(),"archive",count);
     }
 
     class MyItemOnClickListener implements AdapterView.OnItemClickListener{

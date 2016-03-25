@@ -16,6 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.drunkpiano.zhihuselection.fragments.FMBridgeArchive;
+import com.drunkpiano.zhihuselection.fragments.FMBridgeRecent;
+import com.drunkpiano.zhihuselection.fragments.FMBridgeYesterday;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -117,17 +121,17 @@ public class MainActivity extends AppCompatActivity {
 
             Fragment bridge3 = new FragmentBridge();
             Bundle args3 = new Bundle();
-            args3.putString("tabName","archive");
+            args3.putString("tabName", "archive");
             bridge3.setArguments(args3);
 
 
             switch (position){
                 case 0:
-                    return bridge1 ;
+                    return new FMBridgeYesterday() ;
                 case 1:
-                    return bridge2 ;
+                    return new FMBridgeRecent();
                 case 2:
-                    return bridge3 ;
+                    return new FMBridgeArchive() ;
                 case 3:
                     return new FmFourth() ;
 
