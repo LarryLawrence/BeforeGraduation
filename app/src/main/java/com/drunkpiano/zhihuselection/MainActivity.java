@@ -1,5 +1,6 @@
 package com.drunkpiano.zhihuselection;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,11 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.drunkpiano.zhihuselection.fragments.FMBridgeArchive;
-import com.drunkpiano.zhihuselection.fragments.FMBridgeRecent;
-import com.drunkpiano.zhihuselection.fragments.FMBridgeYesterday;
+import com.drunkpiano.zhihuselection.fragments.BridgeArchive;
+import com.drunkpiano.zhihuselection.fragments.BridgeRecent;
+import com.drunkpiano.zhihuselection.fragments.BridgeYesterday;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String PREFS_NAME = "MyPrefsFile";
 
 
     /**
@@ -66,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        Boolean user_first = settings.getBoolean("FirstLaunch",true);//defValue - Value to return if this preference does not exist.
+        if(user_first) {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("FirstLaunch", false);
+            editor.commit();
+            System.out.println("first launch");
+        }
+        else{
+            System.out.println("not first launch");
+        }
     }
 
 
@@ -127,11 +142,11 @@ public class MainActivity extends AppCompatActivity {
 
             switch (position){
                 case 0:
-                    return new FMBridgeYesterday() ;
+                    return new BridgeYesterday() ;
                 case 1:
-                    return new FMBridgeRecent();
+                    return new BridgeRecent();
                 case 2:
-                    return new FMBridgeArchive() ;
+                    return new BridgeArchive() ;
                 case 3:
                     return new FmFourth() ;
 

@@ -25,7 +25,7 @@ public class FMYesterday extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         application = (HeyApplication)getActivity().getApplication();
-        count = application.getRecentCount() ;
+        count = application.getYesterdayCount() ;
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsList = (ListView) root.findViewById(R.id.cards_list);
         setupList();

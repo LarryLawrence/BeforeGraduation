@@ -35,12 +35,12 @@ import java.util.Calendar;
 /**
  * Created by DrunkPiano on 16/3/19.
  */
-public class FMBridgeRecent extends Fragment {
+public class BridgeYesterday extends Fragment {
     private HeyApplication application ;
     ProgressBar pb ;
     int numCount = 30;
     Db db = new Db(getContext());
-    String tabName = "recent";
+    String tabName = "yesterday";
 
     @Nullable
     @Override
@@ -82,12 +82,12 @@ public class FMBridgeRecent extends Fragment {
                     numCount = root.getInt("count");
                     //存放到application里面
                     application = (HeyApplication)getActivity().getApplication();
-                    application.setRecentCount(numCount);//注意,这里传递给了FmSecond里面
+                    application.setYesterdayCount(numCount);//注意,这里传递给了FmSecond里面
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getReadableDatabase();
-                    Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
-                    //如果recent table里面没有数据,才insert
+                    Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
+                    //如果yesterday table里面没有数据,才insert
                     if(!myCursor.moveToFirst()){
                     JSONArray array = root.getJSONArray("answers");//获取数组
                     ListCellData LcData = new ListCellData();
@@ -122,10 +122,10 @@ public class FMBridgeRecent extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 System.out.println("postExecute```````,numCount= "+ numCount);
                 pb.setVisibility(View.GONE);
-                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMRecent()).commit();
+                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
                 super.onPostExecute(aVoid);
              }
-            }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/" + "recent");//读今天的
+            }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/yesterday");//读今天的
         }
 
     private void insertToSheet(ListCellData data , String tabName){
@@ -150,7 +150,6 @@ public class FMBridgeRecent extends Fragment {
 //        fs.setupList();
 
     }
-
     private static String getCurrentTime(){
         SimpleDateFormat justTime = new SimpleDateFormat("HHmm");
         return justTime.format(Calendar.getInstance().getTime());
@@ -167,14 +166,10 @@ public class FMBridgeRecent extends Fragment {
         else if(Integer.parseInt(getCurrentTime())>=1101)
             dateShouldBeReturned = getSystemDate() ;
 
-        return dateShouldBeReturned ;
+        return dateShouldBeReturned.trim() ;
     }
 
     private static String getSystemDate(){
-        //24小时制
-//        SimpleDateFormat dateFormat24 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //12小时制
-//      SimpleDateFormat dateFormat12 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
         return justDate.format(Calendar.getInstance().getTime());
     }
@@ -186,7 +181,4 @@ public class FMBridgeRecent extends Fragment {
         return yesterdayDate ;
     }
 
-    public static boolean shouldUpdateDB(){
-        return true ;
-    }
 }
