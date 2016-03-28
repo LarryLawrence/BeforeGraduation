@@ -1,6 +1,7 @@
 package com.drunkpiano.zhihuselection.fragments;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.Db;
 import com.drunkpiano.zhihuselection.HeyApplication;
@@ -36,6 +36,7 @@ import java.util.Calendar;
  * Created by DrunkPiano on 16/3/19.
  */
 public class BridgeYesterday extends Fragment {
+    public static final String PREFS_NAME = "MyPrefsFile";
     private HeyApplication application ;
     ProgressBar pb ;
     int numCount = 30;
@@ -45,16 +46,47 @@ public class BridgeYesterday extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Toast.makeText(getContext(), "FragmentBridge", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "FragmentBridge", Toast.LENGTH_SHORT).show();
         System.out.println("FragmentBridge!");
-        View root = inflater.inflate(R.layout.progressbar_fragment,container,false);
-//        final Button btn = (Button)root.findViewById(R.id.load);
-         pb = (ProgressBar)root.findViewById(R.id.progressBar);
-        DownloadJSONAndUpdateDB();
-        return root ;
+        View root ;
+        root = inflater.inflate(R.layout.progressbar_fragment,container,false);
+        pb = (ProgressBar)root.findViewById(R.id.progressBar);
+        db = new Db(getContext());
+        SQLiteDatabase dbRead = db.getReadableDatabase();
+        Cursor cursor = dbRead.query("yesterday", null, null, null, null, null, null);
+        if(!cursor.moveToFirst()) {
+            //记录更新数据库的时间
+            SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+//            String user_first = settings.getString("LastUpdate", "19880101");//defValue - Value to return if this preference does not exist.
+            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("LastUpdate",time.format(Calendar.getInstance().getTime()));
+            editor.commit();
+
+            downloadJSONAndUpdateDB();
+        }
+        else
+        {
+            System.out.println("it's not downloading, it's the old database~~~~~~~~~~~~");
+            //1.先呈现db中现有的内容;
+            pb.setVisibility(View.GONE);
+            int _ids = 0 ;
+            while(cursor.moveToNext())
+            {
+                _ids ++ ;
+            }
+            application = (HeyApplication)getActivity().getApplication();
+            application.setYesterdayCount(_ids);
+            getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
+            //2.然后,如果上一次打开标签时间在今天之前,那就要更新.否则不执行.是在这个fragment更新吗?应该是新的里面.
+//            loadFromDbAndTransform();
+        }
+        dbRead.close();
+        cursor.close();
+            return root ;
     }
 
-    public void DownloadJSONAndUpdateDB(){
+    public void downloadJSONAndUpdateDB(){
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
@@ -82,7 +114,7 @@ public class BridgeYesterday extends Fragment {
                     numCount = root.getInt("count");
                     //存放到application里面
                     application = (HeyApplication)getActivity().getApplication();
-                    application.setYesterdayCount(numCount);//注意,这里传递给了FmSecond里面
+                    application.setYesterdayCount(numCount);
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getReadableDatabase();
@@ -127,6 +159,12 @@ public class BridgeYesterday extends Fragment {
              }
             }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/yesterday");//读今天的
         }
+
+//    public void loadFromDbAndTransform(){
+//        //1.先呈现db中现有的内容;然后如果上一次打开标签时间在昨天,这一次打开在今天,那就要更新.否则不执行.
+//
+//    }
+
 
     private void insertToSheet(ListCellData data , String tabName){
         db = new Db(getContext());

@@ -10,6 +10,16 @@ public class HeyApplication extends Application {
     private int recentCount ;
     private int archiveCount ;
 
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+//        //防止没有set却被get
+//        setYesterdayCount(25);
+//        setRecentCount(25);
+//        setArchiveCount(25);
+    }
+
     public int getYesterdayCount() {
         return yesterdayCount;
     }
