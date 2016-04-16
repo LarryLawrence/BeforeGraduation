@@ -1,6 +1,7 @@
 package com.drunkpiano.zhihuselection.fragments;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.drunkpiano.zhihuselection.Db;
-import com.drunkpiano.zhihuselection.HeyApplication;
 import com.drunkpiano.zhihuselection.ListCellData;
 import com.drunkpiano.zhihuselection.R;
 
@@ -35,9 +35,12 @@ import java.util.Calendar;
 /**
  * Created by DrunkPiano on 16/3/19.
  */
+
+//numCount,第一次操作是在判断DB为空时,downloadJSONAndUpdateDB()下载的时候,读json的的条数然后赋值给yesterdayCount;
+// 然后不论是否DB为空,都会transeform到FMYesterday,进去之后,立刻读取yesterdayCount,然后setuplist()
+    //然后开始判断是否需要刷新.如果是,执行refreshListView().里面会重新读json的条数,覆盖numCount
 public class BridgeYesterday extends Fragment {
     public static final String PREFS_NAME = "MyPrefsFile";
-    private HeyApplication application ;
     ProgressBar pb ;
     int numCount = 30;
     Db db = new Db(getContext());
@@ -56,13 +59,13 @@ public class BridgeYesterday extends Fragment {
         Cursor cursor = dbRead.query("yesterday", null, null, null, null, null, null);
         if(!cursor.moveToFirst()) {
             //记录更新数据库的时间
-            SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 //            String user_first = settings.getString("LastUpdate", "19880101");//defValue - Value to return if this preference does not exist.
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
             SharedPreferences.Editor editor = settings.edit();
-            editor.putString("LastUpdate",time.format(Calendar.getInstance().getTime()));
+            editor.putString("LastUpdate", time.format(Calendar.getInstance().getTime()));
             editor.commit();
-
+            System.out.println("数据库里没东西,下载.");
             downloadJSONAndUpdateDB();
         }
         else
@@ -75,8 +78,13 @@ public class BridgeYesterday extends Fragment {
             {
                 _ids ++ ;
             }
-            application = (HeyApplication)getActivity().getApplication();
-            application.setYesterdayCount(_ids);
+            SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putInt("yesterdayCount", _ids) ;
+            editor.commit();
+            System.out.println("_ids------------------>" + _ids);
+//            application = (HeyApplication)getActivity().getApplication();
+//            application.setYesterdayCount(_ids);
             getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
             //2.然后,如果上一次打开标签时间在今天之前,那就要更新.否则不执行.是在这个fragment更新吗?应该是新的里面.
 //            loadFromDbAndTransform();
@@ -113,8 +121,21 @@ public class BridgeYesterday extends Fragment {
                     JSONObject root = new JSONObject(builder.toString());
                     numCount = root.getInt("count");
                     //存放到application里面
-                    application = (HeyApplication)getActivity().getApplication();
-                    application.setYesterdayCount(numCount);
+//                    application = (HeyApplication)getActivity().getApplication();
+//                    application.setYesterdayCount(numCount);
+//                    SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+//                    Boolean user_first = settings.getInt("",true);//defValue - Value to return if this preference does not exist.
+//                    if(user_first) {
+//                        SharedPreferences.Editor editor = settings.edit();
+//                        editor.putBoolean("FirstLaunch", false);
+//                        editor.commit();
+//                        System.out.println("first launch");
+//                    }
+                    SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt("yesterdayCount",numCount) ;
+                    editor.commit();
+
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getReadableDatabase();
@@ -152,13 +173,14 @@ public class BridgeYesterday extends Fragment {
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
             @Override
             protected void onPostExecute(Void aVoid) {
-                System.out.println("postExecute```````,numCount= "+ numCount);
+                System.out.println("postExecute BB```````,numCount= "+ numCount);
                 pb.setVisibility(View.GONE);
                 getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
                 super.onPostExecute(aVoid);
              }
             }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/yesterday");//读今天的
-        }
+//    }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/yesterday");//读今天的
+}
 
 //    public void loadFromDbAndTransform(){
 //        //1.先呈现db中现有的内容;然后如果上一次打开标签时间在昨天,这一次打开在今天,那就要更新.否则不执行.
@@ -166,7 +188,7 @@ public class BridgeYesterday extends Fragment {
 //    }
 
 
-    private void insertToSheet(ListCellData data , String tabName){
+    public void insertToSheet(ListCellData data , String tabName){
         db = new Db(getContext());
         //WRITE
         SQLiteDatabase dbWrite = db.getWritableDatabase();
@@ -180,6 +202,8 @@ public class BridgeYesterday extends Fragment {
         cv.put("sauthorhash",data.getAuthorhash());
         cv.put("savatar",data.getAvatar());
         cv.put("svote", data.getVote());
+        System.out.println("Bridge title---------->" + data.getTitle());
+
         dbWrite.insert(tabName, null, cv);
 
         dbWrite.close();
@@ -199,9 +223,9 @@ public class BridgeYesterday extends Fragment {
     private static String getDate(){
         String dateShouldBeReturned = "" ;
 
-        if(Integer.parseInt(getCurrentTime())<1101)
+        if(Integer.parseInt(getCurrentTime())<501)
             dateShouldBeReturned = getYesterdayDate() ;
-        else if(Integer.parseInt(getCurrentTime())>=1101)
+        else if(Integer.parseInt(getCurrentTime())>=501)
             dateShouldBeReturned = getSystemDate() ;
 
         return dateShouldBeReturned.trim() ;

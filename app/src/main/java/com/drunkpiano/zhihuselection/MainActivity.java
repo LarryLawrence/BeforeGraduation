@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.fragments.BridgeArchive;
-import com.drunkpiano.zhihuselection.fragments.BridgeRecent;
 import com.drunkpiano.zhihuselection.fragments.BridgeYesterday;
 
 public class MainActivity extends AppCompatActivity {
@@ -144,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return new BridgeYesterday() ;
                 case 1:
-                    return new BridgeRecent();
+                    return new FmFourth();
                 case 2:
                     return new BridgeArchive() ;
                 case 3:

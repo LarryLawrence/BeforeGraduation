@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.drunkpiano.zhihuselection.Db;
+import com.drunkpiano.zhihuselection.HeyApplication;
 import com.drunkpiano.zhihuselection.ListCellData;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,10 @@ import java.util.Calendar;
 public class Utilities {
     Context context ;
     String sheet = "";
+    public HeyApplication application ;
+    int numCount = 30;
+
+
     public Utilities(Context context ,String chooseSheet) {
         this.context = context ;
         this.sheet = chooseSheet ;
@@ -36,6 +41,28 @@ public class Utilities {
         cv.put("savatar",data.getAvatar());
         cv.put("svote", data.getVote());
         dbWrite.insert(sheet, null, cv);
+
+        dbWrite.close();
+
+    }
+
+    private void updateSheet(ListCellData data ){
+        Db db = new Db(context);
+        //WRITE
+        SQLiteDatabase dbWrite = db.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("stitle",data.getTitle());
+        cv.put("stime",data.getTime());
+        cv.put("ssummary",data.getSummary());
+        cv.put("squestionid",data.getQuestionid());
+        cv.put("sanswerid",data.getAnswerid());
+        cv.put("sauthorname", data.getAuthorname());
+        cv.put("sauthorhash",data.getAuthorhash());
+        cv.put("savatar",data.getAvatar());
+        cv.put("svote", data.getVote());
+        String whereClause="id=?";
+        String[] whereArgs = {String.valueOf(1)};
+        dbWrite.update(sheet, cv, whereClause , whereArgs);
 
         dbWrite.close();
 
@@ -66,7 +93,5 @@ public class Utilities {
         return yesterdayDate ;
     }
 
-    public static boolean shouldUpdateDB(){
-        return true ;
-    }
+
 }
