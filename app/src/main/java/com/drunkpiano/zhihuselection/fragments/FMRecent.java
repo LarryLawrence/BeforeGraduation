@@ -160,7 +160,8 @@ public class FMRecent extends Fragment {
             mSwipeRefreshLayout.setRefreshing(true);
         }
         System.out.println("initiateDownloadToEmptyDB");
-        new DownloadToEmptyDbBackgroundTask().execute();
+//        new DownloadToEmptyDbBackgroundTask().execute();
+        downloadJSONAndUpdateDB();
     }
 
     private void onRefreshComplete() {
@@ -295,6 +296,7 @@ public class FMRecent extends Fragment {
                 System.out.println("refresh   4   postExecute```````,numCount= "+ numCount);
 //                pb.setVisibility(View.GONE);
                 setupList();
+                db.close();
                 super.onPostExecute(aVoid);
             }
         }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/recent");//读今天的
@@ -343,20 +345,20 @@ public class FMRecent extends Fragment {
             onRefreshComplete();
         }
     }
-
-    private class DownloadToEmptyDbBackgroundTask extends AsyncTask <Void, Void, Void>{
-        @Override
-        protected Void doInBackground(Void... params) {
-            downloadJSONAndUpdateDB();
-            return null;
-        }
-
+//
+//    private class DownloadToEmptyDbBackgroundTask extends AsyncTask <Void, Void, Void>{
 //        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            super.onPostExecute(aVoid);
-//            mSwipeRefreshLayout.setRefreshing(false);
+//        protected Void doInBackground(Void... params) {
+//            downloadJSONAndUpdateDB();
+//            return null;
 //        }
-    }
+//
+////        @Override
+////        protected void onPostExecute(Void aVoid) {
+////            super.onPostExecute(aVoid);
+////            mSwipeRefreshLayout.setRefreshing(false);
+////        }
+//    }
 
     public void updateTables(ListCellData data , String tabName , int ids ){
         db = new Db(getContext());
