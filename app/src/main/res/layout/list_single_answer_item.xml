@@ -20,6 +20,7 @@
         android:paddingTop="4dp"
         android:textSize="16sp"
         android:text="title"
+        android:textColor="@color/black"
         />
 
     <TextView
@@ -29,7 +30,7 @@
         android:ellipsize="end"
         android:maxLines="4"
         android:paddingTop="4dp"
-        android:text="summary info"
+        android:textColor="@color/almost_black"
         />
 
 </LinearLayout>

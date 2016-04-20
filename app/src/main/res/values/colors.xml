@@ -21,5 +21,9 @@
     <color name="swipe_color_3">#8ABD00</color>
     <color name="swipe_color_4">#7CAF00</color>
 
+    <color name="black">#000000</color>
+    <color name="almost_black">#242424</color>
+
+
 
 </resources>

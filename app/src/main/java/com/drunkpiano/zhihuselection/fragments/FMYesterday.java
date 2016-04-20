@@ -91,7 +91,7 @@ public class FMYesterday extends Fragment {
 //        count = application.getYesterdayCount() ;
         //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的.
         settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        numCount = settings.getInt("yesterdayCount",30);//defValue - Value to return if this preference does not exist.
+        numCount = settings.getInt("yesterdayCount",20);//defValue - Value to return if this preference does not exist.
         originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsList = (ListView) root.findViewById(R.id.cards_list);
@@ -143,25 +143,7 @@ public class FMYesterday extends Fragment {
         });
     }
     private void initiateRefresh() {
-         int TASK_DURATION = 1000; // 3 seconds
-
-        if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
-        {
-            refreshListView();
-            settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("LastUpdate", currentTimeStr);
-            editor.apply();
-        }
-        else
-        {
-            try {
-                Thread.sleep(TASK_DURATION);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        onRefreshComplete();
+         new SwipeRefreshBackgroundTask().execute();
     }
 
     private void onRefreshComplete() {
@@ -170,12 +152,11 @@ public class FMYesterday extends Fragment {
         {
             System.out.println("已经是最新的内容了");
 
-            Toast.makeText(getActivity(),"已经是最新的内容了~",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"「日常」板块每天早晨5:00更新~",Toast.LENGTH_SHORT).show();
         }
         else{
-            System.out.println("正在更新..");
 
-            Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
+            //更新动作不是在这里哦 这里已经刷新完成
         }
         // Stop the refreshing indicator
         mSwipeRefreshLayout.setRefreshing(false);
@@ -307,6 +288,38 @@ public class FMYesterday extends Fragment {
 //            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/yesterday");//读今天的
     }
 
+    private class SwipeRefreshBackgroundTask extends AsyncTask<Void ,Void , Void>{
+        static final int TASK_DURATION = 1000; // 3 seconds
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+            {
+                refreshListView();
+                System.out.println("正在更新..");
+//                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
+                settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("LastUpdate", currentTimeStr);
+                editor.apply();
+            }
+            else
+            {
+                try {
+                    Thread.sleep(TASK_DURATION);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null ;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            onRefreshComplete();
+        }
+    }
+
     public void updateTables(ListCellData data , String tabName , int ids ){
         db = new Db(getContext());
         //WRITE
@@ -349,12 +362,10 @@ public class FMYesterday extends Fragment {
         System.out.println("Bridge title---------->" + data.getTitle());
 
         dbWrite.insert(tabName, null, cv);
-
         dbWrite.close();
 //        notifyDataSetChanged();
 //        FmSecond fs = new FmSecond();
 //        fs.setupList();
-
     }
     private static String getDate(){
         String dateShouldBeReturned = "" ;

@@ -18,7 +18,7 @@
         android:scrollbarStyle="outsideOverlay"
         android:divider="@android:color/transparent"
         android:dividerHeight="10dp"
-        android:padding="10dp"
+        android:paddingBottom="10dp"
         tools:listitem="@layout/list_single_answer_item"
         />
 </android.support.v4.widget.SwipeRefreshLayout>

@@ -1,6 +1,8 @@
 package com.drunkpiano.zhihuselection.fragments;
 
+import android.app.ActivityManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,7 +10,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,7 +24,6 @@ import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.CardsAdapter;
 import com.drunkpiano.zhihuselection.Db;
-import com.drunkpiano.zhihuselection.HeyApplication;
 import com.drunkpiano.zhihuselection.ListCellData;
 import com.drunkpiano.zhihuselection.R;
 
@@ -39,52 +45,146 @@ import java.util.Calendar;
  * Created by DrunkPiano on 16/3/9.
  */
 public class FMRecent extends Fragment {
-    HeyApplication application ;
     public static final String PREFS_NAME = "MyPrefsFile";
-    int count = 3 ;
-    int numCount = 30;
+    public SwipeRefreshLayout mSwipeRefreshLayout ;
+
+    //    HeyApplication application ;
+//    int count = 3 ;
     ListView cardsList ;
-    Db db = new Db(getContext());
+    int numCount ;
+    int originNumCountForCompare = 30 ;
+    Db db ;
     String tabName = "recent";
+    Long currentTimeInt ;
+    Long latestWebsiteUpdateTimeInt ;
+    SimpleDateFormat currentTime ;
+    String lastUpdate ;
+    SimpleDateFormat latestWebsiteUpdateTime ;
+    Long lastUpdateInt ;
+    SharedPreferences settings ;
+    String currentTimeStr ;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Notify the system to allow an options menu for this fragment.
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        application = (HeyApplication)getActivity().getApplication();
-        count = application.getRecentCount() ;
+        //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的.
+        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        numCount = settings.getInt("recentCount",20);//defValue - Value to return if this preference does not exist.
+        originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsList = (ListView) root.findViewById(R.id.cards_list);
-        setupList();
 
-        SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
-        //DB的最近更新时间
-        String lastUpdate = settings.getString("LastUpdate", "198801010500");//defValue - Value to return if this preference does not exist.
-        Long lastUpdateInt = Long.parseLong(lastUpdate);
-        //现在的时间
-        SimpleDateFormat currentTime = new SimpleDateFormat("yyyyMMddHHmm");
-        String currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-        Long currentTimeInt = Long.parseLong(currentTimeStr);
-        //网站最近更新时间,今天早上五点
-        SimpleDateFormat latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
-        Long latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
 
-        if(true)
-//        if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+        //现在尝试将FMRecent该造成不需要Bridge的情况
+        //首先,判断recent table中是否有数据
+        db = new Db(getContext());
+        SQLiteDatabase dbRead = db.getReadableDatabase();
+        Cursor cursor = dbRead.query("recent", null, null, null, null, null, null);
+        if(!cursor.moveToFirst()) {
+            //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
+            SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("RecentLastUpdate", time.format(Calendar.getInstance().getTime()));
+            editor.commit();
+            System.out.println("数据库里没东西,下载.");
+            //我觉得它已经在执行了,因为有log,只是看不见而已
+            if (!mSwipeRefreshLayout.isRefreshing()) {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+            initiateDownloadToEmptyDB();
+        }
+        else
         {
+            setupList();
 
+            //DB的最近更新时间
+            lastUpdate = settings.getString("RecentLastUpdate", "198801010500");//defValue - Value to return if this preference does not exist.
+            lastUpdateInt = Long.parseLong(lastUpdate);
+            //现在的时间
+            currentTime = new SimpleDateFormat("yyyyMMddHHmm");
+            currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+            currentTimeInt = Long.parseLong(currentTimeStr);
+            //网站最近更新时间,今天早上五点
+            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
+            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+
+//        if(true)
+            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+        {
             refreshListView();
         }
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("LastUpdate",currentTimeStr);
-        editor.commit();
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("LastUpdate", currentTimeStr);
+            editor.apply();
+        }
+
+//         Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
+        mSwipeRefreshLayout.setColorScheme(
+                R.color.swipe_color_1, R.color.swipe_color_2,
+                R.color.swipe_color_3, R.color.swipe_color_4);
+        // END_INCLUDE (change_colors)
+
         return root;
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // We make sure that the SwipeRefreshLayout is displaying it's refreshing indicator
+                if (!mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+                initiateRefresh();
+            }
+        });
+    }
+    public void initiateRefresh() {
+        new SwipeRefreshBackgroundTask().execute();
+    }
+    private void initiateDownloadToEmptyDB(){
+        if (!mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(true);
+        }
+        System.out.println("initiateDownloadToEmptyDB");
+        new DownloadToEmptyDbBackgroundTask().execute();
+    }
+
+    private void onRefreshComplete() {
+        System.out.println("onRefreshComplete");
+        if(!(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt))
+        {
+            System.out.println("已经是最新的内容了");
+
+            Toast.makeText(getActivity(),"「日常」板块每天早晨5:00更新~",Toast.LENGTH_SHORT).show();
+        }
+        else{
+
+            //更新动作不是在这里哦 这里已经刷新完成
+        }
+        // Stop the refreshing indicator
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
     public void setupList(){
         cardsList.setAdapter(createAdapter());
         cardsList.setOnItemClickListener(new MyItemOnClickListener());
     }
-        private CardsAdapter createAdapter(){
-            return new CardsAdapter(getActivity(),"recent",count);
+    private CardsAdapter createAdapter(){
+        return new CardsAdapter(getActivity(),"recent",numCount);
     }
 
     class MyItemOnClickListener implements AdapterView.OnItemClickListener{
@@ -93,14 +193,15 @@ public class FMRecent extends Fragment {
             Toast.makeText(getActivity(), "Clicked on List Item " + position, Toast.LENGTH_SHORT).show();
         }
     }
-
     public void refreshListView(){
         System.out.println("--------refreshListView,init------------");
+
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
                 try {
                     System.out.println("--------refreshListView,doInBackground------------");
+
                     URL url = new URL(params[0]);
                     URLConnection connection = url.openConnection();
                     InputStream is = connection.getInputStream();
@@ -122,18 +223,27 @@ public class FMRecent extends Fragment {
                     //获取答案数量
                     JSONObject root = new JSONObject(builder.toString());
                     numCount = root.getInt("count");
-                    //存放到application里面
-                    application = (HeyApplication)getActivity().getApplication();
-                    application.setYesterdayCount(numCount);
+                    try {
+                        SharedPreferences sp = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("recentCount", numCount);
+                        editor.apply();
+                    }catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        System.out.println("e--->"+e.toString());
+                    }
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getReadableDatabase();
-                    Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
-                    //如果yesterday table里面没有数据,才insert
+                    Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
                     if(myCursor.moveToFirst()){
                         JSONArray array = root.getJSONArray("answers");//获取数组
                         ListCellData LcData = new ListCellData();
-                        for (int i = 0; i < array.length(); i++) {
+                        if(numCount>originNumCountForCompare)
+                            numCount = originNumCountForCompare ; //今天的条目比昨天的多
+                        for (int i = 0; i < numCount; i++) {
+//                        for (int i = 0; i < array.length(); i++) {
                             JSONObject jo = array.getJSONObject(i);
                             LcData.setTitle(jo.getString("title"));
                             LcData.setTime(jo.getString("time"));
@@ -144,11 +254,28 @@ public class FMRecent extends Fragment {
                             LcData.setAuthorhash(jo.getString("authorhash"));
                             LcData.setAvatar(jo.getString("avatar"));
                             LcData.setVote(jo.getString("vote"));
-
 //                            insertToSheet(LcData , tabName);
-                            System.out.println("-------->before update");
-                            updateTables(LcData, tabName, i+1);
-                            System.out.println("-------->after update");
+//                            System.out.println("-------->before update");
+                            updateTables(LcData, tabName, i + 1);
+                            //如果今天的_ids比昨天多,那么多出的部分,update是无效的,因为只有ids存在的情况下才能更新;想增加只能insert.
+                            //如果什么都不处理,那么是否会出现out of index的情况?因为传入给cardAdapter的numCount比昨天的getCount要大.
+                            //那就处理吧.怎么处理?先获取昨天的count,多出的部分用insert.
+                            //先暂时不考虑今天的_ids比昨天少的情况.
+                        }
+                        for (int i = numCount; i < array.length(); i++) {
+                            JSONObject jo = array.getJSONObject(i);
+                            LcData.setTitle(jo.getString("title"));
+                            LcData.setTime(jo.getString("time"));
+                            LcData.setSummary(jo.getString("summary"));
+                            LcData.setQuestionid(jo.getString("questionid"));
+                            LcData.setAnswerid(jo.getString("answerid"));
+                            LcData.setAuthorname(jo.getString("authorname"));
+                            LcData.setAuthorhash(jo.getString("authorhash"));
+                            LcData.setAvatar(jo.getString("avatar"));
+                            LcData.setVote(jo.getString("vote"));
+                            insertToTables(LcData , tabName);
+//                            System.out.println("-------->before update");
+//                            updateTables(LcData, tabName, i + 1);
                         }
                     }
                     dbRead.close();
@@ -167,16 +294,71 @@ public class FMRecent extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 System.out.println("refresh   4   postExecute```````,numCount= "+ numCount);
 //                pb.setVisibility(View.GONE);
-//                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
+                setupList();
                 super.onPostExecute(aVoid);
             }
-//        }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/yesterday");//读今天的
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160330" + "/yesterday");//读今天的
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/recent");//读今天的
+//            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/recent");//读今天的
+    }
 
+    private class SwipeRefreshBackgroundTask extends AsyncTask<Void ,Void , Void>{
+        static final int TASK_DURATION = 1000; // 3 seconds
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            //DB的最近更新时间
+            lastUpdate = settings.getString("RecentLastUpdate", "198801010500");//defValue - Value to return if this preference does not exist.
+            lastUpdateInt = Long.parseLong(lastUpdate);
+            //现在的时间
+            currentTime = new SimpleDateFormat("yyyyMMddHHmm");
+            currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+            currentTimeInt = Long.parseLong(currentTimeStr);
+            //网站最近更新时间,今天早上五点
+            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
+            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+            {
+                refreshListView();
+                System.out.println("正在更新..");
+//                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
+                settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("LastUpdate", currentTimeStr);
+                editor.apply();
+            }
+            else
+            {
+                try {
+                    Thread.sleep(TASK_DURATION);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null ;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            onRefreshComplete();
+        }
+    }
+
+    private class DownloadToEmptyDbBackgroundTask extends AsyncTask <Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            downloadJSONAndUpdateDB();
+            return null;
+        }
+
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            mSwipeRefreshLayout.setRefreshing(false);
+//        }
     }
 
     public void updateTables(ListCellData data , String tabName , int ids ){
-        System.out.println("update!!!!!!!!!!!!!!!!!!!!!!!");
         db = new Db(getContext());
         //WRITE
         SQLiteDatabase dbWrite = db.getWritableDatabase();
@@ -201,7 +383,28 @@ public class FMRecent extends Fragment {
 //        fs.setupList();
 
     }
+    public void insertToTables(ListCellData data , String tabName){
+        db = new Db(getContext());
+        //WRITE
+        SQLiteDatabase dbWrite = db.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("stitle",data.getTitle());
+        cv.put("stime",data.getTime());
+        cv.put("ssummary",data.getSummary());
+        cv.put("squestionid",data.getQuestionid());
+        cv.put("sanswerid",data.getAnswerid());
+        cv.put("sauthorname", data.getAuthorname());
+        cv.put("sauthorhash",data.getAuthorhash());
+        cv.put("savatar",data.getAvatar());
+        cv.put("svote", data.getVote());
+        System.out.println("Bridge title---------->" + data.getTitle());
 
+        dbWrite.insert(tabName, null, cv);
+        dbWrite.close();
+//        notifyDataSetChanged();
+//        FmSecond fs = new FmSecond();
+//        fs.setupList();
+    }
     private static String getDate(){
         String dateShouldBeReturned = "" ;
         if(Integer.parseInt(getCurrentTime())<501)
@@ -224,4 +427,136 @@ public class FMRecent extends Fragment {
         String yesterdayDate = new SimpleDateFormat( "yyyyMMdd ").format(cal.getTime());
         return yesterdayDate ;
     }
+
+
+    public void downloadJSONAndUpdateDB(){
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected Void doInBackground(String... params) {
+                try {
+                    URL url = new URL(params[0]);
+                    URLConnection connection = url.openConnection();
+                    InputStream is = connection.getInputStream();
+                    //需要把它包装成更加简洁的读取数据的方式
+                    //IS可指定字符集,所以这是一个字节到字符的转换
+                    InputStreamReader isr = new InputStreamReader(is, "utf-8");
+                    //BR可以读取一行字符串
+                    BufferedReader br = new BufferedReader(isr);
+                    String line;
+                    StringBuilder builder = new StringBuilder();
+                    while ((line = br.readLine()) != null) {
+                        System.out.println(line);
+                        builder.append(line);
+                    }
+                    //读取完成,依次向上关闭连接
+                    br.close();
+                    isr.close();
+                    is.close();
+                    //获取答案数量
+                    JSONObject root = new JSONObject(builder.toString());
+                    numCount = root.getInt("count");
+                    SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt("recentCount",numCount) ;
+                    editor.commit();
+
+                    //写入日期到database
+                    db = new Db(getContext());
+                    SQLiteDatabase dbRead = db.getReadableDatabase();
+                    Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
+                    //如果yesterday table里面没有数据,才insert
+                    if(!myCursor.moveToFirst()){
+                        JSONArray array = root.getJSONArray("answers");//获取数组
+                        ListCellData LcData = new ListCellData();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject jo = array.getJSONObject(i);
+                            LcData.setTitle(jo.getString("title"));
+                            LcData.setTime(jo.getString("time"));
+                            LcData.setSummary(jo.getString("summary"));
+                            LcData.setQuestionid(jo.getString("questionid"));
+                            LcData.setAnswerid(jo.getString("answerid"));
+                            LcData.setAuthorname(jo.getString("authorname"));
+                            LcData.setAuthorhash(jo.getString("authorhash"));
+                            LcData.setAvatar(jo.getString("avatar"));
+                            LcData.setVote(jo.getString("vote"));
+
+                            insertToSheet(LcData , tabName);
+                        }
+                    }
+                    dbRead.close();
+                    myCursor.close();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                //setupList放在这里,可以保证下载完成再setuplist.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
+                setupList();
+                mSwipeRefreshLayout.setRefreshing(false);
+                //只需要下载就可以了
+//                System.out.println("postExecute BB```````,numCount= " + numCount);
+////                pb.setVisibility(View.GONE);
+//                getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
+                super.onPostExecute(aVoid);
+            }
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/recent");//读今天的
+//    }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/recent");//读今天的
+    }
+
+    public void insertToSheet(ListCellData data , String tabName){
+        db = new Db(getContext());
+        //WRITE
+        SQLiteDatabase dbWrite = db.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("stitle",data.getTitle());
+        cv.put("stime",data.getTime());
+        cv.put("ssummary",data.getSummary());
+        cv.put("squestionid",data.getQuestionid());
+        cv.put("sanswerid",data.getAnswerid());
+        cv.put("sauthorname", data.getAuthorname());
+        cv.put("sauthorhash",data.getAuthorhash());
+        cv.put("savatar",data.getAvatar());
+        cv.put("svote", data.getVote());
+        System.out.println("Bridge title---------->" + data.getTitle());
+
+        dbWrite.insert(tabName, null, cv);
+
+        dbWrite.close();
+    }
+
+
+    @Override
+public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    inflater.inflate(R.menu.menu_main, menu);
+}
+
+    // BEGIN_INCLUDE (setup_refresh_menu_listener)
+    /**
+     * Respond to the user's selection of the Refresh action item. Start the SwipeRefreshLayout
+     * progress bar, then initiate the background task that refreshes the content.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                Toast.makeText(getActivity(), "刷新", Toast.LENGTH_SHORT).show();
+                System.out.println("刷新");
+                // We make sure that the SwipeRefreshLayout is displaying it's refreshing indicator
+                if (!mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+                // Start our refresh background task
+                initiateRefresh();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

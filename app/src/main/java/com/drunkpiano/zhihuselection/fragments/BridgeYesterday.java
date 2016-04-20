@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class BridgeYesterday extends Fragment {
     int numCount = 30;
     Db db = new Db(getContext());
     String tabName = "yesterday";
+    SwipeRefreshLayout mSwipeRefreshLayout ;
 
     @Nullable
     @Override
@@ -54,6 +56,13 @@ public class BridgeYesterday extends Fragment {
         View root ;
         root = inflater.inflate(R.layout.progressbar_fragment,container,false);
         pb = (ProgressBar)root.findViewById(R.id.progressBar);
+
+//        mSwipeRefreshLayout = (SwipeRefreshLayout)root.findViewById(R.id.swipe_refresh_layout);
+//        if (!mSwipeRefreshLayout.isRefreshing()) {
+//            mSwipeRefreshLayout.setRefreshing(true);
+//        }
+//        InitiateSimulateRefresh();
+
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor cursor = dbRead.query("yesterday", null, null, null, null, null, null);
@@ -173,7 +182,7 @@ public class BridgeYesterday extends Fragment {
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
             @Override
             protected void onPostExecute(Void aVoid) {
-                System.out.println("postExecute BB```````,numCount= "+ numCount);
+                System.out.println("postExecute BB```````,numCount= " + numCount);
                 pb.setVisibility(View.GONE);
                 getChildFragmentManager().beginTransaction().replace(R.id.bridge_container, new FMYesterday()).commitAllowingStateLoss();
                 super.onPostExecute(aVoid);
@@ -242,5 +251,29 @@ public class BridgeYesterday extends Fragment {
         String yesterdayDate = new SimpleDateFormat( "yyyyMMdd ").format(cal.getTime());
         return yesterdayDate ;
     }
+
+//    private void InitiateSimulateRefresh(){
+//        final int REFRESH_DURATION = 1000 ;
+//
+//        new AsyncTask<Void, Void, Void>(){
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                try{
+//                    Thread.sleep(REFRESH_DURATION);
+//                }
+//                catch (Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//                mSwipeRefreshLayout.setRefreshing(false);
+//            }
+//        }.execute();
+//
+//    }
 
 }

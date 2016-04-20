@@ -48,7 +48,7 @@ public class FragmentBridge extends Fragment {
 
         View root = inflater.inflate(R.layout.progressbar_fragment,container,false);
 //        final Button btn = (Button)root.findViewById(R.id.load);
-         pb = (ProgressBar)root.findViewById(R.id.progressBar);
+//         pb = (ProgressBar)root.findViewById(R.id.progressBar);
 
         tabName = getArguments().getString("tabName") ;
 //        System.out.println("getArguments()获取的tabName-------->" + tabName);
