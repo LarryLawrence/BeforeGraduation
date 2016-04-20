@@ -61,7 +61,7 @@ public class CardsAdapter extends BaseAdapter {
 
             holder = new ViewHolder();
             holder.title = (TextView) convertView.findViewById(R.id.title);
-            holder.action = (TextView) convertView.findViewById(R.id.action);
+//            holder.action = (TextView) convertView.findViewById(R.id.action);
             holder.info = (TextView) convertView.findViewById(R.id.info);
             convertView.setTag(holder);
 

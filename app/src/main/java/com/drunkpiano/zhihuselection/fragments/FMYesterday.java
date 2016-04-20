@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import java.util.Calendar;
  */
 public class FMYesterday extends Fragment {
     public static final String PREFS_NAME = "MyPrefsFile";
+    private SwipeRefreshLayout mSwipeRefreshLayout ;
 
     //    HeyApplication application ;
 //    int count = 3 ;
@@ -48,6 +50,12 @@ public class FMYesterday extends Fragment {
     int originNumCountForCompare = 30 ;
     Db db = new Db(getContext());
     String tabName = "yesterday";
+    Long currentTimeInt ;
+    Long latestWebsiteUpdateTimeInt ;
+    SimpleDateFormat latestWebsiteUpdateTime ;
+    Long lastUpdateInt ;
+    SharedPreferences settings ;
+    String currentTimeStr ;
 
     @Override
     public void onStart() {
@@ -81,8 +89,8 @@ public class FMYesterday extends Fragment {
         System.out.println("FMYesterday--->onCreateView");
 //        application = (HeyApplication)getActivity().getApplication();
 //        count = application.getYesterdayCount() ;
-        SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的.
+        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         numCount = settings.getInt("yesterdayCount",30);//defValue - Value to return if this preference does not exist.
         originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
@@ -91,14 +99,14 @@ public class FMYesterday extends Fragment {
 
         //DB的最近更新时间
         String lastUpdate = settings.getString("LastUpdate", "198801010500");//defValue - Value to return if this preference does not exist.
-        Long lastUpdateInt = Long.parseLong(lastUpdate);
+        lastUpdateInt = Long.parseLong(lastUpdate);
         //现在的时间
         SimpleDateFormat currentTime = new SimpleDateFormat("yyyyMMddHHmm");
-        String currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-        Long currentTimeInt = Long.parseLong(currentTimeStr);
+        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+        currentTimeInt = Long.parseLong(currentTimeStr);
         //网站最近更新时间,今天早上五点
-        SimpleDateFormat latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
-        Long latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
+        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
 
 //        if(true)
         if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
@@ -106,12 +114,73 @@ public class FMYesterday extends Fragment {
             refreshListView();
         }
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("LastUpdate",currentTimeStr);
-        editor.commit();
+        editor.putString("LastUpdate", currentTimeStr);
+        editor.apply();
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
+//         Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
+        mSwipeRefreshLayout.setColorScheme(
+                R.color.swipe_color_1, R.color.swipe_color_2,
+                R.color.swipe_color_3, R.color.swipe_color_4);
+        // END_INCLUDE (change_colors)
 
         return root;
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // We make sure that the SwipeRefreshLayout is displaying it's refreshing indicator
+                if (!mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+                initiateRefresh();
+            }
+        });
+    }
+    private void initiateRefresh() {
+         int TASK_DURATION = 1000; // 3 seconds
+
+        if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+        {
+            refreshListView();
+            settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("LastUpdate", currentTimeStr);
+            editor.apply();
+        }
+        else
+        {
+            try {
+                Thread.sleep(TASK_DURATION);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        onRefreshComplete();
+    }
+
+    private void onRefreshComplete() {
+        System.out.println("onRefreshComplete");
+        if(!(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt))
+        {
+            System.out.println("已经是最新的内容了");
+
+            Toast.makeText(getActivity(),"已经是最新的内容了~",Toast.LENGTH_SHORT).show();
+        }
+        else{
+            System.out.println("正在更新..");
+
+            Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
+        }
+        // Stop the refreshing indicator
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
     public void setupList(){
         cardsList.setAdapter(createAdapter());
         cardsList.setOnItemClickListener(new MyItemOnClickListener());
@@ -163,7 +232,7 @@ public class FMYesterday extends Fragment {
                         SharedPreferences sp = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sp.edit();
                         editor.putInt("yesterdayCount", numCount);
-                        editor.commit();
+                        editor.apply();
                     }catch (Exception e)
                     {
                         e.printStackTrace();
@@ -263,9 +332,6 @@ public class FMYesterday extends Fragment {
 //        fs.setupList();
 
     }
-
-
-
     public void insertToTables(ListCellData data , String tabName){
         db = new Db(getContext());
         //WRITE
@@ -290,7 +356,6 @@ public class FMYesterday extends Fragment {
 //        fs.setupList();
 
     }
-
     private static String getDate(){
         String dateShouldBeReturned = "" ;
         if(Integer.parseInt(getCurrentTime())<501)
@@ -313,6 +378,4 @@ public class FMYesterday extends Fragment {
         String yesterdayDate = new SimpleDateFormat( "yyyyMMdd ").format(cal.getTime());
         return yesterdayDate ;
     }
-
-
 }

@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_white2grey_selector"
@@ -7,27 +8,6 @@
     android:paddingRight="16dp"
     android:paddingTop="12.0dip"
     android:orientation="vertical" >
-
-    <LinearLayout
-        android:id="@+id/action_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp">
-
-
-        <TextView
-            android:id="@+id/action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8.0dip"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="answered question"
-            />
-    </LinearLayout>
 
     <TextView
         android:id="@+id/title"
@@ -38,6 +18,7 @@
         android:maxLines="2"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
+        android:textSize="16sp"
         android:text="title"
         />
 
