@@ -3,10 +3,12 @@ package com.drunkpiano.zhihuselection;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Created by DrunkPiano on 16/3/10.
@@ -18,6 +20,8 @@ public class FmThird extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_test,container,false);
+        TextView tv=(TextView)rootView.findViewById(R.id.tv3);
+        tv.setMovementMethod(ScrollingMovementMethod.getInstance());
 
 //        System.out.println("Fragment3");
 //        Toast.makeText(getContext(),"Fragment3!",Toast.LENGTH_SHORT).show();

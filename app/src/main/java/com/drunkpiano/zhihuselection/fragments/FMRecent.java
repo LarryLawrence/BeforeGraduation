@@ -81,7 +81,6 @@ public class FMRecent extends Fragment {
         originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsList = (ListView) root.findViewById(R.id.cards_list);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
 
         //现在尝试将FMRecent该造成不需要Bridge的情况
@@ -95,12 +94,11 @@ public class FMRecent extends Fragment {
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("RecentLastUpdate", time.format(Calendar.getInstance().getTime()));
-            editor.commit();
+            editor.apply();
             System.out.println("数据库里没东西,下载.");
             //我觉得它已经在执行了,因为有log,只是看不见而已
-            if (!mSwipeRefreshLayout.isRefreshing()) {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
+            mSwipeRefreshLayout.setProgressViewOffset(false, 0, 24);
+            mSwipeRefreshLayout.setRefreshing(true);
             initiateDownloadToEmptyDB();
         }
         else
@@ -304,13 +302,13 @@ public class FMRecent extends Fragment {
     }
 
     private class SwipeRefreshBackgroundTask extends AsyncTask<Void ,Void , Void>{
-        static final int TASK_DURATION = 1000; // 3 seconds
+        static final int TASK_DURATION = 500; // 3 seconds
 
         @Override
         protected Void doInBackground(Void... params) {
 
             //DB的最近更新时间
-            lastUpdate = settings.getString("RecentLastUpdate", "198801010500");//defValue - Value to return if this preference does not exist.
+            lastUpdate = settings.getString("RecentLastUpdate", "19880101100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
             currentTime = new SimpleDateFormat("yyyyMMddHHmm");
@@ -318,7 +316,7 @@ public class FMRecent extends Fragment {
             currentTimeInt = Long.parseLong(currentTimeStr);
             //网站最近更新时间,今天早上五点
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
-            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
             if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
             {
                 refreshListView();
@@ -409,9 +407,9 @@ public class FMRecent extends Fragment {
     }
     private static String getDate(){
         String dateShouldBeReturned = "" ;
-        if(Integer.parseInt(getCurrentTime())<501)
+        if(Integer.parseInt(getCurrentTime())<1101)
             dateShouldBeReturned = getYesterdayDate() ;
-        else if(Integer.parseInt(getCurrentTime())>=501)
+        else if(Integer.parseInt(getCurrentTime())>=1101)
             dateShouldBeReturned = getSystemDate() ;
         return dateShouldBeReturned.trim() ;
     }
@@ -460,7 +458,7 @@ public class FMRecent extends Fragment {
                     SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putInt("recentCount",numCount) ;
-                    editor.commit();
+                    editor.apply();
 
                     //写入日期到database
                     db = new Db(getContext());
@@ -548,7 +546,7 @@ public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                Toast.makeText(getActivity(), "刷新", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "刷新", Toast.LENGTH_SHORT).show();
                 System.out.println("刷新");
                 // We make sure that the SwipeRefreshLayout is displaying it's refreshing indicator
                 if (!mSwipeRefreshLayout.isRefreshing()) {
