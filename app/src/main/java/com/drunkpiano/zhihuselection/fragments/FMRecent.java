@@ -1,6 +1,5 @@
 package com.drunkpiano.zhihuselection.fragments;
 
-import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -93,7 +91,8 @@ public class FMRecent extends Fragment {
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
             SharedPreferences.Editor editor = settings.edit();
-            editor.putString("RecentLastUpdate", time.format(Calendar.getInstance().getTime()));
+            //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setuplist并且更新;第三次,用户下拉发现可以更新
+            editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
             editor.apply();
             System.out.println("数据库里没东西,下载.");
             //我觉得它已经在执行了,因为有log,只是看不见而已
@@ -118,12 +117,14 @@ public class FMRecent extends Fragment {
 
 //        if(true)
             if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
-        {
-            refreshListView();
-        }
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("LastUpdate", currentTimeStr);
-            editor.apply();
+                {
+                    System.out.println("对应createView的时候判断出需要刷新的情况");
+                    refreshListView();
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("LastUpdateRecent", currentTimeStr);
+                    editor.apply();
+                }
+
         }
 
 //         Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
@@ -164,10 +165,6 @@ public class FMRecent extends Fragment {
 
     private void onRefreshComplete() {
 
-        settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("LastUpdateRecent", currentTimeStr);
-        editor.apply();
         lastUpdate = settings.getString("LastUpdateRecent", "198801010500");//defValue - Value to return if this preference does not exist.
         lastUpdateInt = Long.parseLong(lastUpdate);
 
@@ -303,7 +300,7 @@ public class FMRecent extends Fragment {
             //stitle text,stime text,ssummary text,squestionid text,sanswerid text,sauthorname text,sauthorhash text,savatar text, svote, text)")
             @Override
             protected void onPostExecute(Void aVoid) {
-                System.out.println("refresh   4   postExecute```````,numCount= "+ numCount);
+                System.out.println("refresh   4   postExecute```````,numCount= " + numCount);
 //                pb.setVisibility(View.GONE);
                 setupList();
                 db.close();
@@ -320,7 +317,7 @@ public class FMRecent extends Fragment {
         protected Void doInBackground(Void... params) {
 
             //DB的最近更新时间
-            lastUpdate = settings.getString("RecentLastUpdate", "19880101100");//defValue - Value to return if this preference does not exist.
+            lastUpdate = settings.getString("LastUpdateRecent", "19880101100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
             currentTime = new SimpleDateFormat("yyyyMMddHHmm");
@@ -329,16 +326,22 @@ public class FMRecent extends Fragment {
             //网站最近更新时间,今天早上五点
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
+
             if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
             {
+                System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
+//                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
+
+
                 refreshListView();
                 System.out.println("正在更新..");
 //                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
                 //改写最后更新时间
                 settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+                //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateRecent", currentTimeStr);
-                editor.apply();
+                editor.commit();
             }
             else
             {
@@ -513,6 +516,7 @@ public class FMRecent extends Fragment {
                 //setupList放在这里,可以保证下载完成再setuplist.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
                 setupList();
                 Toast.makeText(getActivity(),"Init Success.",Toast.LENGTH_SHORT).show();
+
                 mSwipeRefreshLayout.setRefreshing(false);
                 //只需要下载就可以了
 //                System.out.println("postExecute BB```````,numCount= " + numCount);
