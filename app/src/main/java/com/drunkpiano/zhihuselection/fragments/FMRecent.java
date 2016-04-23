@@ -106,7 +106,7 @@ public class FMRecent extends Fragment {
             setupList();
 
             //DB的最近更新时间
-            lastUpdate = settings.getString("RecentLastUpdate", "198801010500");//defValue - Value to return if this preference does not exist.
+            lastUpdate = settings.getString("LastUpdateRecent", "198801010500");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
             currentTime = new SimpleDateFormat("yyyyMMddHHmm");
@@ -163,15 +163,27 @@ public class FMRecent extends Fragment {
     }
 
     private void onRefreshComplete() {
+
+        settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("LastUpdateRecent", currentTimeStr);
+        editor.apply();
+        lastUpdate = settings.getString("LastUpdateRecent", "198801010500");//defValue - Value to return if this preference does not exist.
+        lastUpdateInt = Long.parseLong(lastUpdate);
+
         System.out.println("onRefreshComplete");
         if(!(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt))
         {
             System.out.println("已经是最新的内容了");
 
-            Toast.makeText(getActivity(),"「日常」板块每天早晨5:00更新~",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(),"「一周」板块每天11:00更新~",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
+
         }
         else{
+            Toast.makeText(getActivity(),"?lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
 
+//            Toast.makeText(getActivity(),"Loading Complete!",Toast.LENGTH_SHORT).show();
             //更新动作不是在这里哦 这里已经刷新完成
         }
         // Stop the refreshing indicator
@@ -322,9 +334,10 @@ public class FMRecent extends Fragment {
                 refreshListView();
                 System.out.println("正在更新..");
 //                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
+                //改写最后更新时间
                 settings = getActivity().getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString("LastUpdate", currentTimeStr);
+                editor.putString("LastUpdateRecent", currentTimeStr);
                 editor.apply();
             }
             else
@@ -499,6 +512,7 @@ public class FMRecent extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 //setupList放在这里,可以保证下载完成再setuplist.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
                 setupList();
+                Toast.makeText(getActivity(),"Init Success.",Toast.LENGTH_SHORT).show();
                 mSwipeRefreshLayout.setRefreshing(false);
                 //只需要下载就可以了
 //                System.out.println("postExecute BB```````,numCount= " + numCount);
