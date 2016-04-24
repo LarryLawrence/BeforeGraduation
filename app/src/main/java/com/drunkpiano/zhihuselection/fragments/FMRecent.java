@@ -46,8 +46,6 @@ public class FMRecent extends Fragment {
     public static final String PREFS_NAME = "MyPrefsFile";
     public SwipeRefreshLayout mSwipeRefreshLayout ;
 
-    //    HeyApplication application ;
-//    int count = 3 ;
     ListView cardsList ;
     int numCount ;
     int originNumCountForCompare = 30 ;
