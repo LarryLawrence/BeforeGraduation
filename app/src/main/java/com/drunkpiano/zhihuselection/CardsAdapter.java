@@ -28,18 +28,10 @@ public class CardsAdapter extends BaseAdapter {
         this.count = count ;
 //        System.out.println("---------------->this is the constructor");
     }
-    public CardsAdapter(){}//Timer中调用
-
     @Override
     public int getCount() {
-//        System.out.println("---------------->this is the getCount() and the count is: "+count);
         return count ;
     }
-
-//    @Override
-//    public String getItem(int position) {
-//        return items.get(position);
-//    }
     public ListCellData getItem(int position)
     {
         return data[position];
@@ -80,7 +72,7 @@ public class CardsAdapter extends BaseAdapter {
 
     private static class ViewHolder {
         private TextView title;
-        private TextView action;
+//        private TextView action;
         private TextView info;
     }
 

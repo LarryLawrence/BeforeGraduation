@@ -3,6 +3,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <!--无需设置statusBarColor,因为可以沿用v21以前的色彩-->
         <!--<item name="android:statusBarColor">@color/colorPrimaryDark</item>-->
     </style>
 </resources>

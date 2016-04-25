@@ -10,7 +10,7 @@
     android:layout_height="match_parent"
     android:id="@+id/swipe_refresh_layout"
     >
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/cards_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +18,6 @@
         android:scrollbarStyle="outsideOverlay"
         android:divider="@drawable/divider_opacity_15_new"
         android:dividerHeight="8dp"
-        android:paddingBottom="75dp"
         tools:listitem="@layout/list_single_answer_item"
         />
 </android.support.v4.widget.SwipeRefreshLayout>

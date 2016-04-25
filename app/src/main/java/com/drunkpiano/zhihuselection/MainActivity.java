@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.drunkpiano.zhihuselection.fragments.FMRecent;
+import com.drunkpiano.zhihuselection.utilities.BBFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -149,13 +150,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (position){
                 case 0:
-                    return new FmThird() ;
+                    return new BBFragment() ;
                 case 1:
                     return new FMRecent();
                 case 2:
-                    return new FmThird() ;
+                    return new BBFragment() ;
                 case 3:
-                    return new FmThird() ;
+                    return new BBFragment() ;
 
             }
             // getItem is called to instantiate the fragment for the given page.

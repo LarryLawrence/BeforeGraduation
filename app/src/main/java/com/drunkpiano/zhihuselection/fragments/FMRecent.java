@@ -10,20 +10,23 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.drunkpiano.zhihuselection.CardsAdapter;
 import com.drunkpiano.zhihuselection.Db;
 import com.drunkpiano.zhihuselection.ListCellData;
+import com.drunkpiano.zhihuselection.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
+import com.drunkpiano.zhihuselection.utilities.DividerItemDecoration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +49,8 @@ public class FMRecent extends Fragment {
     public static final String PREFS_NAME = "MyPrefsFile";
     public SwipeRefreshLayout mSwipeRefreshLayout ;
 
-    ListView cardsList ;
+//    ListView cardsList ;
+    RecyclerView cardsListRv ;
     int numCount ;
     int originNumCountForCompare = 30 ;
     Db db ;
@@ -76,9 +80,12 @@ public class FMRecent extends Fragment {
         numCount = settings.getInt("recentCount",20);//defValue - Value to return if this preference does not exist.
         originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
-        cardsList = (ListView) root.findViewById(R.id.cards_list);
+        cardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
 
+        cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//这里用线性显示 类似于listview
+//        cardsListRv.setLayoutManager(new GridLayoutManager(getContext(), 2));//这里用线性宫格显示 类似于grid view
+//        cardsListRv.setLayoutManager(new StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL));//这里用线性宫格显示 类似于瀑布流
         //现在尝试将FMRecent该造成不需要Bridge的情况
         //首先,判断recent table中是否有数据
         db = new Db(getContext());
@@ -101,7 +108,6 @@ public class FMRecent extends Fragment {
         else
         {
             setupList();
-
             //DB的最近更新时间
             lastUpdate = settings.getString("LastUpdateRecent", "198801010500");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
@@ -122,7 +128,6 @@ public class FMRecent extends Fragment {
                     editor.putString("LastUpdateRecent", currentTimeStr);
                     editor.apply();
                 }
-
         }
 
 //         Set the color scheme of the SwipeRefreshLayout by providing 4 color resource ids
@@ -186,19 +191,27 @@ public class FMRecent extends Fragment {
     }
 
     public void setupList(){
-        cardsList.setAdapter(createAdapter());
-        cardsList.setOnItemClickListener(new MyItemOnClickListener());
+//        cardsList.setAdapter(createAdapter());
+//        cardsList.setOnItemClickListener(new MyItemOnClickListener());
+        cardsListRv.setAdapter(createAdapter());
+        cardsListRv.setItemAnimator(new DefaultItemAnimator());
+        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL));
+
+
     }
-    private CardsAdapter createAdapter(){
-        return new CardsAdapter(getActivity(),"recent",numCount);
+//    private CardsAdapter createAdapter(){
+//        return new CardsAdapter(getActivity(),"recent",numCount);
+//    }
+    private MyAdapter createAdapter(){
+        return new MyAdapter(getActivity(),"recent",numCount);
     }
 
-    class MyItemOnClickListener implements AdapterView.OnItemClickListener{
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Toast.makeText(getActivity(), "Clicked on List Item " + position, Toast.LENGTH_SHORT).show();
-        }
-    }
+//    class MyItemOnClickListener implements AdapterView.OnItemClickListener{
+//        @Override
+//        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//            Toast.makeText(getActivity(), "Clicked on List Item " + position, Toast.LENGTH_SHORT).show();
+//        }
+//    }
     public void refreshListView(){
         System.out.println("--------refreshListView,init------------");
 
