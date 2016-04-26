@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<group android:checkableBehavior="single">-->
+        <!--<item android:id="@+id/nav_camara" android:icon="@android:drawable/ic_menu_camera"-->
+            <!--android:title="Import" />-->
+        <!--<item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"-->
+            <!--android:title="Gallery" />-->
+    <!--</group>-->
+    <!--<group android:checkableBehavior="single">-->
+        <!--<item android:id="@+id/nav_about" android:icon="@android:drawable/ic_menu_view"-->
+            <!--android:title="About this App" />-->
+    <!--</group>-->
+
+    <item android:title="Info">
+        <menu>
+            <item android:id="@+id/nav_how_to_use" android:icon="@android:drawable/ic_menu_directions"
+                android:title="How to Use"/>
+            <item android:id="@+id/nav_about" android:icon="@android:drawable/ic_menu_view"
+                android:title="About this APP" />
+        </menu>
+    </item>
+
+    <item android:title="Quit">
+        <menu>
+            <item android:id="@+id/nav_quit" android:icon="@android:drawable/ic_menu_delete"
+                android:title="Quit this APP" />
+        </menu>
+    </item>
+
+</menu>

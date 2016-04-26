@@ -8,8 +8,9 @@
 
 
     <string name="action_about">About</string>
-    <string name="dialog_message">Created by Yasin Yildirim - 2014</string>
     <string name="dialog_ok">OK</string>
     <string name="list_item_left_button">Left</string>
     <string name="list_item_right_button">Right</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

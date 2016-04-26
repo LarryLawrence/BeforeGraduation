@@ -27,6 +27,7 @@ import com.drunkpiano.zhihuselection.ListCellData;
 import com.drunkpiano.zhihuselection.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.utilities.DividerItemDecoration;
+import com.drunkpiano.zhihuselection.utilities.RecyclerViewDivider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +64,7 @@ public class FMRecent extends Fragment {
     Long lastUpdateInt ;
     SharedPreferences settings ;
     String currentTimeStr ;
+    int dbLines = 0 ;
 
 
     @Override
@@ -75,10 +77,10 @@ public class FMRecent extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的.
+        //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的,,不,现在改成直接从recentCount里读取.
         settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         numCount = settings.getInt("recentCount",20);//defValue - Value to return if this preference does not exist.
-        originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿.
+        originNumCountForCompare = numCount ; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿（json中获取count时更新）.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
@@ -91,6 +93,8 @@ public class FMRecent extends Fragment {
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor cursor = dbRead.query("recent", null, null, null, null, null, null);
+        while(cursor.moveToNext())
+            dbLines ++ ;
         if(!cursor.moveToFirst()) {
             //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -109,7 +113,7 @@ public class FMRecent extends Fragment {
         {
             setupList();
             //DB的最近更新时间
-            lastUpdate = settings.getString("LastUpdateRecent", "198801010500");//defValue - Value to return if this preference does not exist.
+            lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
             currentTime = new SimpleDateFormat("yyyyMMddHHmm");
@@ -117,7 +121,7 @@ public class FMRecent extends Fragment {
             currentTimeInt = Long.parseLong(currentTimeStr);
             //网站最近更新时间,今天早上五点
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
-            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 
 //        if(true)
             if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
@@ -195,8 +199,8 @@ public class FMRecent extends Fragment {
 //        cardsList.setOnItemClickListener(new MyItemOnClickListener());
         cardsListRv.setAdapter(createAdapter());
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
-        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL));
-
+        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL ));
+//        cardsListRv.addItemDecoration(new RecyclerViewDivider(getContext(), LinearLayoutManager.VERTICAL,  R.drawable.divider_opacity_15_new));
 
     }
 //    private CardsAdapter createAdapter(){
@@ -259,8 +263,9 @@ public class FMRecent extends Fragment {
                     if(myCursor.moveToFirst()){
                         JSONArray array = root.getJSONArray("answers");//获取数组
                         ListCellData LcData = new ListCellData();
+                        //这里的numCount已经是本次获取的条目数
                         if(numCount>originNumCountForCompare)
-                            numCount = originNumCountForCompare ; //今天的条目比昨天的多
+                            numCount = originNumCountForCompare ; //今天的条目比昨天的多,那么把先update已有条目,再insert新的.
                         for (int i = 0; i < numCount; i++) {
 //                        for (int i = 0; i < array.length(); i++) {
                             JSONObject jo = array.getJSONObject(i);
@@ -281,7 +286,7 @@ public class FMRecent extends Fragment {
                             //那就处理吧.怎么处理?先获取昨天的count,多出的部分用insert.
                             //先暂时不考虑今天的_ids比昨天少的情况.
                         }
-                        for (int i = numCount; i < array.length(); i++) {
+                        for (int i = numCount; i < array.length(); i++) {//如果numCount=array.length(),这里不会执行
                             JSONObject jo = array.getJSONObject(i);
                             LcData.setTitle(jo.getString("title"));
                             LcData.setTime(jo.getString("time"));
@@ -296,6 +301,18 @@ public class FMRecent extends Fragment {
 //                            System.out.println("-------->before update");
 //                            updateTables(LcData, tabName, i + 1);
                         }
+//                        if(numCount<originNumCountForCompare)//今天的条目比昨天少
+//                        {
+//                            for(int i = numCount + 1 ; i < originNumCountForCompare ; i ++)
+//                            deleteDBLines(tabName, i );
+//                        }
+                        System.out.println(numCount+"--=====================++===============---"+dbLines);
+                        if(numCount<dbLines)//今天的条目比db中的少
+                        {
+                            for(int i = numCount + 1 ; i < dbLines + 1 ; i ++)
+                                deleteDBLines(tabName, i );
+                        }
+
                     }
                     dbRead.close();
                     myCursor.close();
@@ -338,7 +355,8 @@ public class FMRecent extends Fragment {
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 
-            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+//            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+            if(true)//强制下拉每次刷新
             {
                 System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
 //                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
@@ -352,7 +370,7 @@ public class FMRecent extends Fragment {
                 //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateRecent", currentTimeStr);
-                editor.commit();
+                editor.apply();
             }
             else
             {
@@ -384,6 +402,14 @@ public class FMRecent extends Fragment {
 ////            mSwipeRefreshLayout.setRefreshing(false);
 ////        }
 //    }
+    public void deleteDBLines(String tabName , int ids){
+        db = new Db(getContext());
+        SQLiteDatabase dbWrite = db.getWritableDatabase();
+        String whereClause = "_id=?";
+        String [] whereArgs = {String.valueOf(ids)};
+        dbWrite.delete(tabName, whereClause , whereArgs);//没有cv
+        dbWrite.close();
+    }
 
     public void updateTables(ListCellData data , String tabName , int ids ){
         db = new Db(getContext());

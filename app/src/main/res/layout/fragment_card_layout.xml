@@ -16,9 +16,9 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:scrollbarStyle="outsideOverlay"
-        android:divider="@drawable/divider_opacity_15_new"
-        android:dividerHeight="8dp"
         tools:listitem="@layout/list_single_answer_item"
         />
+    <!--android:divider="@drawable/divider_recycler"-->
+    <!--android:dividerHeight="8dp"-->
 </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
