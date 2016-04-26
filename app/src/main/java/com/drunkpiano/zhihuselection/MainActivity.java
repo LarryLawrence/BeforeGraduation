@@ -24,12 +24,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.drunkpiano.zhihuselection.fragments.FMRecent;
-import com.drunkpiano.zhihuselection.utilities.BBFragment;
+import com.drunkpiano.zhihuselection.fragments.NoNetWorkFragment;
+import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     public static final String PREFS_NAME = "MyPrefsFile";
-
+    boolean netWorkAvailable = false ;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -103,6 +104,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             System.out.println("not first launch");
         }
+        if(Utilities.isNetworkAvailable(MainActivity.this)){
+            netWorkAvailable = true ;
+            System.out.println("有网络有网络有网络有网络有网络有网络有网络");
+        }
+        System.out.println("没有网络没有网络没有网络没有网络没有网络没有网络没有网络");
+
+
     }
 
     /**
@@ -126,13 +134,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             switch (position){
                 case 0:
-                    return new FmThird() ;
+                {
+                    if(netWorkAvailable)
+                        return new FmThird() ;
+                    else
+                        return new NoNetWorkFragment();
+                }
                 case 1:
-                    return new FMRecent();
+                    if(netWorkAvailable)
+                        return new FMRecent() ;
+                    else
+                    return new NoNetWorkFragment();
                 case 2:
-                    return new BBFragment() ;
+                    if(netWorkAvailable)
+                        return new FmThird() ;
+                    else
+                        return new NoNetWorkFragment() ;
                 case 3:
-                    return new BBFragment() ;
+                    if(netWorkAvailable)
+                        return new FmThird() ;
+                    else
+                        return new NoNetWorkFragment() ;
 
             }
             // getItem is called to instantiate the fragment for the given page.

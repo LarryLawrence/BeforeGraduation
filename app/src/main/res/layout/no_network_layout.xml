@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/no_network_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lineSpacingMultiplier="1.2"
+        android:maxLines="2"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:textSize="16sp"
+        android:text="没有网络.."
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_gravity="center_vertical" />
+</LinearLayout>

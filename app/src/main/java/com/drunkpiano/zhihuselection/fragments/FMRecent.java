@@ -199,7 +199,7 @@ public class FMRecent extends Fragment {
 //        cardsList.setOnItemClickListener(new MyItemOnClickListener());
         cardsListRv.setAdapter(createAdapter());
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
-        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL ));
+//        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL ));
 //        cardsListRv.addItemDecoration(new RecyclerViewDivider(getContext(), LinearLayoutManager.VERTICAL,  R.drawable.divider_opacity_15_new));
 
     }
