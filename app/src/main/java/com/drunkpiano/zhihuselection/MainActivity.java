@@ -105,32 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            Toast.makeText(MainActivity.this,"mainActivity", Toast.LENGTH_SHORT).show();
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -148,25 +122,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            Bundle args = new Bundle();
 //            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 //            fragment.setArguments(args);
-            Fragment bridge1 = new FragmentBridge();
-            Bundle args1 = new Bundle();
-            args1.putString("tabName","yesterday");
-            bridge1.setArguments(args1);
-
-            Fragment bridge2 = new FragmentBridge();
-            Bundle args2 = new Bundle();
-            args2.putString("tabName","recent");
-            bridge2.setArguments(args2);
-
-            Fragment bridge3 = new FragmentBridge();
-            Bundle args3 = new Bundle();
-            args3.putString("tabName", "archive");
-            bridge3.setArguments(args3);
 
 
             switch (position){
                 case 0:
-                    return new BBFragment() ;
+                    return new FmThird() ;
                 case 1:
                     return new FMRecent();
                 case 2:

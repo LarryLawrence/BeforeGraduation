@@ -203,9 +203,7 @@ public class FMRecent extends Fragment {
 //        cardsListRv.addItemDecoration(new RecyclerViewDivider(getContext(), LinearLayoutManager.VERTICAL,  R.drawable.divider_opacity_15_new));
 
     }
-//    private CardsAdapter createAdapter(){
-//        return new CardsAdapter(getActivity(),"recent",numCount);
-//    }
+
     private MyAdapter createAdapter(){
         return new MyAdapter(getActivity(),"recent",numCount);
     }
@@ -355,8 +353,8 @@ public class FMRecent extends Fragment {
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 
-//            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
-            if(true)//强制下拉每次刷新
+            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+//            if(true)//强制下拉每次刷新
             {
                 System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
 //                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
@@ -431,9 +429,6 @@ public class FMRecent extends Fragment {
         dbWrite.update(tabName, cv, whereClause, whereArgs);
 
         dbWrite.close();
-//        notifyDataSetChanged();
-//        FmSecond fs = new FmSecond();
-//        fs.setupList();
 
     }
     public void insertToTables(ListCellData data , String tabName){
@@ -454,9 +449,7 @@ public class FMRecent extends Fragment {
 
         dbWrite.insert(tabName, null, cv);
         dbWrite.close();
-//        notifyDataSetChanged();
-//        FmSecond fs = new FmSecond();
-//        fs.setupList();
+
     }
     private static String getDate(){
         String dateShouldBeReturned = "" ;

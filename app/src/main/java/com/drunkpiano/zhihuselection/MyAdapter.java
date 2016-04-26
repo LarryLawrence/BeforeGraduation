@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * Created by DrunkPiano on 16/4/24.
  */
 public class MyAdapter extends RecyclerView.Adapter{
-//    private String[] mDataset;
     ListCellData [] data  ;
     int id = 0 ;
     int count = 0 ;
@@ -30,12 +29,6 @@ public class MyAdapter extends RecyclerView.Adapter{
         this.count = count ;
     }
 
-//    public MyAdapter(String[] dataSet)
-//    {
-//        mDataset = dataSet;
-//    }
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class DataSetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private TextView title;
         private TextView info;
@@ -45,7 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter{
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
             info = (TextView) itemView.findViewById(R.id.info);
-            rootView = itemView.findViewById(R.id.list_single_answer_item_recycler);
+            rootView = itemView.findViewById(R.id.cv_item);
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);
         }
@@ -66,7 +59,7 @@ public class MyAdapter extends RecyclerView.Adapter{
         QueryData();
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_single_answer_item, parent, false);
+                .inflate(R.layout.list_single_answer_item_card_view, parent, false);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         v.setLayoutParams(lp);
         return new DataSetViewHolder(v);
