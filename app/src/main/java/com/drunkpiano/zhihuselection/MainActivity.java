@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(user_first) {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("FirstLaunch", false);
-            editor.commit();
+            editor.apply();
             System.out.println("first launch");
         }
         else{
@@ -108,9 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             netWorkAvailable = true ;
             System.out.println("有网络有网络有网络有网络有网络有网络有网络");
         }
-        System.out.println("没有网络没有网络没有网络没有网络没有网络没有网络没有网络");
-
-
     }
 
     /**
@@ -130,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            Bundle args = new Bundle();
 //            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 //            fragment.setArguments(args);
-
-
             switch (position){
                 case 0:
                 {

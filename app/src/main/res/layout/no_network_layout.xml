@@ -16,7 +16,7 @@
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
         android:textSize="16sp"
-        android:text="没有网络.."
+        android:text="啊..网络连接不上了 (´･ω･｀)"
         android:textColor="@color/black"
         android:gravity="center"
         android:layout_gravity="center_vertical" />

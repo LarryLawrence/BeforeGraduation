@@ -19,15 +19,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.content.Intent ;
 
-import com.drunkpiano.zhihuselection.Db;
+import com.drunkpiano.zhihuselection.utilities.ActivityTest;
+import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.ListCellData;
 import com.drunkpiano.zhihuselection.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.utilities.DividerItemDecoration;
-import com.drunkpiano.zhihuselection.utilities.RecyclerViewDivider;
+import com.drunkpiano.zhihuselection.utilities.WebViewActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -200,7 +200,6 @@ public class FMRecent extends Fragment {
         cardsListRv.setAdapter(createAdapter());
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
 //        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL ));
-//        cardsListRv.addItemDecoration(new RecyclerViewDivider(getContext(), LinearLayoutManager.VERTICAL,  R.drawable.divider_opacity_15_new));
 
     }
 

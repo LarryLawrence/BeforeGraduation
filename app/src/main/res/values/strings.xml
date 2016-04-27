@@ -6,7 +6,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
 
-
     <string name="action_about">About</string>
     <string name="dialog_ok">OK</string>
     <string name="list_item_left_button">Left</string>

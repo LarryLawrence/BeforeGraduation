@@ -1,6 +1,7 @@
 package com.drunkpiano.zhihuselection;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.drunkpiano.zhihuselection.utilities.ActivityTest;
+import com.drunkpiano.zhihuselection.utilities.Db;
 
 import java.util.ArrayList;
 
@@ -21,7 +25,7 @@ public class MyAdapter extends RecyclerView.Adapter{
     int count = 0 ;
     String sheetName = "";
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
-    private Context context;
+    public Context context;
 
     public MyAdapter(Context context,  String sheetName ,int count) {
         this.context = context;
@@ -33,9 +37,11 @@ public class MyAdapter extends RecyclerView.Adapter{
         private TextView title;
         private TextView info;
         public View rootView;
+        MyAdapter myAdapter ;
 
-        public DataSetViewHolder(View itemView) {
+        public DataSetViewHolder(View itemView, MyAdapter adapter) {
             super(itemView);
+            myAdapter = adapter ;
             title = (TextView) itemView.findViewById(R.id.title);
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.cv_item);
@@ -44,7 +50,14 @@ public class MyAdapter extends RecyclerView.Adapter{
         }
         @Override
         public void onClick(View v) {
+            //http://www.zhihu.com/question/questionid/answer/answerid
+            Intent intent = new Intent(myAdapter.context, ActivityTest.class);
+//            intent.putExtra("address", "http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[Integer.parseInt(String.valueOf(getItemId()))].getAnswerid());
+            intent.putExtra("address", "http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[getPosition()].getAnswerid());
+            System.out.println(getPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
+            System.out.println("http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[getPosition()].getAnswerid());
 
+            myAdapter.context.startActivity(intent);
         }
         @Override
         public boolean onLongClick(View v) {
@@ -62,7 +75,7 @@ public class MyAdapter extends RecyclerView.Adapter{
                 .inflate(R.layout.list_single_answer_item_card_view, parent, false);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         v.setLayoutParams(lp);
-        return new DataSetViewHolder(v);
+        return new DataSetViewHolder(v, this);
         // set the view's size, margins, paddings and layout parameters
 //        ...
 //        ViewHolder vh = new ViewHolder(v);
@@ -125,4 +138,6 @@ public class MyAdapter extends RecyclerView.Adapter{
         if(count!=0) return true ;
         else return false ;
     }
+
+
 }

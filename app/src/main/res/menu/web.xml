@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_star"
+        android:icon="@android:drawable/star_off"
+        android:orderInCategory="80"
+        android:title="收藏"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="100"
+        android:title="分享"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@id/action_refresh"
+        android:orderInCategory="100"
+        android:title="刷新"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_open_browser"
+        android:orderInCategory="100"
+        android:title="浏览器打开"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_open_zhihu"
+        android:orderInCategory="100"
+        android:title="知乎打开"
+        app:showAsAction="never" />
+</menu>

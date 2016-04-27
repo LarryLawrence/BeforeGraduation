@@ -1,4 +1,4 @@
-package com.drunkpiano.zhihuselection;
+package com.drunkpiano.zhihuselection.utilities;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
