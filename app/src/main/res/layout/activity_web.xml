@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
+    <include layout="@layout/custom_toolbar" />
+
+    <com.gc.materialdesign.views.ProgressBarIndeterminate
+        android:id="@+id/web_progress"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff1e88e5" />
 
     <WebView
         android:id="@+id/webView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 </LinearLayout>
-
-    <!--<include layout="@layout/custom_toolbar" />-->
-
-    <!--<ProgressBar-->
-    <!--android:id="@+id/progressBarIndeterminate"-->
-    <!--style="?android:attr/progressBarStyleHorizontal"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center_horizontal" />-->

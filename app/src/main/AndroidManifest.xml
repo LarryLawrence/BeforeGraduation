@@ -29,7 +29,6 @@
 
         </activity>
 
-        <activity android:name=".utilities.ActivityTest"></activity>
     </application>
 
 </manifest>

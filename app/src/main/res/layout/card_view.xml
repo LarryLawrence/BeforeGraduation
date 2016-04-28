@@ -16,7 +16,8 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         card_view:cardCornerRadius="10dp"
-        card_view:cardElevation="10dp">
+        card_view:cardElevation="@dimen/cardview_default_elevation">
+        <!--card_view:cardElevation="10dp">-->
     <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
     <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
 

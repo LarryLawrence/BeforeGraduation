@@ -4,16 +4,17 @@
 
     <item
         android:id="@+id/action_star"
-        android:icon="@android:drawable/star_off"
         android:orderInCategory="80"
         android:title="收藏"
+        android:icon="@drawable/ic_favorite_border_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_share"
         android:orderInCategory="100"
         android:title="分享"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_share_white_24dp"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@id/action_refresh"

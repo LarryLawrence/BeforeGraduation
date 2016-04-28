@@ -5,9 +5,10 @@
     android:id="@+id/toobar_custom"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="?colorPrimary"
+    android:background="@color/colorPrimary"
     android:clipToPadding="false"
     android:fitsSystemWindows="true"
     android:minHeight="?actionBarSize"
     app:layout_scrollFlags="enterAlways|scroll"
-    app:theme="@style/AppTheme" />
+    app:popupTheme="@style/AppTheme.PopupOverlay"
+    app:theme="@style/AppTheme.AppBarOverlay" />

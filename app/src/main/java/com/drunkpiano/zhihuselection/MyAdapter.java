@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.drunkpiano.zhihuselection.utilities.ActivityTest;
 import com.drunkpiano.zhihuselection.utilities.Db;
+import com.drunkpiano.zhihuselection.utilities.WebViewActivity;
 
 import java.util.ArrayList;
 
@@ -51,7 +51,7 @@ public class MyAdapter extends RecyclerView.Adapter{
         @Override
         public void onClick(View v) {
             //http://www.zhihu.com/question/questionid/answer/answerid
-            Intent intent = new Intent(myAdapter.context, ActivityTest.class);
+            Intent intent = new Intent(myAdapter.context, WebViewActivity.class);
 //            intent.putExtra("address", "http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[Integer.parseInt(String.valueOf(getItemId()))].getAnswerid());
             intent.putExtra("address", "http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[getPosition()].getAnswerid());
             System.out.println(getPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));

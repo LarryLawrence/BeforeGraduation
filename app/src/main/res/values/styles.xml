@@ -24,4 +24,9 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="ThemeOverlay.YourApp" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--<item name="android:itemBackground">#777</item>-->
+        <!--<item name="android:textColor">#000</item>-->
+    </style>
+
 </resources>

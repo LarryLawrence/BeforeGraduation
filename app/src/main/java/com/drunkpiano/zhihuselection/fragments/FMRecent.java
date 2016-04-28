@@ -20,14 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.content.Intent ;
 
-import com.drunkpiano.zhihuselection.utilities.ActivityTest;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.ListCellData;
 import com.drunkpiano.zhihuselection.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.utilities.WebViewActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -194,7 +191,7 @@ public class FMRecent extends Fragment {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    public void setupList(){
+    public void setupList() {
 //        cardsList.setAdapter(createAdapter());
 //        cardsList.setOnItemClickListener(new MyItemOnClickListener());
         cardsListRv.setAdapter(createAdapter());
