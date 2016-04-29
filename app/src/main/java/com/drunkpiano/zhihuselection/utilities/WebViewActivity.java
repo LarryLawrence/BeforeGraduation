@@ -26,7 +26,7 @@ public class WebViewActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toobar_custom);
         progressBarIndeterminate = (com.gc.materialdesign.views.ProgressBarIndeterminate)findViewById(R.id.web_progress);
-//        toolbar.setTitle("Zhihu Selection");
+        toolbar.setTitle("答案");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
 

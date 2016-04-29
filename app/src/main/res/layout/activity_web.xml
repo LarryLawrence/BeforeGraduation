@@ -10,7 +10,7 @@
         android:id="@+id/web_progress"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#ff1e88e5" />
+        android:background="@color/colorPrimary" />
 
     <WebView
         android:id="@+id/webView"

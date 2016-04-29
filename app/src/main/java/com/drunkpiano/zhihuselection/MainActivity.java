@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.fragments.FMRecent;
 import com.drunkpiano.zhihuselection.fragments.NoNetWorkFragment;
@@ -57,18 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
 //        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        //**Drawer
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -89,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 //            getWindow().setStatusBarColor(Color.parseColor("#598A32"));
             //setStatusBarColor在v21/styles.xml中设置了（其实无需设置,因为可以沿用5.0以下配色）
-            getWindow().setNavigationBarColor(Color.parseColor("#598A32"));
+            getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -107,6 +97,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             netWorkAvailable = true ;
             System.out.println("有网络有网络有网络有网络有网络有网络有网络");
         }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     /**
@@ -214,22 +213,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return null;
         }
     }
-
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
 
-        if (id == R.id.nav_how_to_use) {
-        } else if (id == R.id.nav_about) {
+        if (id == R.id.nav_camera) {
+            // Handle the camera action
+        } else if (id == R.id.nav_gallery) {
+            Toast.makeText(MainActivity.this,"gallery",Toast.LENGTH_SHORT).show();
 
-        }
-        else if(id == R.id.nav_quit) {
-            System.exit(0);
+        } else if (id == R.id.nav_slideshow) {
+            Toast.makeText(MainActivity.this,"nav_slideshow",Toast.LENGTH_SHORT).show();
+
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
