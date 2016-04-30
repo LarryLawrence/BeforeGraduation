@@ -1,4 +1,4 @@
-package com.drunkpiano.zhihuselection;
+package com.drunkpiano.zhihuselection.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+
+import com.drunkpiano.zhihuselection.R;
 
 /**
  * Created by DrunkPiano on 16/3/10.

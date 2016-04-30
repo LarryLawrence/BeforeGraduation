@@ -1,4 +1,4 @@
-package com.drunkpiano.zhihuselection;
+package com.drunkpiano.zhihuselection.utilities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.drunkpiano.zhihuselection.utilities.Db;
-import com.drunkpiano.zhihuselection.utilities.WebViewActivity;
+import com.drunkpiano.zhihuselection.R;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ import java.util.ArrayList;
  * Created by DrunkPiano on 16/4/24.
  */
 public class MyAdapter extends RecyclerView.Adapter{
-    ListCellData [] data  ;
+    ListCellData[] data  ;
     int id = 0 ;
     int count = 0 ;
     String sheetName = "";

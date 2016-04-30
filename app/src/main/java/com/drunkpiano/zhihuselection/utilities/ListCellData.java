@@ -1,4 +1,4 @@
-package com.drunkpiano.zhihuselection;
+package com.drunkpiano.zhihuselection.utilities;
 
 /**
  * Created by DrunkPiano on 16/3/15.

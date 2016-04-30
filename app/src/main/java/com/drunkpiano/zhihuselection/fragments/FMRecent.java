@@ -22,8 +22,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.utilities.Db;
-import com.drunkpiano.zhihuselection.ListCellData;
-import com.drunkpiano.zhihuselection.MyAdapter;
+import com.drunkpiano.zhihuselection.utilities.ListCellData;
+import com.drunkpiano.zhihuselection.utilities.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
 
 import org.json.JSONArray;
