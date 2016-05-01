@@ -2,12 +2,9 @@ package com.drunkpiano.zhihuselection.activities;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -20,16 +17,14 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.fragments.FMFavorite;
-import com.drunkpiano.zhihuselection.fragments.FMRecent;
-import com.drunkpiano.zhihuselection.fragments.FmThird;
-import com.drunkpiano.zhihuselection.fragments.NoNetWorkFragment;
+import com.drunkpiano.zhihuselection.fragments.MainFragment;
 import com.drunkpiano.zhihuselection.utilities.Utilities;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FMFavorite.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     public static final String PREFS_NAME = "MyPrefsFile";
-    boolean netWorkAvailable = false ;
+    public static boolean netWorkAvailable = false ;
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -38,12 +33,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,24 +46,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-//        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-//        // Set up the ViewPager with the sections adapter.
-//        mViewPager = (ViewPager) findViewById(R.id.container);
-//        mViewPager.setAdapter(mSectionsPagerAdapter);
-//
-//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-//        tabLayout.setupWithViewPager(mViewPager);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -78,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //setStatusBarColor在v21/styles.xml中设置了（其实无需设置,因为可以沿用5.0以下配色）
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
+        getSupportFragmentManager().beginTransaction().add(R.id.content_frame,new MainFragment()).commit();
+
+
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         Boolean user_first = settings.getBoolean("FirstLaunch",true);//defValue - Value to return if this preference does not exist.
@@ -105,69 +83,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            switch (position){
-                case 0:
-                {
-                    if(netWorkAvailable)
-                        return new FmThird() ;
-                    else
-                        return new NoNetWorkFragment();
-                }
-                case 1:
-                    if(netWorkAvailable)
-                        return new FMRecent() ;
-                    else
-                    return new NoNetWorkFragment();
-                case 2:
-                    if(netWorkAvailable)
-                        return new FmThird() ;
-                    else
-                        return new NoNetWorkFragment() ;
-                case 3:
-                    if(netWorkAvailable)
-                        return new FmThird() ;
-                    else
-                        return new NoNetWorkFragment() ;
-
-            }
-            return null ;
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "日常";
-                case 1:
-                    return "一周";
-                case 2:
-                    return "经典";
-                case 3:
-                    return "闲逛";
-            }
-            return null;
-        }
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -177,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_home_page) {
             // Handle the camera action
         } else if (id == R.id.nav_favorites) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, new FMFavorite()).commitAllowingStateLoss();
             Toast.makeText(MainActivity.this,"gallery",Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_about) {
@@ -204,8 +118,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

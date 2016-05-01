@@ -43,7 +43,7 @@ import java.util.Calendar;
 /**
  * Created by DrunkPiano on 16/3/9.
  */
-public class FMRecent extends Fragment {
+public class RecentFragment extends Fragment {
     public static final String PREFS_NAME = "MyPrefsFile";
     public SwipeRefreshLayout mSwipeRefreshLayout ;
 

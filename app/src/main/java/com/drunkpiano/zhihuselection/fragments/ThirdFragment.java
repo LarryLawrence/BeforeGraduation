@@ -15,7 +15,7 @@ import com.drunkpiano.zhihuselection.R;
 /**
  * Created by DrunkPiano on 16/3/10.
  */
-public class FmThird extends Fragment {
+public class ThirdFragment extends Fragment {
     private RecyclerView rv ;
     protected RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;

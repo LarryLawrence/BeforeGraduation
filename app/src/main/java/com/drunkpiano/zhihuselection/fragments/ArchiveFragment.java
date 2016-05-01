@@ -5,6 +5,6 @@ import android.support.v4.app.Fragment;
 /**
  * Created by DrunkPiano on 16/3/9.
  */
-public class FMArchive extends Fragment {
+public class ArchiveFragment extends Fragment {
 
 }
