@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.drunkpiano.zhihuselection.R;
+import com.drunkpiano.zhihuselection.activities.WebViewActivity;
 
 import java.util.ArrayList;
 
@@ -53,7 +54,9 @@ public class MyAdapter extends RecyclerView.Adapter{
             Intent intent = new Intent(myAdapter.context, WebViewActivity.class);
 //            intent.putExtra("address", "http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[Integer.parseInt(String.valueOf(getItemId()))].getAnswerid());
             intent.putExtra("address", "http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[getPosition()].getAnswerid());
-            System.out.println(getPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
+            intent.putExtra("title", myAdapter.data[getPosition()].getTitle());
+            intent.putExtra("summary", myAdapter.data[getPosition()].getSummary());
+//            System.out.println(getPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
             System.out.println("http://www.zhihu.com/question/" + myAdapter.data[getPosition()].getQuestionid() + "/answer/" + myAdapter.data[getPosition()].getAnswerid());
 
             myAdapter.context.startActivity(intent);

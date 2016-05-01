@@ -1,10 +1,14 @@
 package com.drunkpiano.zhihuselection.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -13,17 +17,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.fragments.MainFragment;
+import com.drunkpiano.zhihuselection.fragments.SectionsPagerAdapter;
 import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     public static final String PREFS_NAME = "MyPrefsFile";
     public static boolean netWorkAvailable = false ;
+
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -53,8 +61,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //setStatusBarColor在v21/styles.xml中设置了（其实无需设置,因为可以沿用5.0以下配色）
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
-        getSupportFragmentManager().beginTransaction().add(R.id.content_frame,new MainFragment()).commit();
 
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(fab!= null)
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("撤销收藏", new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v) {
+                                System.out.println("撤销收藏");
+                                // Perform anything for the action selected
+                            }
+                        }).show();
+            }
+        });
 
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -92,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_home_page) {
             // Handle the camera action
         } else if (id == R.id.nav_favorites) {
+            Intent intent = new Intent(MainActivity.this,FavoritesActivity.class);
+            startActivity(intent);
             Toast.makeText(MainActivity.this,"gallery",Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_about) {
