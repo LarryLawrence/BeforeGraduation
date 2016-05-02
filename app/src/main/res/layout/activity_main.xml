@@ -25,7 +25,6 @@
                 android:id="@+id/appbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/appbar_padding_top"
                 android:theme="@style/AppTheme.AppBarOverlay">
 
                 <android.support.v7.widget.Toolbar
@@ -55,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:layout_margin="@dimen/fab_margin"
-                android:src="@android:drawable/ic_input_get"
+                android:src="@android:drawable/ic_dialog_info"
                 app:layout_behavior="com.drunkpiano.zhihuselection.utilities.ScrollingFABBehavior" />
         </android.support.design.widget.CoordinatorLayout>
     </FrameLayout>

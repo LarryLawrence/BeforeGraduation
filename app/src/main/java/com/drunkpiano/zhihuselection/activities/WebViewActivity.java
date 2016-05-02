@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -39,6 +42,24 @@ public class WebViewActivity extends AppCompatActivity {
         toolbar.setTitle("答案");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
+        if(fab!= null)
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    favoriteItemPressed();
+                    Snackbar.make(view, "收藏成功", Snackbar.LENGTH_LONG)
+                            .setAction("撤销收藏", new View.OnClickListener(){
+                                @Override
+                                public void onClick(View v) {
+                                    System.out.println("撤销收藏");
+                                    // Perform anything for the action selected
+                                }
+                            }).show();
+                }
+            });
 
         this.initMyWebView();
     }
@@ -89,9 +110,6 @@ public class WebViewActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 break ;
-            case R.id.action_star :
-                favoriteItemPressed();
-                break ;
             case R.id.action_share :
                 System.out.println(id);
                 break ;
@@ -106,18 +124,31 @@ public class WebViewActivity extends AppCompatActivity {
         db = new Db(getApplicationContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
-        if(myCursor.moveToFirst())
-        {
-            for(int i = 0 ; i < myCursor.getCount(); i ++)
+//        myCursor.moveToFirst();
+        System.out.println("cursorcount===========>"+myCursor.getCount());
+        //
+        myCursor.moveToFirst();
+//        {
+        //这段for循环,在空表的时候不会执行
+        //如果不为空,顺序搜索
+            for(int i = 0 ; i < myCursor.getCount()   ; i ++)
             {
+                myCursor.moveToFirst();
                 myCursor.move(i);
+//                myCursor.moveToNext();
+//                myCursor.move(i);  错误表达!
                 String storedAddress = myCursor.getString(3);
-                System.out.println(address);
-                if(address == storedAddress )
+                System.out.println("gddress.trim()"+address.trim());
+                System.out.println("storedAddress.trim()------>"+storedAddress.trim());
+                //String 不要用 等于号!!!
+                if(address.trim().equals(storedAddress.trim())  ) {
+                    System.out.println("有了地址------>"+address);
                     alreadyStarred = true ;
+                    break;
+                }
             }
-        }
-        if(alreadyStarred)
+        //空表的时候必定添加
+        if(!alreadyStarred)
             addFavorite();
         else
             removeFavorite();
@@ -132,6 +163,8 @@ public class WebViewActivity extends AppCompatActivity {
         cv.put("saddress", address);
         dbWrite.insert("favorites", null, cv);
         dbWrite.close();
+        System.out.println("收藏成功------>" + address);
+
 
     }
 

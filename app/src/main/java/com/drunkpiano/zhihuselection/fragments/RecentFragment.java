@@ -349,8 +349,8 @@ public class RecentFragment extends Fragment {
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 
-            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
-//            if(true)//强制下拉每次刷新
+//            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
+            if(true)//强制下拉每次刷新
             {
                 System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
 //                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
