@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
-import com.drunkpiano.zhihuselection.utilities.MyAdapter;
+import com.drunkpiano.zhihuselection.adapters.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
 
 import org.json.JSONArray;
@@ -194,8 +194,8 @@ public class RecentFragment extends Fragment {
     public void setupList() {
 //        cardsList.setAdapter(createAdapter());
 //        cardsList.setOnItemClickListener(new MyItemOnClickListener());
-        cardsListRv.setAdapter(createAdapter());
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
+        cardsListRv.setAdapter(createAdapter());
 //        cardsListRv.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayout.VERTICAL ));
 
     }

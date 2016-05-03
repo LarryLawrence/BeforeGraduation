@@ -22,7 +22,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.fragments.SectionsPagerAdapter;
+import com.drunkpiano.zhihuselection.adapters.SectionsPagerAdapter;
 import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{

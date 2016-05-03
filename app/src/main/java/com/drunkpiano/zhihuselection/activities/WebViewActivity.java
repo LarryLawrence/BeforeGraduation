@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -37,18 +40,21 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
 
-        toolbar = (Toolbar) findViewById(R.id.toobar_custom);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_custom);
         progressBarIndeterminate = (com.gc.materialdesign.views.ProgressBarIndeterminate)findViewById(R.id.web_progress);
         toolbar.setTitle("答案");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
         if(fab!= null)
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     favoriteItemPressed();
                     Snackbar.make(view, "收藏成功", Snackbar.LENGTH_LONG)
                             .setAction("撤销收藏", new View.OnClickListener(){
@@ -100,7 +106,7 @@ public class WebViewActivity extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.web,menu);
+        getMenuInflater().inflate(R.menu.menu_web,menu);
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -120,9 +126,9 @@ public class WebViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void favoriteItemPressed(){
+    private boolean favoriteItemPressed(){
         db = new Db(getApplicationContext());
-        SQLiteDatabase dbRead = db.getReadableDatabase();
+        SQLiteDatabase dbRead = db.getInstance(WebViewActivity.this).getReadableDatabase();
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
 //        myCursor.moveToFirst();
         System.out.println("cursorcount===========>"+myCursor.getCount());
@@ -140,7 +146,7 @@ public class WebViewActivity extends AppCompatActivity {
                 String storedAddress = myCursor.getString(3);
                 System.out.println("gddress.trim()"+address.trim());
                 System.out.println("storedAddress.trim()------>"+storedAddress.trim());
-                //String 不要用 等于号!!!
+                //String compare 不能用 等于号!!!
                 if(address.trim().equals(storedAddress.trim())  ) {
                     System.out.println("有了地址------>"+address);
                     alreadyStarred = true ;
@@ -153,6 +159,8 @@ public class WebViewActivity extends AppCompatActivity {
         else
             removeFavorite();
         dbRead.close();
+
+        return alreadyStarred ;
     }
     private void addFavorite(){
         db = new Db(getApplicationContext());
@@ -164,8 +172,6 @@ public class WebViewActivity extends AppCompatActivity {
         dbWrite.insert("favorites", null, cv);
         dbWrite.close();
         System.out.println("收藏成功------>" + address);
-
-
     }
 
     private void removeFavorite(){

@@ -1,8 +1,11 @@
-package com.drunkpiano.zhihuselection.fragments;
+package com.drunkpiano.zhihuselection.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.drunkpiano.zhihuselection.fragments.RecentFragment;
+import com.drunkpiano.zhihuselection.fragments.ThirdFragment;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

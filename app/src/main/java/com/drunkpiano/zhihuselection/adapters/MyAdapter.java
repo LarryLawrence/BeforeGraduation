@@ -1,4 +1,4 @@
-package com.drunkpiano.zhihuselection.utilities;
+package com.drunkpiano.zhihuselection.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
+import com.drunkpiano.zhihuselection.utilities.Db;
+import com.drunkpiano.zhihuselection.utilities.ListCellData;
 
 import java.util.ArrayList;
 
@@ -21,15 +23,14 @@ import java.util.ArrayList;
  */
 public class MyAdapter extends RecyclerView.Adapter{
     ListCellData[] data  ;
-    int id = 0 ;
     int count = 0 ;
-    String sheetName = "";
+    String tableName = "";
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
 
-    public MyAdapter(Context context,  String sheetName ,int count) {
+    public MyAdapter(Context context,  String tableName ,int count) {
         this.context = context;
-        this.sheetName = sheetName ;
+        this.tableName = tableName ;
         this.count = count ;
     }
 
@@ -95,7 +96,7 @@ public class MyAdapter extends RecyclerView.Adapter{
 //        Person person = list.get(i);
 //        dataSetViewHolder.title.setText(person.getName());
 //        dataSetViewHolder.info.setText(person.getAge() + "岁");
-        if(data.length>1) {
+        if(data.length>0) {
 //                System.out.println("BB" + data[0]);
             dataSetViewHolder.title.setText(data[position].getTitle());
             dataSetViewHolder.info.setText(data[position].getSummary());
@@ -117,7 +118,7 @@ public class MyAdapter extends RecyclerView.Adapter{
         //READ
         SQLiteDatabase dbRead = db.getReadableDatabase();
         //public Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
-        Cursor myCursor = dbRead.query(sheetName, null, null, null, null, null, null);
+        Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
 //        if(myCursor.moveToFirst()) {
         //遍历游标
 //            for(count=0;count<myCursor.getCount();count++){

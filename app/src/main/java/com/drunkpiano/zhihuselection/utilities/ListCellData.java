@@ -4,6 +4,16 @@ package com.drunkpiano.zhihuselection.utilities;
  * Created by DrunkPiano on 16/3/15.
  */
 public class ListCellData {
+    private String title = "";
+    private String time = "";
+    private String summary = "";
+    private String questionid = "";
+    private String answerid = "";
+    private String authorname = "";
+    private String authorhash = "";
+    private String avatar = "" ;
+    private String vote = "0";
+
     public ListCellData( String title,String time,String summary,String questionid, String answerid,
                          String authorname, String authorhash, String avatar, String vote){
         this.title = title ;
@@ -15,19 +25,9 @@ public class ListCellData {
         this.authorhash = authorhash ;
         this.avatar = avatar ;
         this.vote = vote ;
-
     }
-    public ListCellData(){}//2nd constructor哪里用到了
 
-    private String title = "";
-    private String time = "";
-    private String summary = "";
-    private String questionid = "";
-    private String answerid = "";
-    private String authorname = "";
-    private String authorhash = "";
-    private String avatar = "" ;
-    private String vote = "0";
+    public ListCellData(){}//2nd constructor哪里用到了
 
     public String getTitle() {
         return title;

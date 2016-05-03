@@ -9,6 +9,14 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class Db extends SQLiteOpenHelper {
 
+    public static Db mInstance = null ;
+    public synchronized static Db getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new Db(context);//单例
+        }
+        return mInstance;
+    }
+
     public Db(Context context) {
         super(context, "dbb", null, 1);//name是数据库名;CursorFactory只在需要自定义Cursor时才使用;version是数据库版本,与onUpgrade相关
     }
