@@ -52,14 +52,15 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
     public void remove(int position) {
         dataArrayList.remove(position);
         notifyItemRemoved(position);
-        count -- ;
         db = new Db(mContext);
         dbWrite = db.getInstance(mContext).getWritableDatabase();
 //        String whereClause = "_id=?";
         String whereClause = "saddress=?";
-        String [] whereArgs = {data[position].getAddress()};
-        dbWrite.delete("favorites", whereClause , whereArgs);//没有cv
+        String [] whereArgs = {data[count-1-position].getAddress()};
+        dbWrite.delete("favorites", whereClause, whereArgs);//没有cv
         dbWrite.close();
+        count -- ;
+
     }
 
 
@@ -76,8 +77,8 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
         System.out.println("this is favorite onBindViewHolder");
 
         if(data.length>0) {
-            holder.title.setText(data[position].getTitle());
-            holder.info.setText(data[position].getSummary());
+            holder.title.setText(data[count - 1 - position].getTitle());
+            holder.info.setText(data[count - 1 - position].getSummary());
         }
     }
 
@@ -109,9 +110,9 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mAdapter.mContext, WebViewActivity.class);
-            intent.putExtra("address", mAdapter.data[getPosition()].getAddress());
-            intent.putExtra("title", mAdapter.data[getPosition()].getTitle());
-            intent.putExtra("summary", mAdapter.data[getPosition()].getSummary());
+            intent.putExtra("address", mAdapter.data[count - 1 - getPosition()].getAddress());
+            intent.putExtra("title", mAdapter.data[count - 1 - getPosition()].getTitle());
+            intent.putExtra("summary", mAdapter.data[count - 1 - getPosition()].getSummary());
             mAdapter.mContext.startActivity(intent);
         }
 
@@ -143,9 +144,7 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
             data[i] = dataArrayList.get(i);
             System.out.println("hello---------->" + data[i].getTitle());
         }
-        if (count != 0) return true;
-        else return false;
-
+        return (count != 0 );
 
     }
 }

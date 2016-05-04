@@ -25,9 +25,11 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
         toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
-        toolbar.setTitle("收藏夹");
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        setSupportActionBar(toolbar);
+        if(toolbar!=null) {
+            toolbar.setTitle("收藏夹");
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        }
+            setSupportActionBar(toolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
@@ -40,6 +42,7 @@ public class FavoritesActivity extends AppCompatActivity {
         System.out.println("this is Fav Activity onCreate!" +
                 "");
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

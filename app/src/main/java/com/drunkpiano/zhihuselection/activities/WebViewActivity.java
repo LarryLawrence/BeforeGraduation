@@ -32,6 +32,7 @@ public class WebViewActivity extends AppCompatActivity {
     WebView myWebView ;
     Toolbar toolbar ;
     Db db ;
+    String snackMsg;
     boolean alreadyStarred = false ;
 
     com.gc.materialdesign.views.ProgressBarIndeterminate progressBarIndeterminate ;
@@ -55,12 +56,17 @@ public class WebViewActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    favoriteItemPressed();
-                    Snackbar.make(view, "收藏成功", Snackbar.LENGTH_LONG)
+                    boolean i  = favoriteItemPressed();
+                    if(!i)
+                        snackMsg = "收藏成功";
+                    else
+                        snackMsg = "已经收藏过这一条";
+                    Snackbar.make(view, snackMsg, Snackbar.LENGTH_SHORT)
                             .setAction("撤销收藏", new View.OnClickListener(){
                                 @Override
                                 public void onClick(View v) {
                                     System.out.println("撤销收藏");
+                                    removeFavorite();
                                     // Perform anything for the action selected
                                 }
                             }).show();
@@ -156,15 +162,15 @@ public class WebViewActivity extends AppCompatActivity {
         //空表的时候必定添加
         if(!alreadyStarred)
             addFavorite();
-        else
-            removeFavorite();
+//        else
+//            removeFavorite();
         dbRead.close();
 
         return alreadyStarred ;
     }
     private void addFavorite(){
         db = new Db(getApplicationContext());
-        SQLiteDatabase dbWrite = db.getWritableDatabase();
+        SQLiteDatabase dbWrite = db.getInstance(getApplicationContext()).getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("stitle", title);
         cv.put("ssummary", summary);
@@ -175,6 +181,12 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     private void removeFavorite(){
+        db = new Db(getApplicationContext());
+        SQLiteDatabase dbWrite = db.getInstance(getApplicationContext()).getWritableDatabase();
+        String whereClause = "saddress=?";
+        String [] whereArgs = {address};
+        dbWrite.delete("favorites", whereClause , whereArgs);//没有cv
+        dbWrite.close();
 
     }
 }

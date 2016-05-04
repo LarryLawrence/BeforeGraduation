@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,6 +26,7 @@ import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
 import com.drunkpiano.zhihuselection.adapters.MyAdapter;
 import com.drunkpiano.zhihuselection.R;
+import com.gc.materialdesign.widgets.SnackBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -178,11 +180,11 @@ public class RecentFragment extends Fragment {
             System.out.println("已经是最新的内容了");
 
 //            Toast.makeText(getActivity(),"「一周」板块每天11:00更新~",Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
 
         }
         else{
-            Toast.makeText(getActivity(),"?lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(),"?lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
 
 //            Toast.makeText(getActivity(),"Loading Complete!",Toast.LENGTH_SHORT).show();
             //更新动作不是在这里哦 这里已经刷新完成
@@ -352,7 +354,7 @@ public class RecentFragment extends Fragment {
 //            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
             if(true)//强制下拉每次刷新
             {
-                System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
+//                System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
 //                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
 
 
@@ -541,9 +543,10 @@ public class RecentFragment extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 //setupList放在这里,可以保证下载完成再setuplist.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
                 setupList();
-                Toast.makeText(getActivity(),"Init Success.",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),"Init Success.",Toast.LENGTH_SHORT).show();
 
                 mSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(getView(),"「一周」栏目每天11:00更新", Snackbar.LENGTH_SHORT).show();
                 //只需要下载就可以了
 //                System.out.println("postExecute BB```````,numCount= " + numCount);
 ////                pb.setVisibility(View.GONE);
