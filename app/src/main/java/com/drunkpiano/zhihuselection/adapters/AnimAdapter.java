@@ -22,8 +22,8 @@ import java.util.ArrayList;
  */
 public class AnimAdapter extends RecyclerView.Adapter {
 
-    private  static final int NORMAL_ITEM = 0 ;
-    private  static final int ITEM_WITH_DATE = 1 ;
+    private static final int NORMAL_ITEM = 0;
+    private static final int ITEM_WITH_DATE = 1;
 
     ListCellDataSimplified[] data;
     Db db;
@@ -59,10 +59,10 @@ public class AnimAdapter extends RecyclerView.Adapter {
         dbWrite = db.getInstance(mContext).getWritableDatabase();
 //        String whereClause = "_id=?";
         String whereClause = "saddress=?";
-        String [] whereArgs = {data[count-1-position].getAddress()};
+        String[] whereArgs = {data[count - 1 - position].getAddress()};
         dbWrite.delete("favorites", whereClause, whereArgs);//没有cv
         dbWrite.close();
-        count -- ;
+        count--;
 
     }
 
@@ -70,23 +70,23 @@ public class AnimAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QueryData();
-        if(viewType == NORMAL_ITEM)
+//        if (viewType == NORMAL_ITEM)
+        //原本想要用在MainAdapter上面的,写在了这个Adapter上面..所以取消If
             return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view, parent, false));
-        else
-            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
+//        else
+//            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
     }
 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(data.length<=0)
+        if (data.length <= 0)
             return;
-        if(holder instanceof NormalTextViewHolder) {
+        if (holder instanceof NormalTextViewHolder) {
             NormalTextViewHolder vh1 = (NormalTextViewHolder) holder;
             vh1.title.setText(data[count - 1 - position].getTitle());
             vh1.info.setText(data[count - 1 - position].getSummary());
-        }
-        else {
+        } else {
             NormalTextViewHolderWithDate vh2 = (NormalTextViewHolderWithDate) holder;
             vh2.date.setText("2015年11月11日");
             vh2.title.setText(data[count - 1 - position].getTitle());
@@ -97,17 +97,16 @@ public class AnimAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
 //        return dataArrayList == null ? 0 : dataArrayList.size();
-        return count ;
+        return count;
     }
 
-    public  class NormalTextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+    public class NormalTextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         TextView title;
         TextView info;
         AnimAdapter mAdapter;
         View rootView;
 
-//        NormalTextViewHolder(View view, AnimAdapter adapter) {
         public NormalTextViewHolder(View view) {
             super(view);
 //            mAdapter = adapter;
@@ -137,20 +136,18 @@ public class AnimAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public class NormalTextViewHolderWithDate extends NormalTextViewHolder{
-        TextView date ;
-//        public NormalTextViewHolderWithDate(View itemView, AnimAdapter adapter){
-        public NormalTextViewHolderWithDate(View itemView){
-//            super(itemView, adapterWithDate(View itemView, AnimAdapter adapter){
-            super(itemView);
-            date = (TextView)itemView.findViewById(R.id.date_show);
-        }
+    public class NormalTextViewHolderWithDate extends NormalTextViewHolder {
+        TextView date;
 
+        public NormalTextViewHolderWithDate(View itemView) {
+            super(itemView);
+            date = (TextView) itemView.findViewById(R.id.date_show);
+        }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0 )
+        if (position == 0)
             return ITEM_WITH_DATE;
         else
             return NORMAL_ITEM;
@@ -171,11 +168,11 @@ public class AnimAdapter extends RecyclerView.Adapter {
         myCursor.close();
         dbRead.close();
         data = new ListCellDataSimplified[count];
-        for (int i = 0; i < count ; i++) {
+        for (int i = 0; i < count; i++) {
             data[i] = dataArrayList.get(i);
             System.out.println("hello---------->" + data[i].getTitle());
         }
-        return (count != 0 );
+        return (count != 0);
 
     }
 }

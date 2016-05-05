@@ -2,14 +2,12 @@ package com.drunkpiano.zhihuselection.fragments;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.adapters.MyAdapter;
+import com.drunkpiano.zhihuselection.adapters.MainAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
 
@@ -229,7 +227,7 @@ public class RecentFragment extends Fragment {
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
 
-        cardsListRv.setAdapter(new MyAdapter(getActivity(), "recent", myCursor.getCount()));
+        cardsListRv.setAdapter(new MainAdapter(getActivity(), "recent", myCursor.getCount()));
         dbRead.close();
         myCursor.close();
     }

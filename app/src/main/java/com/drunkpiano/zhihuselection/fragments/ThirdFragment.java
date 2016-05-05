@@ -71,7 +71,6 @@ public class ThirdFragment extends Fragment {
 
         // specify an adapter (see also next example)
         initDataset();
-//        mAdapter = new MyAdapter(mDataset);
 //        rv.setAdapter(mAdapter);
 
         return rootView;
