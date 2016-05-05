@@ -25,6 +25,7 @@ import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.MainAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
+import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by DrunkPiano on 16/3/9.
@@ -48,6 +50,7 @@ public class RecentFragment extends Fragment {
     public SwipeRefreshLayout mSwipeRefreshLayout;
 
     RecyclerView cardsListRv;
+    static String dateWithChinese;
     int numCount = 0;
     int originNumCountForCompare = 30;
     Db db;
@@ -86,50 +89,6 @@ public class RecentFragment extends Fragment {
 //        getChildFragmentManager().beginTransaction().add(R.id.swipe_refresh_layout, new NoNetWorkFragment()).commitAllowingStateLoss();
         cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//用线性显示 类似于listview
         initThisFragment(false);
-//        db = new Db(getContext());
-//        SQLiteDatabase dbRead = db.getReadableDatabase();
-//        Cursor cursor = dbRead.query("recent", null, null, null, null, null, null);
-//
-//        while (cursor.moveToNext())//其实可以不用这样计算行数
-//            dbLines++;
-//        if (!cursor.moveToFirst()) {
-//            //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
-//            SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-//            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
-//            SharedPreferences.Editor editor = settings.edit();
-//            //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setuplist并且更新;第三次,用户下拉发现可以更新
-//            editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
-//            editor.apply();
-//            System.out.println("数据库里没东西,下载.");
-//            //NECESSARY
-//            mSwipeRefreshLayout.setProgressViewOffset(false, 0, 24);
-//            mSwipeRefreshLayout.setRefreshing(true);
-//            initiateDownloadToEmptyDB();
-//        } else {
-//            mSwipeRefreshLayout.setProgressViewOffset(false, 0, 24);
-//            mSwipeRefreshLayout.setRefreshing(true);
-//            setupList();
-//            //DB的最近更新时间
-//            lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
-//            lastUpdateInt = Long.parseLong(lastUpdate);
-//            //现在的时间
-//            currentTime = new SimpleDateFormat("yyyyMMddHHmm");
-//            currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-//            currentTimeInt = Long.parseLong(currentTimeStr);
-//            //网站最近更新时间,今天早上五点
-//            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
-//            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
-////        if(true)
-//            if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
-//                System.out.println("对应createView的时候判断出需要刷新的情况");
-//                refreshListView();
-//                SharedPreferences.Editor editor = settings.edit();
-//                editor.putString("LastUpdateRecent", currentTimeStr);
-//                editor.apply();
-//            }
-//        }
-//        cursor.close();
-//        dbRead.close();
         return root;
     }
     private void initThisFragment(boolean chongxinlianjieshishi){
@@ -171,7 +130,7 @@ public class RecentFragment extends Fragment {
                 mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
                 mSwipeRefreshLayout.setRefreshing(true);
                 System.out.println("对应createView的时候判断出需要刷新的情况");
-                refreshListView();
+                refreshListView(getDate());
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateRecent", currentTimeStr);
                 editor.apply();
@@ -227,12 +186,12 @@ public class RecentFragment extends Fragment {
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
 
-        cardsListRv.setAdapter(new MainAdapter(getActivity(), "recent", myCursor.getCount()));
+        cardsListRv.setAdapter(new MainAdapter(getActivity(), "recent", myCursor.getCount(),dateWithChinese));
         dbRead.close();
         myCursor.close();
     }
 
-    public void refreshListView() {
+    public void refreshListView(String dateStr) {
         System.out.println("--------refreshListView,init------------");
 
         new AsyncTask<String, Void, Void>() {
@@ -368,7 +327,7 @@ public class RecentFragment extends Fragment {
                 db.close();
                 super.onPostExecute(aVoid);
             }
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/recent");//读今天的
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + dateStr + "/recent");//读今天的
 //            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160404" + "/recent");//读今天的
     }
 
@@ -394,7 +353,7 @@ public class RecentFragment extends Fragment {
             {
 //                System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
 //                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
-                refreshListView();
+                refreshListView(getDate());
                 System.out.println("正在更新..");
 //                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
                 //改写最后更新时间
@@ -576,8 +535,18 @@ public class RecentFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_shuffle:
-                refreshListView();
-                Snackbar.make(getView(), "随机来到了XX日.", Snackbar.LENGTH_SHORT).show();
+                //    Date randomDate = randomDate("2010-09-20", "2010-09-21");
+//                SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
+//                return justDate.format(Calendar.getInstance().getTime());
+                Date randomDate = Utilities.randomDate("20140919",getSystemDate());
+                String randomDateStr = new SimpleDateFormat("yyyyMMdd").format(randomDate);
+                System.out.println(randomDateStr);
+                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(randomDate);
+                //返回20140919到今天的随机一天
+                refreshListView(randomDateStr);
+                Snackbar.make(getView(), "时光机带你随机来到了"+dateWithChinese+"~", Snackbar.LENGTH_LONG).show();
+                mSwipeRefreshLayout.setProgressViewOffset(false, 0, 96);
+                mSwipeRefreshLayout.setRefreshing(true);
                 break;
             case R.id.action_date_picker:
                 Snackbar.make(getView(), "选择了XX日.", Snackbar.LENGTH_SHORT).show();

@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10.0dip"
-        android:text="2015年12月10日"
         android:textSize="15.0sp" />
 
     <include layout="@layout/list_single_answer_item_card_view"/>

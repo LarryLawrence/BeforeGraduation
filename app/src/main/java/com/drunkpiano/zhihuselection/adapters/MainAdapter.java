@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
@@ -28,13 +27,17 @@ public class MainAdapter extends RecyclerView.Adapter {
     ListCellData[] data;
     int count = 0;
     String tableName = "";
+    String dateWithChinese;
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
 
-    public MainAdapter(Context context, String tableName, int count) {
+    public MainAdapter(Context context, String tableName, int count ,String dateWithChinese) {
         this.context = context;
         this.tableName = tableName;
         this.count = count;
+        this.dateWithChinese = dateWithChinese;
+        System.out.println("dateWithChinese----constructor--->"+this.dateWithChinese);
+
     }
 
     @Override
@@ -117,12 +120,15 @@ public class MainAdapter extends RecyclerView.Adapter {
             return;
         }
         if (holder instanceof DataSetViewHolder) {
+            System.out.println("dateWithChinese----0--->"+dateWithChinese);
             DataSetViewHolder dataSetViewHolder = (DataSetViewHolder) holder;
             dataSetViewHolder.title.setText(data[position].getTitle());
             dataSetViewHolder.info.setText(data[position].getSummary());
         } else {
+            System.out.println("dateWithChinese----1--->"+dateWithChinese);
             DataSetViewHolderWithDate dataSetViewHolderWithDate = (DataSetViewHolderWithDate) holder;
-            dataSetViewHolderWithDate.date.setText("2016年1月1日");
+            System.out.println("dateWithChinese----2--->"+dateWithChinese);
+            dataSetViewHolderWithDate.date.setText(dateWithChinese);
             dataSetViewHolderWithDate.title.setText(data[position].getTitle());
             dataSetViewHolderWithDate.info.setText(data[position].getSummary());
 
@@ -170,7 +176,6 @@ public class MainAdapter extends RecyclerView.Adapter {
             }
         } else {
             System.out.println("访问网络失败了");
-            Toast.makeText(context, "访问网络失败了", Toast.LENGTH_SHORT).show();
         }
 
         return (count != 0);
