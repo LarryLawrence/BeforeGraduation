@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.drunkpiano.zhihuselection.fragments.NoNetWorkFragment;
 import com.drunkpiano.zhihuselection.fragments.RecentFragment;
 import com.drunkpiano.zhihuselection.fragments.ThirdFragment;
 
@@ -22,7 +23,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return new ThirdFragment();
+                return new NoNetWorkFragment();
             case 1:
                 return new RecentFragment();
             case 2:

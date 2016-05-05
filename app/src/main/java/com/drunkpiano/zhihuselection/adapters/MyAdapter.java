@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
@@ -134,13 +135,16 @@ public class MyAdapter extends RecyclerView.Adapter{
         dbRead.close();
 
         data = new ListCellData[count];
-        for(int i = 0 ; i <count ; i ++)
-        {
-            data[i] = dataArrayList.get(i);
+        if(count>0) {
+            for (int i = 0; i < count; i++) {
+                data[i] = dataArrayList.get(i);
+            }
         }
-        if(count!=0) return true ;
-        else return false ;
+        else
+        {   System.out.println("访问网络失败了");
+            Toast.makeText(context, "访问网络失败了", Toast.LENGTH_SHORT).show();
+        }
+
+        return (count!=0) ;
     }
-
-
 }

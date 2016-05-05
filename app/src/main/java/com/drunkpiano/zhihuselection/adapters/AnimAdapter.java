@@ -20,7 +20,10 @@ import java.util.ArrayList;
 /**
  * Created by DrunkPiano on 16/5/3.
  */
-public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextViewHolder> {
+public class AnimAdapter extends RecyclerView.Adapter {
+
+    private  static final int NORMAL_ITEM = 0 ;
+    private  static final int ITEM_WITH_DATE = 1 ;
 
     ListCellDataSimplified[] data;
     Db db;
@@ -65,20 +68,29 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
 
 
     @Override
-    public NormalTextViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        System.out.println("this is favorite onCreateViewHolder");
-
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QueryData();
-        return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view, parent, false), this);
+        if(viewType == NORMAL_ITEM)
+            return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view, parent, false));
+        else
+            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
     }
 
-    @Override
-    public void onBindViewHolder(NormalTextViewHolder holder, int position) {
-        System.out.println("this is favorite onBindViewHolder");
 
-        if(data.length>0) {
-            holder.title.setText(data[count - 1 - position].getTitle());
-            holder.info.setText(data[count - 1 - position].getSummary());
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if(data.length<=0)
+            return;
+        if(holder instanceof NormalTextViewHolder) {
+            NormalTextViewHolder vh1 = (NormalTextViewHolder) holder;
+            vh1.title.setText(data[count - 1 - position].getTitle());
+            vh1.info.setText(data[count - 1 - position].getSummary());
+        }
+        else {
+            NormalTextViewHolderWithDate vh2 = (NormalTextViewHolderWithDate) holder;
+            vh2.date.setText("2015年11月11日");
+            vh2.title.setText(data[count - 1 - position].getTitle());
+            vh2.info.setText(data[count - 1 - position].getSummary());
         }
     }
 
@@ -95,9 +107,10 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
         AnimAdapter mAdapter;
         View rootView;
 
-        NormalTextViewHolder(View view, AnimAdapter adapter) {
+//        NormalTextViewHolder(View view, AnimAdapter adapter) {
+        public NormalTextViewHolder(View view) {
             super(view);
-            mAdapter = adapter;
+//            mAdapter = adapter;
             title = (TextView) view.findViewById(R.id.title);
             info = (TextView) view.findViewById(R.id.info);
             rootView = view.findViewById(R.id.cv_item);
@@ -124,6 +137,24 @@ public class AnimAdapter extends RecyclerView.Adapter<AnimAdapter.NormalTextView
         }
     }
 
+    public class NormalTextViewHolderWithDate extends NormalTextViewHolder{
+        TextView date ;
+//        public NormalTextViewHolderWithDate(View itemView, AnimAdapter adapter){
+        public NormalTextViewHolderWithDate(View itemView){
+//            super(itemView, adapterWithDate(View itemView, AnimAdapter adapter){
+            super(itemView);
+            date = (TextView)itemView.findViewById(R.id.date_show);
+        }
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(position == 0 )
+            return ITEM_WITH_DATE;
+        else
+            return NORMAL_ITEM;
+    }
 
     public boolean QueryData() {
         System.out.println("this is favorite queryData");
