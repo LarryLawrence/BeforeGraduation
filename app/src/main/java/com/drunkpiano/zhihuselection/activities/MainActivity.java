@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            getWindow().setStatusBarColor(Color.parseColor("#598A32"));
+            getWindow().setStatusBarColor(Color.parseColor("#14000000"));
             //setStatusBarColor在v21/styles.xml中设置了（其实无需设置,因为可以沿用5.0以下配色）
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
@@ -118,10 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
-
-        if (id == R.id.nav_home_page) {
-            // Handle the camera action
-        } else if (id == R.id.nav_favorites) {
+        if (id == R.id.nav_favorites) {
             Intent intent = new Intent(MainActivity.this,FavoritesActivity.class);
             startActivity(intent);
             Toast.makeText(MainActivity.this,"gallery",Toast.LENGTH_SHORT).show();

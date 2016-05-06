@@ -10,21 +10,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@id/action_refresh"
-        android:orderInCategory="100"
-        android:title="刷新"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_open_zhihu"
         android:orderInCategory="100"
         android:title="用知乎打开"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_open_browser"
-        android:orderInCategory="100"
-        android:title="用浏览器打开"
         app:showAsAction="never" />
 
 </menu>

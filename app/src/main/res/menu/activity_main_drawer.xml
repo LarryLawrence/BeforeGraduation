@@ -3,26 +3,24 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home_page"
-            android:icon="@android:drawable/ic_menu_always_landscape_portrait"
-            android:title="首页" />
-        <item
             android:id="@+id/nav_favorites"
-            android:icon="@android:drawable/ic_menu_today"
+            android:icon="@drawable/ic_favorite_black_24dp"
             android:title="收藏" />
         <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="关于" />
-        <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="设置" />
+    </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_tag_faces_black_24dp"
+            android:title="使用介绍和关于" />
         <item
             android:id="@+id/nav_change_theme"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_help_black_24dp"
             android:title="切换主题" />
-    </group>
 
+    </group>
 
 </menu>
