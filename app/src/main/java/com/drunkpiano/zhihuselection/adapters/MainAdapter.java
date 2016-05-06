@@ -42,22 +42,25 @@ public class MainAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0)
+        if (position == 0) {
+            System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
-        else
-            return NORMAL_ITEM;
+        }
+            else{
+            System.out.println("NORMAL_ITEM");
+            return NORMAL_ITEM;}
     }
 
 
-    public static class DataSetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class DataSetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView title;
         TextView info;
         public View rootView;
-        MainAdapter mainAdapter;
+//        MainAdapter mainAdapter;
 
-        public DataSetViewHolder(View itemView, MainAdapter adapter) {
+        public DataSetViewHolder(View itemView) {
             super(itemView);
-            mainAdapter = adapter;
+//            mainAdapter = adapter;
             title = (TextView) itemView.findViewById(R.id.title);
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.cv_item);
@@ -68,14 +71,14 @@ public class MainAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             //http://www.zhihu.com/question/questionid/answer/answerid
-            Intent intent = new Intent(mainAdapter.context, WebViewActivity.class);
-            intent.putExtra("address", "http://www.zhihu.com/question/" + mainAdapter.data[getPosition()].getQuestionid() + "/answer/" + mainAdapter.data[getPosition()].getAnswerid());
-            intent.putExtra("title", mainAdapter.data[getPosition()].getTitle());
-            intent.putExtra("summary", mainAdapter.data[getPosition()].getSummary());
+            Intent intent = new Intent(context, WebViewActivity.class);
+            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getPosition()].getQuestionid() + "/answer/" + data[getPosition()].getAnswerid());
+            intent.putExtra("title", data[getPosition()].getTitle());
+            intent.putExtra("summary", data[getPosition()].getSummary());
 //            System.out.println(getPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
-            System.out.println("http://www.zhihu.com/question/" + mainAdapter.data[getPosition()].getQuestionid() + "/answer/" + mainAdapter.data[getPosition()].getAnswerid());
+            System.out.println("http://www.zhihu.com/question/" + data[getPosition()].getQuestionid() + "/answer/" + data[getPosition()].getAnswerid());
 
-            mainAdapter.context.startActivity(intent);
+            context.startActivity(intent);
         }
 
         @Override
@@ -87,8 +90,8 @@ public class MainAdapter extends RecyclerView.Adapter {
     public class DataSetViewHolderWithDate extends DataSetViewHolder {
         TextView date;
 
-        public DataSetViewHolderWithDate(View itemView, MainAdapter adapter) {
-            super(itemView, adapter);
+        public DataSetViewHolderWithDate(View itemView) {
+            super(itemView);
             date = (TextView) itemView.findViewById(R.id.date_show);
         }
     }
@@ -99,19 +102,27 @@ public class MainAdapter extends RecyclerView.Adapter {
         QueryData();
         View v ;
         if(viewType == NORMAL_ITEM)
-        {
+        {//getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
         // create a new view
+
         v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_single_answer_item_card_view, parent, false);
+            System.out.println("inflate---->ITEM_WITH_DATE");
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            v.setLayoutParams(lp);
+            return new DataSetViewHolder(v);
 
         }
         else  {
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false);
+            System.out.println("inflate---->NORMAL_ITEM");
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            v.setLayoutParams(lp);
+            return new DataSetViewHolderWithDate(v);
+
         }
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        v.setLayoutParams(lp);
-        return new DataSetViewHolder(v, this);
+
         }
 
     @Override
@@ -119,18 +130,20 @@ public class MainAdapter extends RecyclerView.Adapter {
         if (data.length < 0) {
             return;
         }
-        if (holder instanceof DataSetViewHolder) {
-            System.out.println("dateWithChinese----0--->"+dateWithChinese);
-            DataSetViewHolder dataSetViewHolder = (DataSetViewHolder) holder;
-            dataSetViewHolder.title.setText(data[position].getTitle());
-            dataSetViewHolder.info.setText(data[position].getSummary());
-        } else {
+        if (holder instanceof DataSetViewHolderWithDate) {
+            System.out.println("dateWithChinese----0--->" + dateWithChinese);
+//            DataSetViewHolder dataSetViewHolder = (DataSetViewHolder) holder;
+            ((DataSetViewHolderWithDate)holder).title.setText(data[position].getTitle());
+            ((DataSetViewHolderWithDate)holder).info.setText(data[position].getSummary());
+            ((DataSetViewHolderWithDate)holder).date.setText(dateWithChinese);
+
+        } else if(holder instanceof DataSetViewHolder){
             System.out.println("dateWithChinese----1--->"+dateWithChinese);
-            DataSetViewHolderWithDate dataSetViewHolderWithDate = (DataSetViewHolderWithDate) holder;
-            System.out.println("dateWithChinese----2--->"+dateWithChinese);
-            dataSetViewHolderWithDate.date.setText(dateWithChinese);
-            dataSetViewHolderWithDate.title.setText(data[position].getTitle());
-            dataSetViewHolderWithDate.info.setText(data[position].getSummary());
+//            DataSetViewHolderWithDate dataSetViewHolderWithDate = (DataSetViewHolderWithDate) holder;
+//            System.out.println("dateWithChinese----2--->"+dateWithChinese);
+//            dataSetViewHolderWithDate.date.setText(dateWithChinese);
+            ((DataSetViewHolder)holder).title.setText(data[position].getTitle());
+            ((DataSetViewHolder)holder).info.setText(data[position].getSummary());
 
         }
     }
@@ -141,10 +154,8 @@ public class MainAdapter extends RecyclerView.Adapter {
         return position;
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-//        return mDataset.length;
         return count;
     }
 

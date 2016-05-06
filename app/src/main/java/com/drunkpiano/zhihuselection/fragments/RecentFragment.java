@@ -50,7 +50,7 @@ public class RecentFragment extends Fragment {
     public SwipeRefreshLayout mSwipeRefreshLayout;
 
     RecyclerView cardsListRv;
-    static String dateWithChinese;
+    String dateWithChinese;
     int numCount = 0;
     int originNumCountForCompare = 30;
     Db db;
@@ -103,7 +103,7 @@ public class RecentFragment extends Fragment {
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
             SharedPreferences.Editor editor = settings.edit();
-            //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setuplist并且更新;第三次,用户下拉发现可以更新
+            //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
             editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
             editor.apply();
             System.out.println("数据库里没东西,下载.");
@@ -114,7 +114,7 @@ public class RecentFragment extends Fragment {
         } else {
 //            mSwipeRefreshLayout.setProgressViewOffset(false, 0, 24);
 //            mSwipeRefreshLayout.setRefreshing(true);
-            setupList();
+            setupList("上次的内容");
             //DB的最近更新时间
             lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
@@ -180,7 +180,8 @@ public class RecentFragment extends Fragment {
 //        mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    public void setupList() {
+    public void setupList(String dateWithChinese) {
+
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
@@ -191,7 +192,7 @@ public class RecentFragment extends Fragment {
         myCursor.close();
     }
 
-    public void refreshListView(String dateStr) {
+    public void refreshListView(final String dateStr ) {
         System.out.println("--------refreshListView,init------------");
 
         new AsyncTask<String, Void, Void>() {
@@ -322,7 +323,10 @@ public class RecentFragment extends Fragment {
             protected void onPostExecute(Void aVoid) {
                 System.out.println("refresh   4   postExecute```````,numCount= " + numCount);
 //                pb.setVisibility(View.GONE);
-                setupList();
+//                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(new Date(dateStr));//refreshListView这里两个地方会调用,1是下啦刷新的时候,2是shuffle的时候
+
+                dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6 , dateStr.length())+"日";
+                setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
                 db.close();
                 super.onPostExecute(aVoid);
@@ -460,8 +464,9 @@ public class RecentFragment extends Fragment {
             }
             @Override
             protected void onPostExecute(Void aVoid) {
-                //setupList放在这里,可以保证下载完成再setuplist.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
-                setupList();
+                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(Calendar.getInstance().getTime());
+                //setup List放在这里,可以保证下载完成再setup list.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
+                setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
                 super.onPostExecute(aVoid);
             }
@@ -537,14 +542,15 @@ public class RecentFragment extends Fragment {
             case R.id.action_shuffle:
                 //    Date randomDate = randomDate("2010-09-20", "2010-09-21");
 //                SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
+//                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(Calendar.getInstance().getTime());
 //                return justDate.format(Calendar.getInstance().getTime());
                 Date randomDate = Utilities.randomDate("20140919",getSystemDate());
                 String randomDateStr = new SimpleDateFormat("yyyyMMdd").format(randomDate);
                 System.out.println(randomDateStr);
-                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(randomDate);
                 //返回20140919到今天的随机一天
                 refreshListView(randomDateStr);
-                Snackbar.make(getView(), "时光机带你随机来到了"+dateWithChinese+"~", Snackbar.LENGTH_LONG).show();
+                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(randomDate);
+                Snackbar.make(getView(), "时光机带你降落在 : "+dateWithChinese+"", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setProgressViewOffset(false, 0, 96);
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;

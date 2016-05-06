@@ -67,12 +67,14 @@ public class Utilities {
                 return null;
             }
             long date = random(start.getTime(), end.getTime());
+            System.out.println("long date------>"+ date);
             return new Date(date);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
     private static long random(long begin, long end) {
         long rtn = begin + (long) (Math.random() * (end - begin));
         //如果返回的是开始时间和结束时间，则递归调用本函数查找随机值
