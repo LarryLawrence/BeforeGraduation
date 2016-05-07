@@ -46,7 +46,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
         }
-            else{
+        else{
             System.out.println("NORMAL_ITEM");
             return NORMAL_ITEM;}
     }
@@ -72,11 +72,12 @@ public class MainAdapter extends RecyclerView.Adapter {
         public void onClick(View v) {
             //http://www.zhihu.com/question/questionid/answer/answerid
             Intent intent = new Intent(context, WebViewActivity.class);
-            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getPosition()].getQuestionid() + "/answer/" + data[getPosition()].getAnswerid());
-            intent.putExtra("title", data[getPosition()].getTitle());
-            intent.putExtra("summary", data[getPosition()].getSummary());
-//            System.out.println(getPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
-            System.out.println("http://www.zhihu.com/question/" + data[getPosition()].getQuestionid() + "/answer/" + data[getPosition()].getAnswerid());
+            //getAdapterPosition() This method is deprecated. This method is deprecated because its meaning is ambiguous due to the async handling of adapter updates. Please use getLayoutPosition() or getAdapterPosition() depending on your use case.
+            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
+            intent.putExtra("title", data[getAdapterPosition()].getTitle());
+            intent.putExtra("summary", data[getAdapterPosition()].getSummary());
+//            System.out.println(getAdapterPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
+            System.out.println("http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
 
             context.startActivity(intent);
         }
@@ -103,10 +104,10 @@ public class MainAdapter extends RecyclerView.Adapter {
         View v ;
         if(viewType == NORMAL_ITEM)
         {//getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
-        // create a new view
+            // create a new view
 
-        v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_single_answer_item_card_view, parent, false);
+            v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_single_answer_item_card_view, parent, false);
             System.out.println("inflate---->ITEM_WITH_DATE");
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             v.setLayoutParams(lp);
@@ -123,7 +124,7 @@ public class MainAdapter extends RecyclerView.Adapter {
 
         }
 
-        }
+    }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -188,7 +189,6 @@ public class MainAdapter extends RecyclerView.Adapter {
         } else {
             System.out.println("访问网络失败了");
         }
-
         return (count != 0);
     }
 }

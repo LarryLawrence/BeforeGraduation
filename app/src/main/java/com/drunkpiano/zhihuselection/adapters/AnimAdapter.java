@@ -122,15 +122,15 @@ public class AnimAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mAdapter.mContext, WebViewActivity.class);
-            intent.putExtra("address", mAdapter.data[count - 1 - getPosition()].getAddress());
-            intent.putExtra("title", mAdapter.data[count - 1 - getPosition()].getTitle());
-            intent.putExtra("summary", mAdapter.data[count - 1 - getPosition()].getSummary());
+            intent.putExtra("address", mAdapter.data[count - 1 - getAdapterPosition()].getAddress());
+            intent.putExtra("title", mAdapter.data[count - 1 - getAdapterPosition()].getTitle());
+            intent.putExtra("summary", mAdapter.data[count - 1 - getAdapterPosition()].getSummary());
             mAdapter.mContext.startActivity(intent);
         }
 
         @Override
         public boolean onLongClick(View v) {
-            remove(getPosition());
+            remove(getAdapterPosition());
 
             return true;
         }

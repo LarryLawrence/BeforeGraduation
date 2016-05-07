@@ -100,10 +100,10 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     class myWebViewClient extends WebViewClient {
-        @Override
-        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-            return super.shouldOverrideKeyEvent(view, event);
-        }
+//        @Override
+//        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
+//            return super.shouldOverrideKeyEvent(view, event);
+//        }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -114,8 +114,7 @@ public class WebViewActivity extends AppCompatActivity {
             System.out.println("url------------->" + url);
             System.out.println("containsMsg-------1------->" + containMsg);
 
-
-            if (url.contains("intent://questions/") && url.contains("com.zhihu.android")) ;
+            if (url.contains("intent://questions/") && url.contains("com.zhihu.android"))
             {
                 System.out.print("contains-------2------->" + containMsg);
                 Uri uri = Uri.parse(address);
@@ -123,13 +122,13 @@ public class WebViewActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(uri);
                 startActivity(intent);
+                return true;
             }
-            if (url.contains("comment")) ;
+            if (url.contains("comment"))
             {
                 toolbar.setTitle("评论");
 
             }
-//            return super.shouldOverrideUrlLoading(view, url);
             view.loadUrl(url);
             return true;
         }

@@ -35,14 +35,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
-/**
+/*
  * Created by DrunkPiano on 16/3/9.
  */
 public class RecentFragment extends Fragment {
@@ -82,7 +82,7 @@ public class RecentFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
-        mSwipeRefreshLayout.setColorScheme(
+        mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
 
@@ -91,7 +91,8 @@ public class RecentFragment extends Fragment {
         initThisFragment(false);
         return root;
     }
-    private void initThisFragment(boolean chongxinlianjieshishi){
+
+    private void initThisFragment(boolean chongxinlianjieshishi) {
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor cursor = dbRead.query("recent", null, null, null, null, null, null);
@@ -101,7 +102,7 @@ public class RecentFragment extends Fragment {
         if (!cursor.moveToFirst()) {
             //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
+            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
             SharedPreferences.Editor editor = settings.edit();
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
             editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
@@ -119,11 +120,11 @@ public class RecentFragment extends Fragment {
             lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
-            currentTime = new SimpleDateFormat("yyyyMMddHHmm");
+            currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
             currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
             currentTimeInt = Long.parseLong(currentTimeStr);
             //网站最近更新时间,今天早上五点
-            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
+            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 //        if(true)
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
@@ -152,62 +153,33 @@ public class RecentFragment extends Fragment {
 //                }
                 mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
                 mSwipeRefreshLayout.setRefreshing(true);
-                new SwipeRefreshBackgroundTask().execute();
-                Snackbar.make(getView(), "「一周」栏目每天11:00更新", Snackbar.LENGTH_SHORT).show();
+                swipeRefreshBackgroundTask();
+                if (null != getView())
+                    Snackbar.make(getView(), "「一周」栏目每天11:00更新", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
 
-//    private void initiateDownloadToEmptyDB() {
-//        if (!mSwipeRefreshLayout.isRefreshing()) {
-//            mSwipeRefreshLayout.setRefreshing(true);
-//        }
-//        System.out.println("initiateDownloadToEmptyDB");
-//        downloadJSONAndUpdateDB();
-//    }
-
-    private void onRefreshComplete() {
-
-        lastUpdate = settings.getString("LastUpdateRecent", "198801010500");//defValue - Value to return if this preference does not exist.
-        lastUpdateInt = Long.parseLong(lastUpdate);
-
-        System.out.println("onRefreshComplete");
-        if (!(currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)) {
-            System.out.println("已经是最新的内容了");
-        } else {
-
-        }
-//        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
     public void setupList(String dateWithChinese) {
-
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
 
-        cardsListRv.setAdapter(new MainAdapter(getActivity(), "recent", myCursor.getCount(),dateWithChinese));
+        cardsListRv.setAdapter(new MainAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese));
         dbRead.close();
         myCursor.close();
     }
 
-    public void refreshListView(final String dateStr ) {
-        System.out.println("--------refreshListView,init------------");
-
+    public void refreshListView(final String dateStr) {
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
                 try {
-                    System.out.println("--------refreshListView,doInBackground------------");
-
                     URL url = new URL(params[0]);
                     URLConnection connection = url.openConnection();
                     InputStream is = connection.getInputStream();
-                    //需要把它包装成更加简洁的读取数据的方式
-                    //IS可指定字符集,所以这是一个字节到字符的转换
                     InputStreamReader isr = new InputStreamReader(is, "utf-8");
-                    //BR可以读取一行字符串
                     BufferedReader br = new BufferedReader(isr);
                     String line;
                     StringBuilder builder = new StringBuilder();
@@ -215,28 +187,13 @@ public class RecentFragment extends Fragment {
                         System.out.println(line);
                         builder.append(line);
                     }
-                    //读取完成,依次向上关闭连接
                     br.close();
                     isr.close();
                     is.close();
                     //获取答案数量
-                    JSONObject root = new JSONObject();
-                    try {
-                        root = new JSONObject(builder.toString());
-                    }
-                    catch (JSONException e)
-                    {
-                        System.out.println("没能转换成JSON");
-//                        mSwipeRefreshLayout.setRefreshing(false);
-                        Snackbar.make(getView(), "网络连接不上了", Snackbar.LENGTH_INDEFINITE).setAction("重新连接试试",new View.OnClickListener(){
-                            @Override
-                            public void onClick(View v) {
-//                                new SwipeRefreshBackgroundTask().execute();
-                                initThisFragment(true);
-                            }
-                        }).show();
+                    JSONObject
+                            root = new JSONObject(builder.toString());
 
-                    }
                     numCount = root.getInt("count");
                     System.out.println("refreshListView-->root中的count是" + root.getInt("count"));
 
@@ -257,7 +214,7 @@ public class RecentFragment extends Fragment {
                         ListCellData LcData = new ListCellData();
                         //这里的numCount已经是本次获取的条目数
                         if (numCount > originNumCountForCompare)
-                            numCount = originNumCountForCompare; //今天的条目比昨天的多,那么把先update已有条目,再insert新的.
+                            numCount = originNumCountForCompare; //今天的条目比昨天的多,那么把先update已有条目,再in sert新的.
                         for (int i = 0; i < numCount; i++) {
 //                        for (int i = 0; i < array.length(); i++) {
                             JSONObject jo = array.getJSONObject(i);
@@ -270,15 +227,15 @@ public class RecentFragment extends Fragment {
                             LcData.setAuthorhash(jo.getString("authorhash"));
                             LcData.setAvatar(jo.getString("avatar"));
                             LcData.setVote(jo.getString("vote"));
-//                            insertToSheet(LcData , tabName);
+//                            in sertToSheet(LcData , tabName);
 //                            System.out.println("-------->before update");
                             updateTables(LcData, tabName, i + 1);
-                            //如果今天的_ids比昨天多,那么多出的部分,update是无效的,因为只有ids存在的情况下才能更新;想增加只能insert.
+                            //如果今天的_ids比昨天多,那么多出的部分,update是无效的,因为只有ids存在的情况下才能更新;想增加只能in sert.
                             //如果什么都不处理,那么是否会出现out of index的情况?因为传入给cardAdapter的numCount比昨天的getCount要大.
-                            //那就处理吧.怎么处理?先获取昨天的count,多出的部分用insert.
+                            //那就处理吧.怎么处理?先获取昨天的count,多出的部分用ins ert.
                             //先暂时不考虑今天的_ids比昨天少的情况.
                         }
-                        System.out.println("numCount----->"+ numCount+  "array.length()--->"+array.length());
+                        System.out.println("numCount----->" + numCount + "array.length()--->" + array.length());
                         for (int i = numCount; i < array.length(); i++) {//如果numCount=array.length(),这里不会执行
                             JSONObject jo = array.getJSONObject(i);
                             LcData.setTitle(jo.getString("title"));
@@ -308,12 +265,17 @@ public class RecentFragment extends Fragment {
                     }
                     dbRead.close();
                     myCursor.close();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
-
+                    System.out.println("没能转换成JSON");
+                    if (null != getView())
+                        Snackbar.make(getView(), "网络连接不上了", Snackbar.LENGTH_INDEFINITE).setAction("重新连接试试", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                initThisFragment(true);
+                            }
+                        }).show();
                     e.printStackTrace();
                 }
                 return null;
@@ -325,7 +287,7 @@ public class RecentFragment extends Fragment {
 //                pb.setVisibility(View.GONE);
 //                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(new Date(dateStr));//refreshListView这里两个地方会调用,1是下啦刷新的时候,2是shuffle的时候
 
-                dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6 , dateStr.length())+"日";
+                dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6, dateStr.length()) + "日";
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
                 db.close();
@@ -335,28 +297,29 @@ public class RecentFragment extends Fragment {
 //            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160404" + "/recent");//读今天的
     }
 
-    private class SwipeRefreshBackgroundTask extends AsyncTask<Void, Void, Void> {
-        static final int TASK_DURATION = 500; // 3 seconds
-
-        @Override
-        protected Void doInBackground(Void... params) {
+    private void swipeRefreshBackgroundTask (){
+//        static final int TASK_DURATION = 500; // 3 seconds
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
 
             //DB的最近更新时间
             lastUpdate = settings.getString("LastUpdateRecent", "19880101100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
-            currentTime = new SimpleDateFormat("yyyyMMddHHmm");
+            currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
             currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
             currentTimeInt = Long.parseLong(currentTimeStr);
             //网站最近更新时间,今天早上五点
-            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd");
+            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 
 //            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
-            if (true)//强制下拉每次刷新
-            {
+//            if (true)//强制下拉每次刷新
+//            {
 //                System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
 //                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
+
                 refreshListView(getDate());
                 System.out.println("正在更新..");
 //                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
@@ -366,22 +329,16 @@ public class RecentFragment extends Fragment {
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateRecent", currentTimeStr);
                 editor.apply();
-            } else {
-                try {
-                    Thread.sleep(TASK_DURATION);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
+//            } else {
+//                try {
+//                    Thread.sleep(TASK_DURATION);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            onRefreshComplete();
-        }
-    }
+
 
     public void initiateDownloadToEmptyDB() {
         new AsyncTask<String, Void, Void>() {
@@ -391,10 +348,8 @@ public class RecentFragment extends Fragment {
                     URL url = new URL(params[0]);
                     URLConnection connection = url.openConnection();
                     InputStream is = connection.getInputStream();
-                    //需要把它包装成更加简洁的读取数据的方式
                     //IS可指定字符集,所以这是一个字节到字符的转换
                     InputStreamReader isr = new InputStreamReader(is, "utf-8");
-                    //BR可以读取一行字符串
                     BufferedReader br = new BufferedReader(isr);
                     String line;
                     StringBuilder builder = new StringBuilder();
@@ -407,21 +362,7 @@ public class RecentFragment extends Fragment {
                     isr.close();
                     is.close();
                     //获取答案数量
-                    JSONObject root = new JSONObject();
-                    try{
-                        root = new JSONObject(builder.toString());
-                    }catch (JSONException e)
-                    {
-                        System.out.println("init转换JSON出错");
-                        Snackbar.make(getView(), "网络连接不上了", Snackbar.LENGTH_INDEFINITE).setAction("重新连接试试",new View.OnClickListener(){
-                            @Override
-                            public void onClick(View v) {
-//                                new SwipeRefreshBackgroundTask().execute();
-                                initThisFragment(true);
-                            }
-                        }).show();
-//                        getFragmentManager().beginTransaction().replace(R.id.container, new NoNetWorkFragment()).commit();
-                    }
+                    JSONObject root = new JSONObject(builder.toString());
                     numCount = root.getInt("count");
                     SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
@@ -430,9 +371,9 @@ public class RecentFragment extends Fragment {
 
                     //写入日期到database
                     db = new Db(getContext());
-                    SQLiteDatabase dbRead = db.getReadableDatabase();
+                    SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
                     Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
-                    //如果yesterday table里面没有数据,才insert
+                    //如果yesterday table里面没有数据,才ins ert
                     if (!myCursor.moveToFirst()) {
                         JSONArray array = root.getJSONArray("answers");//获取数组
                         ListCellData LcData = new ListCellData();
@@ -453,18 +394,24 @@ public class RecentFragment extends Fragment {
                     }
                     dbRead.close();
                     myCursor.close();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
+                    if (null != getView())
+                        Snackbar.make(getView(), "网络连接不上了", Snackbar.LENGTH_INDEFINITE).setAction("重新连接试试", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                initThisFragment(true);
+                            }
+                        }).show();
                     e.printStackTrace();
                 }
                 return null;
             }
+
             @Override
             protected void onPostExecute(Void aVoid) {
-                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(Calendar.getInstance().getTime());
+                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(Calendar.getInstance().getTime());
                 //setup List放在这里,可以保证下载完成再setup list.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -540,52 +487,46 @@ public class RecentFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_shuffle:
-                //    Date randomDate = randomDate("2010-09-20", "2010-09-21");
-//                SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
-//                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(Calendar.getInstance().getTime());
-//                return justDate.format(Calendar.getInstance().getTime());
-                Date randomDate = Utilities.randomDate("20140919",getSystemDate());
-                String randomDateStr = new SimpleDateFormat("yyyyMMdd").format(randomDate);
+                Date randomDate = Utilities.randomDate("20140919", getSystemDate());
+                String randomDateStr = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(randomDate);
                 System.out.println(randomDateStr);
                 //返回20140919到今天的随机一天
                 refreshListView(randomDateStr);
-                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(randomDate);
-                Snackbar.make(getView(), "时光机带你降落在 : "+dateWithChinese+"", Snackbar.LENGTH_LONG).show();
+                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(randomDate);
+                if (null != getView())
+                    Snackbar.make(getView(), "时光机带你降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setProgressViewOffset(false, 0, 96);
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;
             case R.id.action_date_picker:
-                Snackbar.make(getView(), "选择了XX日.", Snackbar.LENGTH_SHORT).show();
+                if (null != getView())
+                    Snackbar.make(getView(), "选择了XX日.", Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.action_refresh:
-//                Toast.makeText(getActivity(), "刷新", Toast.LENGTH_SHORT).show();
                 System.out.println("刷新");
-                // We make sure that the SwipeRefreshLayout is displaying it's refreshing indicator
                 if (!mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
-                // Start our refresh background task
-                new SwipeRefreshBackgroundTask().execute();
+                swipeRefreshBackgroundTask();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private static String getCurrentTime() {
-        SimpleDateFormat justTime = new SimpleDateFormat("HHmm");
+        SimpleDateFormat justTime = new SimpleDateFormat("HHmm", Locale.CHINA);
         return justTime.format(Calendar.getInstance().getTime());
     }
 
     private static String getSystemDate() {
-        SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat justDate = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
         return justDate.format(Calendar.getInstance().getTime());
     }
 
     private static String getYesterdayDate() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
-        String yesterdayDate = new SimpleDateFormat("yyyyMMdd ").format(cal.getTime());
-        return yesterdayDate;
+        return new SimpleDateFormat("yyyyMMdd ", Locale.CHINA).format(cal.getTime());
     }
 
     private static String getDate() {

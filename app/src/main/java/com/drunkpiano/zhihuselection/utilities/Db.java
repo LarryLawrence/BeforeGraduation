@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class Db extends SQLiteOpenHelper {
 
     public static Db mInstance = null ;
-    public synchronized static Db getInstance(Context context) {
+    public synchronized  Db getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new Db(context);//单例
         }

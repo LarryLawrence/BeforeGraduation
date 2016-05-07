@@ -9,6 +9,7 @@ import com.drunkpiano.zhihuselection.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by DrunkPiano on 16/3/17.
@@ -49,20 +50,12 @@ public class Utilities {
     }
 
 //    Date randomDate = randomDate("2010-09-20", "2010-09-21");
-
-    /**
-     * 生成随机时间
-     *
-     * @param beginDate
-     * @param endDate
-     * @return
-     */
     public static Date randomDate(String beginDate, String endDate) {
         try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
             Date start = format.parse(beginDate);//构造开始日期
             Date end = format.parse(endDate);//构造结束日期
-//getTime()表示返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
+            //getTime()表示返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
             if (start.getTime() >= end.getTime()) {
                 return null;
             }
