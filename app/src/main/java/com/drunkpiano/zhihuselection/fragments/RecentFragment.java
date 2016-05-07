@@ -52,7 +52,7 @@ public class RecentFragment extends Fragment {
     RecyclerView cardsListRv;
     String dateWithChinese;
     int numCount = 0;
-    int originNumCountForCompare = 30;
+    int originNumCountForCompare = 0;
     Db db;
     String tabName = "recent";
     Long currentTimeInt;
@@ -75,18 +75,24 @@ public class RecentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        db = new Db(getContext());
+        SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
+        Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
+        numCount = myCursor.getCount();
+        originNumCountForCompare = myCursor.getCount();
+        myCursor.close();
         //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的,,不,现在改成直接从recentCount里读取.
-        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        numCount = settings.getInt("recentCount", 0);//defValue - Value to return if this preference does not exist.
-        originNumCountForCompare = numCount; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿（json中获取count时更新）.
+//        numCount = settings.getInt("recentCount", 0);//defValue - Value to return if this preference does not exist.
+//        originNumCountForCompare = numCount; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿（json中获取count时更新）.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
+        mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
 
-//        getChildFragmentManager().beginTransaction().add(R.id.swipe_refresh_layout, new NoNetWorkFragment()).commitAllowingStateLoss();
         cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//用线性显示 类似于listview
         initThisFragment(false);
         return root;
@@ -109,14 +115,15 @@ public class RecentFragment extends Fragment {
             editor.apply();
             System.out.println("数据库里没东西,下载.");
             //NECESSARY
-            mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
             mSwipeRefreshLayout.setRefreshing(true);
             initiateDownloadToEmptyDB();
         } else {
-//            mSwipeRefreshLayout.setProgressViewOffset(false, 0, 24);
-//            mSwipeRefreshLayout.setRefreshing(true);
+            //几处progressBar:
+            //1.onCreateView发现数据库没内容时   正常 （pb在第一个card上）
+            //2.onCreateView发现内容需要更新时   正常 （pb紧贴tab--->改成了find之后统一set）
             setupList("上次的内容");
             //DB的最近更新时间
+            settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
@@ -128,7 +135,6 @@ public class RecentFragment extends Fragment {
             latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 //        if(true)
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
-                mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
                 mSwipeRefreshLayout.setRefreshing(true);
                 System.out.println("对应createView的时候判断出需要刷新的情况");
                 refreshListView(getDate());
@@ -141,23 +147,43 @@ public class RecentFragment extends Fragment {
         dbRead.close();
     }
 
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // We make sure that the SwipeRefreshLayout is displaying it's refreshing indicator
-//                if (!mSwipeRefreshLayout.isRefreshing()) {
-//                    mSwipeRefreshLayout.setRefreshing(true);
-//                }
-                mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
-                mSwipeRefreshLayout.setRefreshing(true);
-                swipeRefreshBackgroundTask();
+                swipeRefresh();
                 if (null != getView())
                     Snackbar.make(getView(), "「一周」栏目每天11:00更新", Snackbar.LENGTH_SHORT).show();
             }
         });
+    }
+
+    //refresh ListView(）一次调用这里,下拉刷新的时候;一次在启动时判断需要更新的情况;还有一次再SHUFFLE的时候;还有一次在item菜单
+    private void swipeRefresh() {
+        //DB的最近更新时间
+        settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        lastUpdate = settings.getString("LastUpdateRecent", "19880101100");//defValue - Value to return if this preference does not exist.
+        lastUpdateInt = Long.parseLong(lastUpdate);
+        //现在的时间
+        currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
+        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+        currentTimeInt = Long.parseLong(currentTimeStr);
+        //网站最近更新时间,今天早上五点
+        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
+
+        mSwipeRefreshLayout.setRefreshing(true);
+        refreshListView(getDate());
+        System.out.println("正在更新..");
+
+        settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("LastUpdateRecent", currentTimeStr);
+        editor.apply();
     }
 
     public void setupList(String dateWithChinese) {
@@ -194,17 +220,9 @@ public class RecentFragment extends Fragment {
                     JSONObject
                             root = new JSONObject(builder.toString());
 
-                    numCount = root.getInt("count");
-                    System.out.println("refreshListView-->root中的count是" + root.getInt("count"));
+//                    numCount = root.getInt("count");
+                    System.out.println("refresh ListView-->root中的count是" + root.getInt("count"));
 
-                    try {
-                        SharedPreferences sp = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putInt("recentCount", numCount);
-                        editor.apply();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
@@ -213,55 +231,57 @@ public class RecentFragment extends Fragment {
                         JSONArray array = root.getJSONArray("answers");//获取数组
                         ListCellData LcData = new ListCellData();
                         //这里的numCount已经是本次获取的条目数
-                        if (numCount > originNumCountForCompare)
-                            numCount = originNumCountForCompare; //今天的条目比昨天的多,那么把先update已有条目,再in sert新的.
-                        for (int i = 0; i < numCount; i++) {
-//                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject jo = array.getJSONObject(i);
-                            LcData.setTitle(jo.getString("title"));
-                            LcData.setTime(jo.getString("time"));
-                            LcData.setSummary(jo.getString("summary"));
-                            LcData.setQuestionid(jo.getString("questionid"));
-                            LcData.setAnswerid(jo.getString("answerid"));
-                            LcData.setAuthorname(jo.getString("authorname"));
-                            LcData.setAuthorhash(jo.getString("authorhash"));
-                            LcData.setAvatar(jo.getString("avatar"));
-                            LcData.setVote(jo.getString("vote"));
-//                            in sertToSheet(LcData , tabName);
-//                            System.out.println("-------->before update");
-                            updateTables(LcData, tabName, i + 1);
-                            //如果今天的_ids比昨天多,那么多出的部分,update是无效的,因为只有ids存在的情况下才能更新;想增加只能in sert.
-                            //如果什么都不处理,那么是否会出现out of index的情况?因为传入给cardAdapter的numCount比昨天的getCount要大.
-                            //那就处理吧.怎么处理?先获取昨天的count,多出的部分用ins ert.
-                            //先暂时不考虑今天的_ids比昨天少的情况.
-                        }
-                        System.out.println("numCount----->" + numCount + "array.length()--->" + array.length());
-                        for (int i = numCount; i < array.length(); i++) {//如果numCount=array.length(),这里不会执行
-                            JSONObject jo = array.getJSONObject(i);
-                            LcData.setTitle(jo.getString("title"));
-                            LcData.setTime(jo.getString("time"));
-                            LcData.setSummary(jo.getString("summary"));
-                            LcData.setQuestionid(jo.getString("questionid"));
-                            LcData.setAnswerid(jo.getString("answerid"));
-                            LcData.setAuthorname(jo.getString("authorname"));
-                            LcData.setAuthorhash(jo.getString("authorhash"));
-                            LcData.setAvatar(jo.getString("avatar"));
-                            LcData.setVote(jo.getString("vote"));
-                            insertToTables(LcData, tabName);
+                        if (root.getInt("count") >= myCursor.getCount()) {
+                            //1'今天数目>昨天数目, 1.update昨天数目 2.insert昨天数目~今天数目
+                            for (int i = 0; i < myCursor.getCount(); i++) {
+                                JSONObject jo = array.getJSONObject(i);
+                                LcData.setTitle(jo.getString("title"));
+                                LcData.setTime(jo.getString("time"));
+                                LcData.setSummary(jo.getString("summary"));
+                                LcData.setQuestionid(jo.getString("questionid"));
+                                LcData.setAnswerid(jo.getString("answerid"));
+                                LcData.setAuthorname(jo.getString("authorname"));
+                                LcData.setAuthorhash(jo.getString("authorhash"));
+                                LcData.setAvatar(jo.getString("avatar"));
+                                LcData.setVote(jo.getString("vote"));
+                                updateTables(LcData, tabName, i + 1);
+                            }
+                            for (int i = myCursor.getCount(); i < root.getInt("count"); i++) {//如果numCount=array.length(),这里不会执行
+                                JSONObject jo = array.getJSONObject(i);
+                                LcData.setTitle(jo.getString("title"));
+                                LcData.setTime(jo.getString("time"));
+                                LcData.setSummary(jo.getString("summary"));
+                                LcData.setQuestionid(jo.getString("questionid"));
+                                LcData.setAnswerid(jo.getString("answerid"));
+                                LcData.setAuthorname(jo.getString("authorname"));
+                                LcData.setAuthorhash(jo.getString("authorhash"));
+                                LcData.setAvatar(jo.getString("avatar"));
+                                LcData.setVote(jo.getString("vote"));
+                                insertToTables(LcData, tabName);
 //                            System.out.println("-------->before update");
 //                            updateTables(LcData, tabName, i + 1);
-                        }
-//                        if(numCount<originNumCountForCompare)//今天的条目比昨天少
-//                        {
-//                            for(int i = numCount + 1 ; i < originNumCountForCompare ; i ++)
-//                            deleteDBLines(tabName, i );
-//                        }
-                        System.out.println(numCount + "--=====================++===============---" + dbLines);
-                        if (numCount < dbLines)//今天的条目比db中的少
-                        {
-                            for (int i = numCount + 1; i < dbLines + 1; i++)
+                            }
+                        } else {
+                            //2'今天数目<昨天数目, 2.update今天数目 2.delete今天数目~昨天数目
+                            for (int i = 0; i < root.getInt("count"); i++) {
+                                JSONObject jo = array.getJSONObject(i);
+                                LcData.setTitle(jo.getString("title"));
+                                LcData.setTime(jo.getString("time"));
+                                LcData.setSummary(jo.getString("summary"));
+                                LcData.setQuestionid(jo.getString("questionid"));
+                                LcData.setAnswerid(jo.getString("answerid"));
+                                LcData.setAuthorname(jo.getString("authorname"));
+                                LcData.setAuthorhash(jo.getString("authorhash"));
+                                LcData.setAvatar(jo.getString("avatar"));
+                                LcData.setVote(jo.getString("vote"));
+                                updateTables(LcData, tabName, i + 1);
+                            }
+
+                            for (int i = root.getInt("count"); i < myCursor.getCount(); i++)
                                 deleteDBLines(tabName, i);
+
                         }
+                        System.out.println("numCount----->" + numCount + ";array.length()--->" + array.length() + "myCursor.getCount()" + myCursor.getCount());
                     }
                     dbRead.close();
                     myCursor.close();
@@ -270,7 +290,7 @@ public class RecentFragment extends Fragment {
                 } catch (JSONException e) {
                     System.out.println("没能转换成JSON");
                     if (null != getView())
-                        Snackbar.make(getView(), "网络连接不上了", Snackbar.LENGTH_INDEFINITE).setAction("重新连接试试", new View.OnClickListener() {
+                        Snackbar.make(getView(), "网络出了问题", Snackbar.LENGTH_INDEFINITE).setAction("刷新试试", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 initThisFragment(true);
@@ -284,9 +304,6 @@ public class RecentFragment extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 System.out.println("refresh   4   postExecute```````,numCount= " + numCount);
-//                pb.setVisibility(View.GONE);
-//                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E").format(new Date(dateStr));//refreshListView这里两个地方会调用,1是下啦刷新的时候,2是shuffle的时候
-
                 dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6, dateStr.length()) + "日";
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -296,49 +313,6 @@ public class RecentFragment extends Fragment {
         }.execute("http://api.kanzhihu.com/getpostanswers/" + dateStr + "/recent");//读今天的
 //            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160404" + "/recent");//读今天的
     }
-
-    private void swipeRefreshBackgroundTask (){
-//        static final int TASK_DURATION = 500; // 3 seconds
-//
-//        @Override
-//        protected Void doInBackground(Void... params) {
-
-            //DB的最近更新时间
-            lastUpdate = settings.getString("LastUpdateRecent", "19880101100");//defValue - Value to return if this preference does not exist.
-            lastUpdateInt = Long.parseLong(lastUpdate);
-            //现在的时间
-            currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-            currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-            currentTimeInt = Long.parseLong(currentTimeStr);
-            //网站最近更新时间,今天早上五点
-            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
-
-//            if(currentTimeInt>latestWebsiteUpdateTimeInt && lastUpdateInt<latestWebsiteUpdateTimeInt)
-//            if (true)//强制下拉每次刷新
-//            {
-//                System.out.println("!lastUpdateInt---->" + lastUpdateInt + "\nlatestWebsiteUpdateTimeInt---->" + latestWebsiteUpdateTimeInt + "\ncurrentTimeInt-->" + currentTimeInt);
-//                Toast.makeText(getActivity(),"!lastUpdateInt---->"+lastUpdateInt+"\nlatestWebsiteUpdateTimeInt---->"+latestWebsiteUpdateTimeInt+"\ncurrentTimeInt-->"+currentTimeInt,Toast.LENGTH_LONG).show();
-
-                refreshListView(getDate());
-                System.out.println("正在更新..");
-//                Toast.makeText(getActivity(),"正在更新..",Toast.LENGTH_SHORT).show();
-                //改写最后更新时间
-                settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-                //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString("LastUpdateRecent", currentTimeStr);
-                editor.apply();
-//            } else {
-//                try {
-//                    Thread.sleep(TASK_DURATION);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-        }
-
-
 
     public void initiateDownloadToEmptyDB() {
         new AsyncTask<String, Void, Void>() {
@@ -398,7 +372,7 @@ public class RecentFragment extends Fragment {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     if (null != getView())
-                        Snackbar.make(getView(), "网络连接不上了", Snackbar.LENGTH_INDEFINITE).setAction("重新连接试试", new View.OnClickListener() {
+                        Snackbar.make(getView(), "网络出了问题..", Snackbar.LENGTH_INDEFINITE).setAction("刷新试试", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 initThisFragment(true);
@@ -487,15 +461,14 @@ public class RecentFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_shuffle:
+                //返回20140919到今天的随机一天
                 Date randomDate = Utilities.randomDate("20140919", getSystemDate());
                 String randomDateStr = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(randomDate);
                 System.out.println(randomDateStr);
-                //返回20140919到今天的随机一天
                 refreshListView(randomDateStr);
                 dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(randomDate);
                 if (null != getView())
                     Snackbar.make(getView(), "时光机带你降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
-                mSwipeRefreshLayout.setProgressViewOffset(false, 0, 96);
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;
             case R.id.action_date_picker:
@@ -507,7 +480,7 @@ public class RecentFragment extends Fragment {
                 if (!mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
-                swipeRefreshBackgroundTask();
+                swipeRefresh();
                 break;
         }
         return super.onOptionsItemSelected(item);

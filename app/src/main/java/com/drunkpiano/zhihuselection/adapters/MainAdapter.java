@@ -36,18 +36,18 @@ public class MainAdapter extends RecyclerView.Adapter {
         this.tableName = tableName;
         this.count = count;
         this.dateWithChinese = dateWithChinese;
-        System.out.println("dateWithChinese----constructor--->"+this.dateWithChinese);
+//        System.out.println("dateWithChinese----constructor--->"+this.dateWithChinese);
 
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-            System.out.println("ITEM_WITH_DATE");
+//            System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
         }
         else{
-            System.out.println("NORMAL_ITEM");
+//            System.out.println("NORMAL_ITEM");
             return NORMAL_ITEM;}
     }
 
@@ -77,7 +77,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             intent.putExtra("title", data[getAdapterPosition()].getTitle());
             intent.putExtra("summary", data[getAdapterPosition()].getSummary());
 //            System.out.println(getAdapterPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
-            System.out.println("http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
+//            System.out.println("http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
 
             context.startActivity(intent);
         }
@@ -108,7 +108,7 @@ public class MainAdapter extends RecyclerView.Adapter {
 
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view, parent, false);
-            System.out.println("inflate---->ITEM_WITH_DATE");
+//            System.out.println("inflate---->ITEM_WITH_DATE");
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             v.setLayoutParams(lp);
             return new DataSetViewHolder(v);
@@ -117,7 +117,7 @@ public class MainAdapter extends RecyclerView.Adapter {
         else  {
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false);
-            System.out.println("inflate---->NORMAL_ITEM");
+//            System.out.println("inflate---->NORMAL_ITEM");
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             v.setLayoutParams(lp);
             return new DataSetViewHolderWithDate(v);
@@ -132,14 +132,14 @@ public class MainAdapter extends RecyclerView.Adapter {
             return;
         }
         if (holder instanceof DataSetViewHolderWithDate) {
-            System.out.println("dateWithChinese----0--->" + dateWithChinese);
+//            System.out.println("dateWithChinese----0--->" + dateWithChinese);
 //            DataSetViewHolder dataSetViewHolder = (DataSetViewHolder) holder;
             ((DataSetViewHolderWithDate)holder).title.setText(data[position].getTitle());
             ((DataSetViewHolderWithDate)holder).info.setText(data[position].getSummary());
             ((DataSetViewHolderWithDate)holder).date.setText(dateWithChinese);
 
         } else if(holder instanceof DataSetViewHolder){
-            System.out.println("dateWithChinese----1--->"+dateWithChinese);
+//            System.out.println("dateWithChinese----1--->"+dateWithChinese);
 //            DataSetViewHolderWithDate dataSetViewHolderWithDate = (DataSetViewHolderWithDate) holder;
 //            System.out.println("dateWithChinese----2--->"+dateWithChinese);
 //            dataSetViewHolderWithDate.date.setText(dateWithChinese);
