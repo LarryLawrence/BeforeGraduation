@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="150dp"
+    android:id="@+id/card_with_date"
     android:layout_marginBottom="2dp"
     android:layout_marginTop="2dp"
     android:orientation="vertical">

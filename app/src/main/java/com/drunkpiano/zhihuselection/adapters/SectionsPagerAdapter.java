@@ -28,8 +28,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 return new RecentFragment();
             case 2:
                 return new ThirdFragment();
-            case 3:
-                return new ThirdFragment();
 
         }
         return null;
@@ -37,20 +35,18 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 3 total pages.
-        return 4;
+        return 3;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "日常";
+                return "一天";
             case 1:
                 return "一周";
             case 2:
-                return "经典";
-            case 3:
-                return "闲逛";
+                return "一月";
         }
         return null;
     }

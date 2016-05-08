@@ -15,11 +15,7 @@
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_tag_faces_black_24dp"
-            android:title="使用介绍和关于" />
-        <item
-            android:id="@+id/nav_change_theme"
-            android:icon="@drawable/ic_help_black_24dp"
-            android:title="切换主题" />
+            android:title="关于" />
 
     </group>
 

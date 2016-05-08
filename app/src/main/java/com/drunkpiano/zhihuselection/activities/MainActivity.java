@@ -22,10 +22,10 @@ import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.SectionsPagerAdapter;
 import com.drunkpiano.zhihuselection.utilities.Utilities;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String PREFS_NAME = "MyPrefsFile";
-    public static boolean netWorkAvailable = false ;
+    public static boolean netWorkAvailable = false;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
@@ -88,29 +88,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        Boolean user_first = settings.getBoolean("FirstLaunch",true);//defValue - Value to return if this preference does not exist.
-        if(user_first) {
+        Boolean user_first = settings.getBoolean("FirstLaunch", true);//defValue - Value to return if this preference does not exist.
+        if (user_first) {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("FirstLaunch", false);
             editor.apply();
             System.out.println("first launch");
-        }
-        else{
+        } else {
             System.out.println("not first launch");
         }
-        if(Utilities.isNetworkAvailable(MainActivity.this)){
-            netWorkAvailable = true ;
+        if (Utilities.isNetworkAvailable(MainActivity.this)) {
+            netWorkAvailable = true;
             System.out.println("有网络有网络有网络有网络有网络有网络有网络");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        if (null != drawer)
+//        drawer.setDrawerListener(toggle);
+            drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        if (null != navigationView)
+            navigationView.setNavigationItemSelectedListener(this);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -119,21 +121,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
         if (id == R.id.nav_favorites) {
-            Intent intent = new Intent(MainActivity.this,FavoritesActivity.class);
+            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
             startActivity(intent);
-            Toast.makeText(MainActivity.this,"gallery",Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_about) {
-            Toast.makeText(MainActivity.this,"nav_slideshow",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "nav_slideshow", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_settings) {
-
-        } else if (id == R.id.nav_change_theme) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null)
+            drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
