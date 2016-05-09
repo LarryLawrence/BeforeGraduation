@@ -27,8 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String PREFS_NAME = "MyPrefsFile";
     public static boolean netWorkAvailable = false;
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -58,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //setStatusBarColor在v21/styles.xml中设置了（其实无需设置,因为可以沿用5.0以下配色）
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
+        SectionsPagerAdapter mSectionsPagerAdapter;
+        ViewPager mViewPager;
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

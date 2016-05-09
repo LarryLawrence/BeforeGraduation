@@ -35,7 +35,7 @@ public class AnimAdapter extends RecyclerView.Adapter {
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
     ArrayList<ListCellDataSimplified> dataArrayList = new ArrayList<>();
-    MyItemClickListener mLongClickListener ;
+    MyItemClickListener mLongClickListener;
 
 //    private ArrayList<String> mTitles = new ArrayList<>();
 
@@ -53,14 +53,12 @@ public class AnimAdapter extends RecyclerView.Adapter {
         dbRead.close();
     }
 
-
     public void remove(int position) {
-        System.out.println("remove postion------>"+ position + "---"+ dataArrayList.get(position).getTitle());
+//        System.out.println("remove postion------>"+ position + "---"+ dataArrayList.get(position).getTitle());
         dataArrayList.remove(count - 1 - position);
         notifyItemRemoved(position);
         db = new Db(mContext);
         dbWrite = db.getInstance(mContext).getWritableDatabase();
-//        String whereClause = "_id=?";
         String whereClause = "saddress=?";
         String[] whereArgs = {data[count - 1 - position].getAddress()};
         dbWrite.delete("favorites", whereClause, whereArgs);//没有cv
@@ -75,7 +73,7 @@ public class AnimAdapter extends RecyclerView.Adapter {
         QueryData();
 //        if (viewType == NORMAL_ITEM)
         //原本想要用在MainAdapter上面的,写在了这个Adapter上面..所以取消If
-            return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view, parent, false));
+        return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view, parent, false));
 //        else
 //            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
     }
@@ -117,28 +115,28 @@ public class AnimAdapter extends RecyclerView.Adapter {
 
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);
-
         }
 
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, WebViewActivity.class);
-                intent.putExtra("address", data[count - 1 - getAdapterPosition()].getAddress());
-                intent.putExtra("title", data[count - 1 - getAdapterPosition()].getTitle());
-                intent.putExtra("summary", data[count - 1 - getAdapterPosition()].getSummary());
-                mContext.startActivity(intent);
+            intent.putExtra("address", data[count - 1 - getAdapterPosition()].getAddress());
+            intent.putExtra("title", data[count - 1 - getAdapterPosition()].getTitle());
+            intent.putExtra("summary", data[count - 1 - getAdapterPosition()].getSummary());
+            mContext.startActivity(intent);
         }
 
         @Override
         public boolean onLongClick(View v) {
 //            remove(getAdapterPosition());
-            if(mLongClickListener != null){
-                mLongClickListener.onInterfaceItemLongClick(v, getAdapterPosition());
+            if (mLongClickListener != null) {
+                mLongClickListener.onInterfaceItemLongClick(getAdapterPosition());
             }
             return true;
         }
     }
-    public void setOnLongClickListener(MyItemClickListener listener){
+
+    public void setOnLongClickListener(MyItemClickListener listener) {
         this.mLongClickListener = listener;
     }
 

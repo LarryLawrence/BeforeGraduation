@@ -20,7 +20,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fav_cards_list"
         android:layout_width="match_parent"
@@ -28,4 +27,16 @@
         android:clipToPadding="false"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical" />
+    <!--this FrameLayout should be placed on the bottom of the LinearLayout-->
+    <FrameLayout
+        android:id="@+id/fav_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="还没有内容" />
+    </FrameLayout>
 </LinearLayout>
