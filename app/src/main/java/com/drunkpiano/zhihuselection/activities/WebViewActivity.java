@@ -160,7 +160,6 @@ public class WebViewActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-//                onBackPressed();
                 if (myWebView.canGoBack()) {
                     myWebView.goBack();
                     break;

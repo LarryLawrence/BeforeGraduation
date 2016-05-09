@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,8 @@ public class MainAdapter extends RecyclerView.Adapter {
         public DataSetViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
+            TextPaint tp = title.getPaint();
+            tp.setFakeBoldText(true);
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.cv_item);
             rootView.setOnClickListener(this);
