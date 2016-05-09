@@ -510,5 +510,4 @@ public class RecentFragment extends Fragment {
             dateShouldBeReturned = getSystemDate();
         return dateShouldBeReturned.trim();
     }
-
 }

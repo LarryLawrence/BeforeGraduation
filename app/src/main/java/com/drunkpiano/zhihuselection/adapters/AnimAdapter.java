@@ -14,6 +14,7 @@ import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellDataSimplified;
+import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
 import java.util.ArrayList;
 
@@ -34,6 +35,7 @@ public class AnimAdapter extends RecyclerView.Adapter {
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
     ArrayList<ListCellDataSimplified> dataArrayList = new ArrayList<>();
+    MyItemClickListener mLongClickListener ;
 
 //    private ArrayList<String> mTitles = new ArrayList<>();
 
@@ -53,7 +55,8 @@ public class AnimAdapter extends RecyclerView.Adapter {
 
 
     public void remove(int position) {
-        dataArrayList.remove(position);
+        System.out.println("remove postion------>"+ position + "---"+ dataArrayList.get(position).getTitle());
+        dataArrayList.remove(count - 1 - position);
         notifyItemRemoved(position);
         db = new Db(mContext);
         dbWrite = db.getInstance(mContext).getWritableDatabase();
@@ -104,12 +107,10 @@ public class AnimAdapter extends RecyclerView.Adapter {
 
         TextView title;
         TextView info;
-        AnimAdapter mAdapter;
         View rootView;
 
         public NormalTextViewHolder(View view) {
             super(view);
-//            mAdapter = adapter;
             title = (TextView) view.findViewById(R.id.title);
             info = (TextView) view.findViewById(R.id.info);
             rootView = view.findViewById(R.id.cv_item);
@@ -121,19 +122,24 @@ public class AnimAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(mAdapter.mContext, WebViewActivity.class);
-            intent.putExtra("address", mAdapter.data[count - 1 - getAdapterPosition()].getAddress());
-            intent.putExtra("title", mAdapter.data[count - 1 - getAdapterPosition()].getTitle());
-            intent.putExtra("summary", mAdapter.data[count - 1 - getAdapterPosition()].getSummary());
-            mAdapter.mContext.startActivity(intent);
+            Intent intent = new Intent(mContext, WebViewActivity.class);
+                intent.putExtra("address", data[count - 1 - getAdapterPosition()].getAddress());
+                intent.putExtra("title", data[count - 1 - getAdapterPosition()].getTitle());
+                intent.putExtra("summary", data[count - 1 - getAdapterPosition()].getSummary());
+                mContext.startActivity(intent);
         }
 
         @Override
         public boolean onLongClick(View v) {
-            remove(getAdapterPosition());
-
+//            remove(getAdapterPosition());
+            if(mLongClickListener != null){
+                mLongClickListener.onInterfaceItemLongClick(v, getAdapterPosition());
+            }
             return true;
         }
+    }
+    public void setOnLongClickListener(MyItemClickListener listener){
+        this.mLongClickListener = listener;
     }
 
     public class NormalTextViewHolderWithDate extends NormalTextViewHolder {
@@ -170,7 +176,7 @@ public class AnimAdapter extends RecyclerView.Adapter {
         data = new ListCellDataSimplified[count];
         for (int i = 0; i < count; i++) {
             data[i] = dataArrayList.get(i);
-            System.out.println("hello---------->" + data[i].getTitle());
+//            System.out.println("hello---------->" + data[i].getTitle());
         }
         return (count != 0);
 

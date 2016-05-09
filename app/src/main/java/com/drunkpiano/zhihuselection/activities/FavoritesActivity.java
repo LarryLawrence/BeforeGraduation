@@ -10,12 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.AnimAdapter;
+import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
-public class FavoritesActivity extends AppCompatActivity {
+public class FavoritesActivity extends AppCompatActivity implements MyItemClickListener {
+    private AnimAdapter animAdapter;
     Toolbar toolbar;
     RecyclerView rv;
 //    SQLiteDatabase db ;
@@ -25,11 +28,11 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
         toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
-        if(toolbar!=null) {
+        if (toolbar != null) {
             toolbar.setTitle("收藏夹");
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         }
-            setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
@@ -38,9 +41,9 @@ public class FavoritesActivity extends AppCompatActivity {
         rv = (RecyclerView) findViewById(R.id.fav_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
-        rv.setAdapter(new AnimAdapter(FavoritesActivity.this, "favorites"));
-        System.out.println("this is Fav Activity onCreate!" +
-                "");
+        animAdapter = new AnimAdapter(FavoritesActivity.this, "favorites");
+        rv.setAdapter(animAdapter);
+        animAdapter.setOnLongClickListener(this);
     }
 
 
@@ -58,8 +61,16 @@ public class FavoritesActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
             case R.id.action_clear_fav:
+
+
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onInterfaceItemLongClick(View view, int position) {
+        animAdapter.remove(position);
+    }
+
 }

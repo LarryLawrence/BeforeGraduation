@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,29 +56,21 @@ public class MainAdapter extends RecyclerView.Adapter {
         TextView title;
         TextView info;
         public View rootView;
-//        MainAdapter mainAdapter;
 
         public DataSetViewHolder(View itemView) {
             super(itemView);
-//            mainAdapter = adapter;
             title = (TextView) itemView.findViewById(R.id.title);
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.cv_item);
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);
         }
-
         @Override
         public void onClick(View v) {
-            //http://www.zhihu.com/question/questionid/answer/answerid
             Intent intent = new Intent(context, WebViewActivity.class);
-            //getAdapterPosition() This method is deprecated. This method is deprecated because its meaning is ambiguous due to the async handling of adapter updates. Please use getLayoutPosition() or getAdapterPosition() depending on your use case.
             intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
             intent.putExtra("title", data[getAdapterPosition()].getTitle());
             intent.putExtra("summary", data[getAdapterPosition()].getSummary());
-//            System.out.println(getAdapterPosition() + "-----------------=------->" + Integer.parseInt(String.valueOf(getItemId())));
-//            System.out.println("http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
-
             context.startActivity(intent);
         }
 
@@ -102,7 +93,7 @@ public class MainAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QueryData();
-        View v ;
+        View  v ;
         if(viewType == NORMAL_ITEM)
         {//getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
             // create a new view
