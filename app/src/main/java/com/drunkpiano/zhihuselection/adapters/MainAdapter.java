@@ -32,7 +32,7 @@ public class MainAdapter extends RecyclerView.Adapter {
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
 
-    public MainAdapter(Context context, String tableName, int count ,String dateWithChinese) {
+    public MainAdapter(Context context, String tableName, int count, String dateWithChinese) {
         this.context = context;
         this.tableName = tableName;
         this.count = count;
@@ -46,10 +46,10 @@ public class MainAdapter extends RecyclerView.Adapter {
         if (position == 0) {
 //            System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
-        }
-        else{
+        } else {
 //            System.out.println("NORMAL_ITEM");
-            return NORMAL_ITEM;}
+            return NORMAL_ITEM;
+        }
     }
 
 
@@ -68,6 +68,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);
         }
+
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, WebViewActivity.class);
@@ -96,9 +97,8 @@ public class MainAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QueryData();
-        View  v ;
-        if(viewType == NORMAL_ITEM)
-        {//getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
+        View v;
+        if (viewType == NORMAL_ITEM) {//getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
             // create a new view
 
             v = LayoutInflater.from(parent.getContext())
@@ -108,8 +108,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             v.setLayoutParams(lp);
             return new DataSetViewHolder(v);
 
-        }
-        else  {
+        } else {
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false);
 //            System.out.println("inflate---->NORMAL_ITEM");
@@ -129,17 +128,17 @@ public class MainAdapter extends RecyclerView.Adapter {
         if (holder instanceof DataSetViewHolderWithDate) {
 //            System.out.println("dateWithChinese----0--->" + dateWithChinese);
 //            DataSetViewHolder dataSetViewHolder = (DataSetViewHolder) holder;
-            ((DataSetViewHolderWithDate)holder).title.setText(data[position].getTitle());
-            ((DataSetViewHolderWithDate)holder).info.setText(data[position].getSummary());
-            ((DataSetViewHolderWithDate)holder).date.setText(dateWithChinese);
+            ((DataSetViewHolderWithDate) holder).title.setText(data[position].getTitle());
+            ((DataSetViewHolderWithDate) holder).info.setText(data[position].getSummary());
+            ((DataSetViewHolderWithDate) holder).date.setText(dateWithChinese);
 
-        } else if(holder instanceof DataSetViewHolder){
+        } else if (holder instanceof DataSetViewHolder) {
 //            System.out.println("dateWithChinese----1--->"+dateWithChinese);
 //            DataSetViewHolderWithDate dataSetViewHolderWithDate = (DataSetViewHolderWithDate) holder;
 //            System.out.println("dateWithChinese----2--->"+dateWithChinese);
 //            dataSetViewHolderWithDate.date.setText(dateWithChinese);
-            ((DataSetViewHolder)holder).title.setText(data[position].getTitle());
-            ((DataSetViewHolder)holder).info.setText(data[position].getSummary());
+            ((DataSetViewHolder) holder).title.setText(data[position].getTitle());
+            ((DataSetViewHolder) holder).info.setText(data[position].getSummary());
 
         }
     }

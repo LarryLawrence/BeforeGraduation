@@ -17,12 +17,12 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.adapters.AnimAdapter;
+import com.drunkpiano.zhihuselection.adapters.FavoritesAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
 public class FavoritesActivity extends AppCompatActivity implements MyItemClickListener {
-    private AnimAdapter animAdapter;
+    private FavoritesAdapter favoritesAdapter;
     Toolbar toolbar;
     RecyclerView rv;
     Db db;
@@ -59,9 +59,9 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         rv = (RecyclerView) findViewById(R.id.fav_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
-        animAdapter = new AnimAdapter(FavoritesActivity.this, "favorites");
-        rv.setAdapter(animAdapter);
-        animAdapter.setOnLongClickListener(this);
+        favoritesAdapter = new FavoritesAdapter(FavoritesActivity.this, "favorites");
+        rv.setAdapter(favoritesAdapter);
+        favoritesAdapter.setOnLongClickListener(this);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 //        new android.support.v7.app.AlertDialog.Builder(this).setMessage("移除这一条").setPositiveButton("好的", new DialogInterface.OnClickListener() {
 //            @Override
 //            public void onClick(DialogInterface dialog, int which) {
-        animAdapter.remove(position);
+        favoritesAdapter.remove(position);
 //
 //            }
 //        }).setNegativeButton("不用", new)

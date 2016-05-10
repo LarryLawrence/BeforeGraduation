@@ -27,7 +27,7 @@
         <Preference
             android:defaultValue="true"
             android:key="mailMe"
-            android:summary="发邮件给我"
+            android:summary="写邮件给我"
             android:title="你说的我都放在心上" />
     </PreferenceCategory>
 </PreferenceScreen>

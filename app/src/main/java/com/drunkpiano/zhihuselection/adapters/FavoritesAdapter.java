@@ -21,11 +21,10 @@ import java.util.ArrayList;
 /**
  * Created by DrunkPiano on 16/5/3.
  */
-public class AnimAdapter extends RecyclerView.Adapter {
+public class FavoritesAdapter extends RecyclerView.Adapter {
 
     private static final int NORMAL_ITEM = 0;
     private static final int ITEM_WITH_DATE = 1;
-
     ListCellDataSimplified[] data;
     Db db;
     SQLiteDatabase dbRead;
@@ -37,9 +36,7 @@ public class AnimAdapter extends RecyclerView.Adapter {
     ArrayList<ListCellDataSimplified> dataArrayList = new ArrayList<>();
     MyItemClickListener mLongClickListener;
 
-//    private ArrayList<String> mTitles = new ArrayList<>();
-
-    public AnimAdapter(Context context, String tableName) {
+    public FavoritesAdapter(Context context, String tableName) {
         mContext = context;
         this.tableName = tableName;
         mLayoutInflater = LayoutInflater.from(context);
@@ -67,7 +64,6 @@ public class AnimAdapter extends RecyclerView.Adapter {
 
     }
 
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QueryData();
@@ -77,7 +73,6 @@ public class AnimAdapter extends RecyclerView.Adapter {
 //        else
 //            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
     }
-
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -174,9 +169,7 @@ public class AnimAdapter extends RecyclerView.Adapter {
         data = new ListCellDataSimplified[count];
         for (int i = 0; i < count; i++) {
             data[i] = dataArrayList.get(i);
-//            System.out.println("hello---------->" + data[i].getTitle());
         }
         return (count != 0);
-
     }
 }

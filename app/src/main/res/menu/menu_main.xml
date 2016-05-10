@@ -7,13 +7,12 @@
         android:orderInCategory="100"
         android:title="随机去某一天看看"
         android:icon="@drawable/ic_shuffle_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_date_picker"
-        android:title="选择一个日期"
+        android:title="@string/action_past"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_update_white_24dp"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="200"

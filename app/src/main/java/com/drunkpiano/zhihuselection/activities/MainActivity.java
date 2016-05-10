@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static boolean netWorkAvailable = false;
 
 
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -68,25 +67,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mViewPager.setAdapter(mSectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        if(fab!= null)
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                RecentFragment rf = new RecentFragment() ;
-//                rf.refreshListView();
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("撤销收藏", new View.OnClickListener(){
-//                            @Override
-//                            public void onClick(View v) {
-//                                System.out.println("撤销收藏");
-//                                // Perform anything for the action selected
-//                            }
-//                        }).show();
-//            }
-//        });
-
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         Boolean user_first = settings.getBoolean("FirstLaunch", true);//defValue - Value to return if this preference does not exist.

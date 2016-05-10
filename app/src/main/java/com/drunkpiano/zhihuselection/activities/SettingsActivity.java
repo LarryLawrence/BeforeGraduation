@@ -1,17 +1,21 @@
 package com.drunkpiano.zhihuselection.activities;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.utilities.MailUtils;
 import com.drunkpiano.zhihuselection.utilities.MarketUtils;
+import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -46,14 +50,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         findPreference(GRADE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                MarketUtils.launchAppDetail("com.drunkpiano.zhihuselection","com.android.vending",getApplicationContext());
-                return false;
+                if (Utilities.isAppInstalled(getApplicationContext(), "com.android.vending"))
+                    MarketUtils.launchAppDetail("com.drunkpiano.zhihuselection", "com.android.vending", getApplicationContext());
+                else
+                    Toast.makeText(getApplicationContext(), "您没有安装Play商店,仍然谢谢您的支持!", Toast.LENGTH_LONG).show();
+
+                return true;
             }
         });
         findPreference(MAILE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                MailUtils.mailContact(getApplication(),"lcconan@gmail.com");
+                mailMe(getApplication());
                 return true;
             }
         });
@@ -106,5 +114,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         return super.onOptionsItemSelected(item);
     }
 
+    public static void mailMe(Context context) {
+        Intent data = new Intent(Intent.ACTION_SENDTO);
+        data.setData(Uri.parse("mailto:lcconan@gmail.com"));
+        data.putExtra(Intent.EXTRA_SUBJECT, "Hello");
+        data.putExtra(Intent.EXTRA_TEXT, "");
+        data.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(data);
+    }
 
 }
