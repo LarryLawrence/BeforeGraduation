@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.SwitchPreference;
@@ -31,6 +32,7 @@ import com.drunkpiano.zhihuselection.utilities.Utilities;
 public class SettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String No_ZhIHU_KEY = "doNotUseClient";
     public final static String NO_JS_KEY = "disableJavascript";
+    public final static String IMAGE_LOAD = "loadImagePreference";
     public final static String GRADE_ME = "gradeMe";
     public final static String MAILE_ME = "mailMe";
 
@@ -38,6 +40,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     SwitchPreference disableJavascript;
     Preference gradeMe;
     Preference mailMe;
+    ListPreference loadImagePreference;
 
 
     @Override
@@ -47,6 +50,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         addPreferencesFromResource(R.xml.pref_general);
         doNotUseClient = (SwitchPreference) findPreference(No_ZhIHU_KEY);
         disableJavascript = (SwitchPreference) findPreference(NO_JS_KEY);
+        loadImagePreference = (ListPreference) findPreference(IMAGE_LOAD);
         findPreference(GRADE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -75,6 +79,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端打开所有答案");
         disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, true) ? "让网页中的链接等元素失效以获取纯粹的阅读体验" : "开启后页面中的链接会被激活");
 
+        String i = sharedPreferences.getString(IMAGE_LOAD, "always");
+        switch (i){
+            case "always":
+                loadImagePreference.setSummary("始终载入图片");
+                break;
+            case "ifWifi":
+                loadImagePreference.setSummary("仅在WiFi环境下载入图片");
+                break;
+            case "never":
+                loadImagePreference.setSummary("从不加载图片");
+                break;
+        }
+
         // Set up a listener whenever a key changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -93,6 +110,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
 
         } else if (key.equals(NO_JS_KEY)) {
             disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, true) ? "让网页中的链接等元素失效以获取纯粹的阅读体验" : "开启后页面中的链接会被激活");
+        } else if (key.equals(IMAGE_LOAD)){
+            String i = sharedPreferences.getString(IMAGE_LOAD, "always");
+            switch (i){
+                case "always":
+                    loadImagePreference.setSummary("始终载入图片");
+                    break;
+                case "ifWifi":
+                    loadImagePreference.setSummary("仅在WiFi环境下载入图片");
+                    break;
+                case "never":
+                    loadImagePreference.setSummary("从不加载图片");
+                    break;
+            }
         }
     }
 

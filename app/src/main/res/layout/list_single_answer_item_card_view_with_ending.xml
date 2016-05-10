@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_with_end"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp"
+    android:orientation="vertical">
+
+
+    <include layout="@layout/list_single_answer_item_card_view" />
+
+    <ImageView
+        android:id="@+id/imgAdapter"
+        android:contentDescription="八分休止符"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:maxHeight="40dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/end_sign" />
+
+
+</LinearLayout>

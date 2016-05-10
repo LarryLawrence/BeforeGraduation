@@ -48,7 +48,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
 
         if (myCursor.getCount() != 0)
-////            Snackbar.make(getView(),)
         {
 //            setContentView(R.layout.activity_favorites);
             frameLayout.setVisibility(View.INVISIBLE);

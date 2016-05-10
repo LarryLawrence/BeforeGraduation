@@ -14,6 +14,15 @@
             android:key="disableJavascript"
             android:summary="让网页中的链接等元素失效以获取纯粹的阅读体验"
             android:title="禁用网页中的JavaScript" />
+
+        <ListPreference
+            android:key="loadImagePreference"
+            android:defaultValue="always"
+            android:title="节省数据流量"
+            android:summary="设置图片载入方式以节省流量"
+            android:entries="@array/image_load"
+            android:entryValues="@array/image_load_values"
+             />
     </PreferenceCategory>
 
     <PreferenceCategory

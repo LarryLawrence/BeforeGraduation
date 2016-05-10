@@ -2,12 +2,14 @@ package com.drunkpiano.zhihuselection.activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,11 +24,13 @@ import android.webkit.WebViewClient;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.utilities.Db;
+import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 /**
  * Created by DrunkPiano on 16/4/27.
  */
 public class WebViewActivity extends AppCompatActivity {
+    public final static String IMAGE_LOAD = "loadImagePreference";
     String address = "http://www.zhihu.com";
     String title = "";
     String summary = "";
@@ -84,10 +88,30 @@ public class WebViewActivity extends AppCompatActivity {
         title = intent.getStringExtra("title");
         summary = intent.getStringExtra("summary");
         myWebView = (WebView) findViewById(R.id.webView);
-        try {
-            myWebView.getSettings().setJavaScriptEnabled(true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean disableJavascript = settings.getBoolean("disableJavascript", true);
+        String loadImage = settings.getString(IMAGE_LOAD, "always");
+        boolean loadIMG = true;
+        if (myWebView != null) {
+            myWebView.getSettings().setJavaScriptEnabled(!disableJavascript);
+            System.out.println("disableJavascript---------------->" + disableJavascript);
+
+            switch (loadImage) {
+                case "always":
+                    loadIMG = true;
+                    break;
+                case "ifWifi": {
+                    if (Utilities.isNetworkAvailable(getApplicationContext()) && Utilities.isWifi(getApplicationContext()))
+                        loadIMG = true;
+                    else
+                        loadIMG = false;
+                    break;
+                }
+                case "never":
+                    loadIMG = false;
+            }
+            System.out.println("setBlockNetworkImage---------------->"+loadImage+"-------"+loadIMG);
+            myWebView.getSettings().setBlockNetworkImage(!loadIMG);
         }
         //启动缓存
         //        myWebView.getSettings().setAppCacheEnabled(true);
@@ -95,7 +119,8 @@ public class WebViewActivity extends AppCompatActivity {
         //        myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         //        this.myWebView.setWebChromeClient();
         //顺序有关系?
-        myWebView.loadUrl(address);
+        if (myWebView != null)
+            myWebView.loadUrl(address);
         myWebView.setWebViewClient(new myWebViewClient());
     }
 
@@ -114,8 +139,7 @@ public class WebViewActivity extends AppCompatActivity {
             System.out.println("url------------->" + url);
             System.out.println("containsMsg-------1------->" + containMsg);
 
-            if (url.contains("intent://questions/") && url.contains("com.zhihu.android"))
-            {
+            if (url.contains("intent://questions/") && url.contains("com.zhihu.android")) {
                 System.out.print("contains-------2------->" + containMsg);
                 Uri uri = Uri.parse(address);
                 Intent intent = new Intent();
@@ -124,8 +148,7 @@ public class WebViewActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-            if (url.contains("comment"))
-            {
+            if (url.contains("comment")) {
                 toolbar.setTitle("评论");
 
             }
@@ -160,10 +183,10 @@ public class WebViewActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                if (myWebView.canGoBack()) {
-                    myWebView.goBack();
-                    break;
-                }
+//                if (myWebView.canGoBack()) {
+//                    myWebView.goBack();
+//                    break;
+//                }
                 onBackPressed();
                 break;
             case R.id.action_share:

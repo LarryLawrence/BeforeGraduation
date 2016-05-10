@@ -24,6 +24,8 @@ import java.util.ArrayList;
 public class MainAdapter extends RecyclerView.Adapter {
     private static final int NORMAL_ITEM = 0;
     private static final int ITEM_WITH_DATE = 1;
+    private static final int ITEM_WITH_END = 2;
+
     static ListCellData[] data;
     int count = 0;
     String tableName = "";
@@ -47,6 +49,8 @@ public class MainAdapter extends RecyclerView.Adapter {
         if (position == 0) {
 //            System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
+        } else if (position == count-1) {
+            return ITEM_WITH_END;
         } else {
 //            System.out.println("NORMAL_ITEM");
             return NORMAL_ITEM;
@@ -54,7 +58,7 @@ public class MainAdapter extends RecyclerView.Adapter {
     }
 
 
-    public class DataSetViewHolder extends RecyclerView.ViewHolder  {
+    public class DataSetViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView info;
         public View rootView;
@@ -66,7 +70,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             TextPaint tp = title.getPaint();
             tp.setFakeBoldText(true);
             info = (TextView) itemView.findViewById(R.id.info);
-            rootView = itemView.findViewById(R.id.cv_item);
+            rootView = itemView.findViewById(R.id.card_single);
         }
 
 //        @Override
@@ -84,14 +88,15 @@ public class MainAdapter extends RecyclerView.Adapter {
 //            context.startActivity(intent);
 //        }
     }
-        public static View.OnClickListener linkListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainItemClickListener.onMainItemClick(data[(Integer)v.getTag()]);
+
+    public static View.OnClickListener linkListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()]);
 //                            if (mainItemClickListener != null) {
 //                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
-            }
-        };
+        }
+    };
 
 //    public void setOnClickListener(MainItemClickListener listener) {
 //        mainItemClickListener = listener;
@@ -107,6 +112,11 @@ public class MainAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public class DataSetViewHolderWithEnd extends DataSetViewHolder {
+        public DataSetViewHolderWithEnd(View itemView) {
+            super(itemView);
+        }
+    }
 
     // Create new views (invoked by the layout manager)
     @Override
@@ -123,7 +133,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             v.setLayoutParams(lp);
             return new DataSetViewHolder(v);
 
-        } else {
+        } else if (viewType == ITEM_WITH_DATE) {
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false);
 //            System.out.println("inflate---->NORMAL_ITEM");
@@ -131,6 +141,12 @@ public class MainAdapter extends RecyclerView.Adapter {
             v.setLayoutParams(lp);
             return new DataSetViewHolderWithDate(v);
 
+        } else  {
+            v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_single_answer_item_card_view_with_ending, parent, false);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            v.setLayoutParams(lp);
+            return new DataSetViewHolderWithEnd(v);
         }
 
     }
@@ -148,12 +164,18 @@ public class MainAdapter extends RecyclerView.Adapter {
             ((DataSetViewHolderWithDate) holder).rootView.setTag(position);
             ((DataSetViewHolderWithDate) holder).rootView.setOnClickListener(linkListener);
 
-        } else if (holder instanceof DataSetViewHolder) {
+        }else if (holder instanceof DataSetViewHolderWithEnd) {
+            ((DataSetViewHolderWithEnd) holder).title.setText(data[position].getTitle());
+            ((DataSetViewHolderWithEnd) holder).info.setText(data[position].getSummary());
+            ((DataSetViewHolderWithEnd) holder).rootView.setTag(position);
+            ((DataSetViewHolderWithEnd) holder).rootView.setOnClickListener(linkListener);
+        }
+
+        else if (holder instanceof DataSetViewHolder) {
             ((DataSetViewHolder) holder).title.setText(data[position].getTitle());
             ((DataSetViewHolder) holder).info.setText(data[position].getSummary());
             ((DataSetViewHolder) holder).rootView.setTag(position);
             ((DataSetViewHolder) holder).rootView.setOnClickListener(linkListener);
-
         }
     }
 

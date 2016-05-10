@@ -30,15 +30,23 @@ public class Utilities {
         if (connectivity != null) {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
             if (info != null && info.isConnected()) {
-                // 当前网络是连接的
                 if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    // 当前所连接的网络可用
                     System.out.println("当前网络是连接的当前网络是连接的当前网络是连接的当前网络是连接的");
                     return true;
                 }
                 System.out.println("网络不可用网络不可用网络不可用网络不可用网络不可用网络不可用");
 
             }
+        }
+        return false;
+    }
+    public static boolean isWifi(Context mContext) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) mContext
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetInfo != null
+                && activeNetInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+            return true;
         }
         return false;
     }

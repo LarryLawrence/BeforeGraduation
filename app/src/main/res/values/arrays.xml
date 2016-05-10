@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="image_load">
+        <item>始终载入图片</item>
+        <item>仅在WiFi环境载入图片</item>
+        <item>始终不载入图片</item>
+    </string-array>
+
+    <string-array name="image_load_values">
+        <item>always</item>
+        <item>ifWifi</item>
+        <item>never</item>
+    </string-array>
+</resources>
