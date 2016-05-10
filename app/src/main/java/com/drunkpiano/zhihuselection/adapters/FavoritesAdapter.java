@@ -69,7 +69,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
         QueryData();
 //        if (viewType == NORMAL_ITEM)
         //原本想要用在MainAdapter上面的,写在了这个Adapter上面..所以取消If
-        return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view, parent, false));
+        return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_no_elevation, parent, false));
 //        else
 //            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
     }
@@ -106,7 +106,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
             super(view);
             title = (TextView) view.findViewById(R.id.title);
             info = (TextView) view.findViewById(R.id.info);
-            rootView = view.findViewById(R.id.cv_item);
+            rootView = view.findViewById(R.id.card_no_ele);
 
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);

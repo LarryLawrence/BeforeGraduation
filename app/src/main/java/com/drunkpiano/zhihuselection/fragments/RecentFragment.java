@@ -1,5 +1,6 @@
 package com.drunkpiano.zhihuselection.fragments;
 
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -477,6 +478,7 @@ public class RecentFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;
             case R.id.action_date_picker:
+                new DatePickerDialog()
                 if (null != getView())
                     Snackbar.make(getView(), "选择了XX日.", Snackbar.LENGTH_SHORT).show();
                 break;
