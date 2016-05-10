@@ -102,21 +102,4 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 //            }
 //        }).setNegativeButton("不用", new)
     }
-//    public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        // Use the Builder class for convenient dialog construction
-//        android.support.v7.app.AlertDialog builder = new android.support.v7.app.AlertDialog(FavoritesActivity.this);
-//        builder.setMessage("移除这一条")
-//                .setPositiveButton("好的", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // FIRE ZE MISSILES!
-//                    }
-//                })
-//                .setNegativeButton("不用", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // User cancelled the dialog
-//                    }
-//                });
-//        // Create the AlertDialog object and return it
-//        return builder.create();
-//    }
 }

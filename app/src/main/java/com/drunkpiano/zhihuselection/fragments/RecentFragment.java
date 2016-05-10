@@ -2,11 +2,14 @@ package com.drunkpiano.zhihuselection.fragments;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -22,9 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.R;
+import com.drunkpiano.zhihuselection.activities.WebViewActivity;
 import com.drunkpiano.zhihuselection.adapters.MainAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
+import com.drunkpiano.zhihuselection.utilities.MainItemClickListener;
 import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 import org.json.JSONArray;
@@ -61,15 +66,19 @@ public class RecentFragment extends Fragment {
     String lastUpdate;
     SimpleDateFormat latestWebsiteUpdateTime;
     Long lastUpdateInt;
-    SharedPreferences settings;
     String currentTimeStr;
     int dbLines = 0;
+    SharedPreferences settings ;
+    private static boolean doNotUseClient ;
+    private static boolean disableJavascript ;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
+
     }
 
     @Nullable
@@ -147,7 +156,6 @@ public class RecentFragment extends Fragment {
         dbRead.close();
     }
 
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -191,8 +199,9 @@ public class RecentFragment extends Fragment {
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
-
-        cardsListRv.setAdapter(new MainAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese));
+        MainAdapter mainAdapter = new MainAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese, callBack);
+        cardsListRv.setAdapter(mainAdapter);
+//        mainAdapter.setOnClickListener(this);
         dbRead.close();
         myCursor.close();
     }
@@ -453,10 +462,6 @@ public class RecentFragment extends Fragment {
         inflater.inflate(R.menu.menu_main, menu);
     }
 
-    /**
-     * Respond to the user's selection of the Refresh action item. Start the SwipeRefreshLayout
-     * progress bar, then initiate the background task that refreshes the content.
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -510,4 +515,40 @@ public class RecentFragment extends Fragment {
             dateShouldBeReturned = getSystemDate();
         return dateShouldBeReturned.trim();
     }
+
+//    @Override
+//    public void onMainItemClick(ListCellData answer) {
+//        Intent intent = new Intent(getContext(), WebViewActivity.class);
+//        intent.putExtra("address", "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
+//        intent.putExtra("title", answer.getTitle());
+//        intent.putExtra("summary", answer.getSummary());
+//        startActivity(intent);
+//    }
+
+
+
+    private MainItemClickListener callBack = new MainItemClickListener() {
+
+        @Override
+        public void onMainItemClick(ListCellData answer) {
+
+            settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+            doNotUseClient = settings.getBoolean("doNotUseClient", true);
+            disableJavascript = settings.getBoolean("disableJavascript",true);
+
+            if(doNotUseClient){
+            Intent intent = new Intent(getContext(), WebViewActivity.class);
+            intent.putExtra("address", "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
+            intent.putExtra("title", answer.getTitle());
+            intent.putExtra("summary", answer.getSummary());
+            startActivity(intent);}
+            else{
+                Uri uri=Uri.parse("http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
+                Intent intent=new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                startActivity(intent);
+            }
+        }
+    };
 }

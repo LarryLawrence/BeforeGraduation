@@ -1,7 +1,6 @@
 package com.drunkpiano.zhihuselection.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.activities.WebViewActivity;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
+import com.drunkpiano.zhihuselection.utilities.MainItemClickListener;
 
 import java.util.ArrayList;
 
@@ -25,18 +24,20 @@ import java.util.ArrayList;
 public class MainAdapter extends RecyclerView.Adapter {
     private static final int NORMAL_ITEM = 0;
     private static final int ITEM_WITH_DATE = 1;
-    ListCellData[] data;
+    static ListCellData[] data;
     int count = 0;
     String tableName = "";
     String dateWithChinese;
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
+    private static MainItemClickListener mainItemClickListener;
 
-    public MainAdapter(Context context, String tableName, int count, String dateWithChinese) {
+    public MainAdapter(Context context, String tableName, int count, String dateWithChinese, MainItemClickListener callBack) {
         this.context = context;
         this.tableName = tableName;
         this.count = count;
         this.dateWithChinese = dateWithChinese;
+        this.mainItemClickListener = callBack;
 //        System.out.println("dateWithChinese----constructor--->"+this.dateWithChinese);
 
     }
@@ -53,10 +54,11 @@ public class MainAdapter extends RecyclerView.Adapter {
     }
 
 
-    public class DataSetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class DataSetViewHolder extends RecyclerView.ViewHolder  {
         TextView title;
         TextView info;
         public View rootView;
+//        public CardView layout;
 
         public DataSetViewHolder(View itemView) {
             super(itemView);
@@ -65,24 +67,36 @@ public class MainAdapter extends RecyclerView.Adapter {
             tp.setFakeBoldText(true);
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.cv_item);
-            rootView.setOnClickListener(this);
-            rootView.setOnLongClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(context, WebViewActivity.class);
-            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
-            intent.putExtra("title", data[getAdapterPosition()].getTitle());
-            intent.putExtra("summary", data[getAdapterPosition()].getSummary());
-            context.startActivity(intent);
-        }
+//        @Override
+//        public void onClick(View v) {
+//            if (mainItemClickListener != null) {
+//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
+//            }
+//        }
 
-        @Override
-        public boolean onLongClick(View v) {
-            return false;
-        }
+//        private void startWebViewActivity() {
+//            Intent intent = new Intent(context, WebViewActivity.class);
+//            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
+//            intent.putExtra("title", data[getAdapterPosition()].getTitle());
+//            intent.putExtra("summary", data[getAdapterPosition()].getSummary());
+//            context.startActivity(intent);
+//        }
     }
+        public static View.OnClickListener linkListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainItemClickListener.onMainItemClick(data[(Integer)v.getTag()]);
+//                            if (mainItemClickListener != null) {
+//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
+            }
+        };
+
+//    public void setOnClickListener(MainItemClickListener listener) {
+//        mainItemClickListener = listener;
+//    }
+
 
     public class DataSetViewHolderWithDate extends DataSetViewHolder {
         TextView date;
@@ -92,6 +106,7 @@ public class MainAdapter extends RecyclerView.Adapter {
             date = (TextView) itemView.findViewById(R.id.date_show);
         }
     }
+
 
     // Create new views (invoked by the layout manager)
     @Override
@@ -125,20 +140,19 @@ public class MainAdapter extends RecyclerView.Adapter {
         if (data.length < 0) {
             return;
         }
+
         if (holder instanceof DataSetViewHolderWithDate) {
-//            System.out.println("dateWithChinese----0--->" + dateWithChinese);
-//            DataSetViewHolder dataSetViewHolder = (DataSetViewHolder) holder;
             ((DataSetViewHolderWithDate) holder).title.setText(data[position].getTitle());
             ((DataSetViewHolderWithDate) holder).info.setText(data[position].getSummary());
             ((DataSetViewHolderWithDate) holder).date.setText(dateWithChinese);
+            ((DataSetViewHolderWithDate) holder).rootView.setTag(position);
+            ((DataSetViewHolderWithDate) holder).rootView.setOnClickListener(linkListener);
 
         } else if (holder instanceof DataSetViewHolder) {
-//            System.out.println("dateWithChinese----1--->"+dateWithChinese);
-//            DataSetViewHolderWithDate dataSetViewHolderWithDate = (DataSetViewHolderWithDate) holder;
-//            System.out.println("dateWithChinese----2--->"+dateWithChinese);
-//            dataSetViewHolderWithDate.date.setText(dateWithChinese);
             ((DataSetViewHolder) holder).title.setText(data[position].getTitle());
             ((DataSetViewHolder) holder).info.setText(data[position].getSummary());
+            ((DataSetViewHolder) holder).rootView.setTag(position);
+            ((DataSetViewHolder) holder).rootView.setOnClickListener(linkListener);
 
         }
     }
@@ -159,18 +173,11 @@ public class MainAdapter extends RecyclerView.Adapter {
         Db db = new Db(context);
         //READ
         SQLiteDatabase dbRead = db.getReadableDatabase();
-        //public Cursor query(String table,String[] columns,String selection,String[]  selectionArgs,String groupBy,String having,String orderBy,String limit);
         Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
-//        if(myCursor.moveToFirst()) {
-        //遍历游标
-//            for(count=0;count<myCursor.getCount();count++){
-//            for(count=0;count<myCursor.getCount();count++){
+
         while (myCursor.moveToNext()) {
             ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4), myCursor.getString(5), myCursor.getString(6), myCursor.getString(7), myCursor.getString(8), myCursor.getString(9));
-//                dataArrayList.add(i,dataCell);
             dataArrayList.add(dataCell);
-//                    count++;
-//                System.out.println(id+":"+authorname+":"+vote);
         }
         myCursor.close();
         dbRead.close();
@@ -185,4 +192,6 @@ public class MainAdapter extends RecyclerView.Adapter {
         }
         return (count != 0);
     }
+
+
 }

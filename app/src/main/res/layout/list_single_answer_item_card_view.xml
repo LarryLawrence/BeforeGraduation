@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cv_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,8 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:clickable="false"
+        android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
+        app:cardUseCompatPadding="true"
         card_view:cardBackgroundColor="@color/colorPrimaryDark"
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="2dp">
