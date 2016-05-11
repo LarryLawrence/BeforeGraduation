@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(MainActivity.this, "nav_slideshow", Toast.LENGTH_SHORT).show();
 
             } else if (id == R.id.nav_settings) {
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(MainActivity.this, AnyActivity.class);
                 startActivity(intent);
 
             }

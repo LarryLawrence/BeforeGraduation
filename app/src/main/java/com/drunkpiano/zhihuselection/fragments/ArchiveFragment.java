@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
-import com.drunkpiano.zhihuselection.adapters.MainAdapter;
+import com.drunkpiano.zhihuselection.adapters.ArchiveAdapter;
 import com.drunkpiano.zhihuselection.utilities.DatePickerFragment;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
@@ -202,8 +202,8 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("archive", null, null, null, null, null, null);
-        MainAdapter mainAdapter = new MainAdapter(getActivity(), "archive", myCursor.getCount(), dateWithChinese, callBack);
-        cardsListRv.setAdapter(mainAdapter);
+        ArchiveAdapter archiveAdapter = new ArchiveAdapter(getActivity(), "archive", myCursor.getCount(), dateWithChinese, callBack);
+        cardsListRv.setAdapter(archiveAdapter);
 //        mainAdapter.setOnClickListener(this);
         dbRead.close();
         myCursor.close();

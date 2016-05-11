@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
-import com.drunkpiano.zhihuselection.adapters.MainAdapter;
+import com.drunkpiano.zhihuselection.adapters.YesterdayAdapter;
 import com.drunkpiano.zhihuselection.utilities.DatePickerFragment;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
@@ -200,8 +200,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
-        MainAdapter mainAdapter = new MainAdapter(getActivity(), "yesterday", myCursor.getCount(), dateWithChinese, callBack);
-        cardsListRv.setAdapter(mainAdapter);
+        YesterdayAdapter yesterdayAdapter = new YesterdayAdapter(getActivity(), "yesterday", myCursor.getCount(), dateWithChinese, callBack);
+        cardsListRv.setAdapter(yesterdayAdapter);
 //        mainAdapter.setOnClickListener(this);
         dbRead.close();
         myCursor.close();

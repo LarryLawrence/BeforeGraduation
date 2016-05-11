@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Created by DrunkPiano on 16/4/24.
  */
-public class MainAdapter extends RecyclerView.Adapter {
+public class YesterdayAdapter extends RecyclerView.Adapter {
     private static final int NORMAL_ITEM = 0;
     private static final int ITEM_WITH_DATE = 1;
     private static final int ITEM_WITH_END = 2;
@@ -34,7 +34,7 @@ public class MainAdapter extends RecyclerView.Adapter {
     public Context context;
     private static MainItemClickListener mainItemClickListener;
 
-    public MainAdapter(Context context, String tableName, int count, String dateWithChinese, MainItemClickListener callBack) {
+    public YesterdayAdapter(Context context, String tableName, int count, String dateWithChinese, MainItemClickListener callBack) {
         this.context = context;
         this.tableName = tableName;
         this.count = count;

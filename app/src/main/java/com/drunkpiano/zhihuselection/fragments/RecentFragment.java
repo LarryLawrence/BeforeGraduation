@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
-import com.drunkpiano.zhihuselection.adapters.MainAdapter;
+import com.drunkpiano.zhihuselection.adapters.RecentAdapter;
 import com.drunkpiano.zhihuselection.utilities.DatePickerFragment;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
@@ -207,9 +207,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
-        MainAdapter mainAdapter = new MainAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese, callBack);
-        cardsListRv.setAdapter(mainAdapter);
-//        mainAdapter.setOnClickListener(this);
+        RecentAdapter recentAdapter = new RecentAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese, callBack);
+        cardsListRv.setAdapter(recentAdapter);
         dbRead.close();
         myCursor.close();
     }

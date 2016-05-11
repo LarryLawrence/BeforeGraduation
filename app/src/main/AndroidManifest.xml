@@ -26,10 +26,7 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.FavoritesActivity" />
-        <activity
-            android:theme="@style/ActionBarTheme"
-            android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+        <activity android:name=".activities.AnyActivity"></activity>
     </application>
 
 </manifest>
