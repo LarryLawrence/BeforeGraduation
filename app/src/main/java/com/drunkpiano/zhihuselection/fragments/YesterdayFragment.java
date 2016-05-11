@@ -51,16 +51,14 @@ import java.util.Locale;
 /*
  * Created by DrunkPiano on 16/3/9.
  */
-public class RecentFragment extends Fragment implements DatePickerFragment.TheListener {
+public class YesterdayFragment extends Fragment implements DatePickerFragment.TheListener {
     public static final String PREFS_NAME = "MyPrefsFile";
     public SwipeRefreshLayout mSwipeRefreshLayout;
 
     RecyclerView cardsListRv;
     String dateWithChinese;
-    int numCount = 0;
-    int originNumCountForCompare = 0;
     Db db;
-    String tabName = "recent";
+    String tabName = "yesterday";
     Long currentTimeInt;
     Long latestWebsiteUpdateTimeInt;
     SimpleDateFormat currentTime;
@@ -86,13 +84,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
-        Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
-        numCount = myCursor.getCount();
-        originNumCountForCompare = myCursor.getCount();
+        Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
         myCursor.close();
-        //这里是预先展示数据库里的条目的情况.先读了numCount,它是由DB中cursor.movetonext得出来的,,不,现在改成直接从recentCount里读取.
-//        numCount = settings.getInt("recentCount", 0);//defValue - Value to return if this preference does not exist.
-//        originNumCountForCompare = numCount; //这里先保存一份DB中原有的numCount的个数的副本用来对比,因为numCount可能会更新了等会儿（json中获取count时更新）.
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         cardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
@@ -109,7 +102,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     private void initThisFragment(boolean chongxinlianjieshishi) {
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
-        Cursor cursor = dbRead.query("recent", null, null, null, null, null, null);
+        Cursor cursor = dbRead.query("yesterday", null, null, null, null, null, null);
 
         while (cursor.moveToNext())//其实可以不用这样计算行数,直接用cursor.getCount;
             dbLines++;
@@ -119,7 +112,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
             SharedPreferences.Editor editor = settings.edit();
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
-            editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
+            editor.putString("LastUpdateYesterday", time.format(Calendar.getInstance().getTime()));
             editor.apply();
             System.out.println("数据库里没东西,下载.");
             //NECESSARY
@@ -132,7 +125,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             setupList("上次看到");
             //DB的最近更新时间
             settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
+            lastUpdate = settings.getString("LastUpdateYesterday", "198801010500");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
             //现在的时间
             currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
@@ -140,14 +133,14 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             currentTimeInt = Long.parseLong(currentTimeStr);
             //网站最近更新时间,今天早上五点
             latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
+            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
 //        if(true)
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
                 System.out.println("对应createView的时候判断出需要刷新的情况");
                 refreshListView(getDate());
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString("LastUpdateRecent", currentTimeStr);
+                editor.putString("LastUpdateYesterday", currentTimeStr);
                 editor.apply();
             }
         }
@@ -165,7 +158,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                     swipeRefresh();
                 else if (null != getView())
                 {
-                    Snackbar.make(getView(), "已是最新,「一周」栏目每天中午11:00更新", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(getView(), "已是最新,「一天」栏目每天早上5:00更新", Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -176,7 +169,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     private void swipeRefresh() {
         //DB的最近更新时间
         settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        lastUpdate = settings.getString("LastUpdateRecent", "19880101100");//defValue - Value to return if this preference does not exist.
+        lastUpdate = settings.getString("LastUpdateYesterday", "19880100500");//defValue - Value to return if this preference does not exist.
         lastUpdateInt = Long.parseLong(lastUpdate);
         //现在的时间
         currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
@@ -184,7 +177,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         currentTimeInt = Long.parseLong(currentTimeStr);
         //网站最近更新时间,今天早上五点
         latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
+        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
 
         mSwipeRefreshLayout.setRefreshing(true);
         refreshListView(getDate());
@@ -193,7 +186,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString("LastUpdateRecent", currentTimeStr);
+        editor.putString("LastUpdateYesterday", currentTimeStr);
         editor.apply();
     }
 
@@ -201,8 +194,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
-        Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
-        MainAdapter mainAdapter = new MainAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese, callBack);
+        Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
+        MainAdapter mainAdapter = new MainAdapter(getActivity(), "yesterday", myCursor.getCount(), dateWithChinese, callBack);
         cardsListRv.setAdapter(mainAdapter);
 //        mainAdapter.setOnClickListener(this);
         dbRead.close();
@@ -232,17 +225,15 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                     JSONObject
                             root = new JSONObject(builder.toString());
 
-//                    numCount = root.getInt("count");
                     System.out.println("refresh ListView-->root中的count是" + root.getInt("count"));
 
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
-                    Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
+                    Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
                     if (myCursor.moveToFirst()) {
                         JSONArray array = root.getJSONArray("answers");//获取数组
                         ListCellData LcData = new ListCellData();
-                        //这里的numCount已经是本次获取的条目数
                         if (root.getInt("count") >= myCursor.getCount()) {
                             //1'今天数目>昨天数目, 1.update昨天数目 2.insert昨天数目~今天数目
                             for (int i = 0; i < myCursor.getCount(); i++) {
@@ -258,7 +249,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                                 LcData.setVote(jo.getString("vote"));
                                 updateTables(LcData, tabName, i + 1);
                             }
-                            for (int i = myCursor.getCount(); i < root.getInt("count"); i++) {//如果numCount=array.length(),这里不会执行
+                            for (int i = myCursor.getCount(); i < root.getInt("count"); i++) {
                                 JSONObject jo = array.getJSONObject(i);
                                 LcData.setTitle(jo.getString("title"));
                                 LcData.setTime(jo.getString("time"));
@@ -293,7 +284,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                                 deleteDBLines(tabName, i);
 
                         }
-                        System.out.println("numCount----->" + numCount + ";array.length()--->" + array.length() + "myCursor.getCount()" + myCursor.getCount());
                     }
                     dbRead.close();
                     myCursor.close();
@@ -315,15 +305,14 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                System.out.println("refresh   4   postExecute```````,numCount= " + numCount);
                 dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6, dateStr.length()) + "日";
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
                 db.close();
                 super.onPostExecute(aVoid);
             }
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + dateStr + "/recent");//读今天的
-//            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160404" + "/recent");//读今天的
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + dateStr + "/yesterday");//读今天的
+//            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160404" + "/yesterday");//读今天的
     }
 
     public void initiateDownloadToEmptyDB() {
@@ -349,16 +338,11 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                     is.close();
                     //获取答案数量
                     JSONObject root = new JSONObject(builder.toString());
-                    numCount = root.getInt("count");
-                    SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putInt("recentCount", numCount);
-                    editor.apply();
 
                     //写入日期到database
                     db = new Db(getContext());
                     SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
-                    Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
+                    Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
                     //如果yesterday table里面没有数据,才ins ert
                     if (!myCursor.moveToFirst()) {
                         JSONArray array = root.getJSONArray("answers");//获取数组
@@ -403,8 +387,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 mSwipeRefreshLayout.setRefreshing(false);
                 super.onPostExecute(aVoid);
             }
-        }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/recent");//读今天的
-//    }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/recent");//读今天的
+        }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/yesterday");//读今天的
+//    }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/yesterday");//读今天的
     }
 
     public void deleteDBLines(String tabName, int ids) {
@@ -516,9 +500,9 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
     private static String getDate() {
         String dateShouldBeReturned = "";
-        if (Integer.parseInt(getCurrentTime()) < 1101)
+        if (Integer.parseInt(getCurrentTime()) < 501)
             dateShouldBeReturned = getYesterdayDate();
-        else if (Integer.parseInt(getCurrentTime()) >= 1101)
+        else if (Integer.parseInt(getCurrentTime()) >= 501)
             dateShouldBeReturned = getSystemDate();
         return dateShouldBeReturned.trim();
     }
