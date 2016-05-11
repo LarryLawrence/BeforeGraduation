@@ -68,6 +68,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     String currentTimeStr;
     int dbLines = 0;
     SharedPreferences settings;
+    String lastViewedDateChinese;
 
 
     @Override
@@ -121,9 +122,11 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-            SharedPreferences.Editor editor = settings.edit();
+            SimpleDateFormat timeWithChinese = new SimpleDateFormat("yyyy年MM月dd日 E",Locale.CHINA);
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
+            SharedPreferences.Editor editor = settings.edit();
             editor.putString("LastUpdateYesterday", time.format(Calendar.getInstance().getTime()));
+            editor.putString("YesterdayLastViewedDateChinese",timeWithChinese.format(Calendar.getInstance().getTime()));
             editor.apply();
             System.out.println("数据库里没东西,下载.");
             //NECESSARY
@@ -137,7 +140,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             //几处progressBar:
             //1.onCreateView发现数据库没内容时   正常 （pb在第一个card上）
             //2.onCreateView发现内容需要更新时   正常 （pb紧贴tab--->改成了find之后统一set）
-            setupList("上次看到");
+            lastViewedDateChinese = settings.getString("YesterdayLastViewedDateChinese", "上次看到这里");//defValue - Value to return if this preference does not exist.
+            setupList(lastViewedDateChinese);
 
 //        if(true)
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
@@ -312,6 +316,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             protected void onPostExecute(Void aVoid) {
                 dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6, dateStr.length()) + "日";
                 setupList(dateWithChinese);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("YesterdayLastViewedDateChinese", dateWithChinese);
+                editor.apply();
                 mSwipeRefreshLayout.setRefreshing(false);
                 db.close();
                 super.onPostExecute(aVoid);
@@ -464,6 +471,11 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 System.out.println(randomDateStr);
                 refreshListView(randomDateStr);
                 dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(randomDate);
+
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("YesterdayLastViewedDateChinese", dateWithChinese);
+                editor.apply();
+
                 if (null != getView())
                     Snackbar.make(getView(), "时光机带你降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(true);
