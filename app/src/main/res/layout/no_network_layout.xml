@@ -13,6 +13,6 @@
         android:ellipsize="end"
         android:lineSpacingMultiplier="1.2"
         android:text="网络似乎没有连上"
-        android:gravity="center"ß
+        android:gravity="center"
         android:layout_gravity="center_vertical" />
 </LinearLayout>

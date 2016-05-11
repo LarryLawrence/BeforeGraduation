@@ -64,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        if (null != mViewPager)
+            mViewPager.setAdapter(mSectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        if (null != tabLayout)
+            tabLayout.setupWithViewPager(mViewPager);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         Boolean user_first = settings.getBoolean("FirstLaunch", true);//defValue - Value to return if this preference does not exist.
@@ -92,8 +94,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (null != navigationView)
+        if (null != navigationView) {
             navigationView.setNavigationItemSelectedListener(this);
+            navigationView.getMenu().findItem(R.id.nav_favorites).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    item.setChecked(false);
+                    return false;
+                }
+            });
+            navigationView.getMenu().findItem(R.id.nav_about).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    item.setChecked(false);
+                    return false;
+                }
+            });
+            navigationView.getMenu().findItem(R.id.nav_settings).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    item.setChecked(false);
+                    return false;
+                }
+            });
+            navigationView.getMenu().findItem(R.id.nav_guide).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    item.setChecked(false);
+                    return false;
+                }
+            });
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -101,22 +132,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
-        if (id == R.id.nav_favorites) {
-            Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-            startActivity(intent);
-
-        } else if (id == R.id.nav_about) {
-            Toast.makeText(MainActivity.this, "nav_slideshow", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer != null)
+        if (drawer != null) {
+            if (id == R.id.nav_favorites) {
+                Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
+                startActivity(intent);
+
+            } else if (id == R.id.nav_guide) {
+                Toast.makeText(MainActivity.this, "guide", Toast.LENGTH_SHORT).show();
+
+            } else if (id == R.id.nav_about) {
+                Toast.makeText(MainActivity.this, "nav_slideshow", Toast.LENGTH_SHORT).show();
+
+            } else if (id == R.id.nav_settings) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+
+            }
             drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 

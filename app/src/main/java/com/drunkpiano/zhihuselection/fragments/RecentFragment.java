@@ -1,6 +1,5 @@
 package com.drunkpiano.zhihuselection.fragments;
 
-import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import android.view.ViewGroup;
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.activities.WebViewActivity;
 import com.drunkpiano.zhihuselection.adapters.MainAdapter;
+import com.drunkpiano.zhihuselection.utilities.DatePickerFragment;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.ListCellData;
 import com.drunkpiano.zhihuselection.utilities.MainItemClickListener;
@@ -51,7 +51,7 @@ import java.util.Locale;
 /*
  * Created by DrunkPiano on 16/3/9.
  */
-public class RecentFragment extends Fragment {
+public class RecentFragment extends Fragment implements DatePickerFragment.TheListener {
     public static final String PREFS_NAME = "MyPrefsFile";
     public SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -69,9 +69,9 @@ public class RecentFragment extends Fragment {
     Long lastUpdateInt;
     String currentTimeStr;
     int dbLines = 0;
-    SharedPreferences settings ;
-    private static boolean doNotUseClient ;
-    private static boolean disableJavascript ;
+    SharedPreferences settings;
+    private static boolean doNotUseClient;
+    private static boolean disableJavascript;
 
 
     @Override
@@ -477,11 +477,14 @@ public class RecentFragment extends Fragment {
                     Snackbar.make(getView(), "时光机带你降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;
-            case R.id.action_date_picker:
-                new DatePickerDialog()
-                if (null != getView())
-                    Snackbar.make(getView(), "选择了XX日.", Snackbar.LENGTH_SHORT).show();
+            case R.id.action_date_picker: {
+                DatePickerFragment picker = new DatePickerFragment();
+                picker.onDateSetListener(this);
+
+                picker.show(getFragmentManager(), "datePicker");
+
                 break;
+            }
             case R.id.action_refresh:
                 System.out.println("刷新");
                 if (!mSwipeRefreshLayout.isRefreshing()) {
@@ -528,7 +531,6 @@ public class RecentFragment extends Fragment {
 //    }
 
 
-
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
@@ -536,21 +538,41 @@ public class RecentFragment extends Fragment {
 
             settings = PreferenceManager.getDefaultSharedPreferences(getContext());
             doNotUseClient = settings.getBoolean("doNotUseClient", true);
-            disableJavascript = settings.getBoolean("disableJavascript",true);
+            disableJavascript = settings.getBoolean("disableJavascript", true);
 
-            if(doNotUseClient){
-            Intent intent = new Intent(getContext(), WebViewActivity.class);
-            intent.putExtra("address", "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
-            intent.putExtra("title", answer.getTitle());
-            intent.putExtra("summary", answer.getSummary());
-            startActivity(intent);}
-            else{
-                Uri uri=Uri.parse("http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
-                Intent intent=new Intent();
+            if (doNotUseClient) {
+                Intent intent = new Intent(getContext(), WebViewActivity.class);
+                intent.putExtra("address", "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
+                intent.putExtra("title", answer.getTitle());
+                intent.putExtra("summary", answer.getSummary());
+                startActivity(intent);
+            } else {
+                Uri uri = Uri.parse("http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
+                Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(uri);
                 startActivity(intent);
             }
         }
     };
+
+    @Override
+    public void returnDate(String date, String date2) {
+//        System.out.println("here is return data----------->" + date);
+        System.out.println("getDate----------->" + getDate());
+
+        long one = Long.parseLong(date);
+        if (one < 20140919) {
+            if (null != getView())
+                Snackbar.make(getView(), "时光机到不了那里,请选择2014年9月19日之后的日期", Snackbar.LENGTH_LONG).show();
+        } else if (one > Long.parseLong(getDate())) {
+            if (null != getView())
+                Snackbar.make(getView(), "这一台时光机不能到未来去啊", Snackbar.LENGTH_LONG).show();
+        } else {
+            refreshListView(date);
+            mSwipeRefreshLayout.setRefreshing(true);
+            if (null != getView())
+                Snackbar.make(getView(), "时光机带你来到了" + date2, Snackbar.LENGTH_LONG).show();
+        }
+    }
 }
