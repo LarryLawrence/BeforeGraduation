@@ -76,6 +76,17 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
 
+        //DB的最近更新时间
+        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        lastUpdate = settings.getString("LastUpdateYesterday", "198801010500");//defValue - Value to return if this preference does not exist.
+        lastUpdateInt = Long.parseLong(lastUpdate);
+        //现在的时间
+        currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
+        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+        currentTimeInt = Long.parseLong(currentTimeStr);
+        //网站最近更新时间,今天早上五点
+        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
     }
 
     @Nullable
@@ -118,22 +129,16 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             //NECESSARY
             mSwipeRefreshLayout.setRefreshing(true);
             initiateDownloadToEmptyDB();
+
+            //为防止自动刷新后,用户下拉刷新,需要更新下面的参数
+            lastUpdate = settings.getString("LastUpdateYesterday", "198801011700");//defValue - Value to return if this preference does not exist.
+            lastUpdateInt = Long.parseLong(lastUpdate);
         } else {
             //几处progressBar:
             //1.onCreateView发现数据库没内容时   正常 （pb在第一个card上）
             //2.onCreateView发现内容需要更新时   正常 （pb紧贴tab--->改成了find之后统一set）
             setupList("上次看到");
-            //DB的最近更新时间
-            settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-            lastUpdate = settings.getString("LastUpdateYesterday", "198801010500");//defValue - Value to return if this preference does not exist.
-            lastUpdateInt = Long.parseLong(lastUpdate);
-            //现在的时间
-            currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-            currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-            currentTimeInt = Long.parseLong(currentTimeStr);
-            //网站最近更新时间,今天早上五点
-            latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-            latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+
 //        if(true)
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
