@@ -47,9 +47,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         db = new Db(getApplicationContext());
         SQLiteDatabase dbRead = db.getInstance(getApplicationContext()).getReadableDatabase();
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
-
-        if (myCursor.getCount() != 0)
-        {
+        if (myCursor.getCount() != 0) {
 //            setContentView(R.layout.activity_favorites);
             frameLayout.setVisibility(View.INVISIBLE);
         }

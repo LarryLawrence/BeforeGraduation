@@ -26,6 +26,7 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.FavoritesActivity" />
+        <activity android:name=".activities.GuideActivity" />
         <activity android:name=".activities.AnyActivity"></activity>
     </application>
 

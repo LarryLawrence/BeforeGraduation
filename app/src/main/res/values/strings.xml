@@ -4,7 +4,7 @@
     <string name="action_refresh">回到今天</string>
     <string name="action_past">回到过去</string>
     <string name="title_activity_settings">设置</string>
-    <string name="slogan">每天三次, 了解知乎动态</string>
+    <string name="slogan">每天三次, 看看知乎动态</string>
 
 
     <string name="section_format">Hello World from section: %1$d</string>

@@ -88,6 +88,13 @@ public class WebViewActivity extends AppCompatActivity {
         title = intent.getStringExtra("title");
         summary = intent.getStringExtra("summary");
         myWebView = (WebView) findViewById(R.id.webView);
+        //scrollBar
+        if (null != myWebView) {
+            System.out.println("webview scrollbar");
+            myWebView.setVerticalScrollBarEnabled(true);
+            myWebView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+        }
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean disableJavascript = settings.getBoolean("disableJavascript", true);
         String loadImage = settings.getString(IMAGE_LOAD, "always");
@@ -110,7 +117,7 @@ public class WebViewActivity extends AppCompatActivity {
                 case "never":
                     loadIMG = false;
             }
-            System.out.println("setBlockNetworkImage---------------->"+loadImage+"-------"+loadIMG);
+            System.out.println("setBlockNetworkImage---------------->" + loadImage + "-------" + loadIMG);
             myWebView.getSettings().setBlockNetworkImage(!loadIMG);
         }
         //启动缓存

@@ -9,8 +9,7 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        >
+        android:theme="@style/AppTheme.AppBarOverlay">
         <!--app:layout_scrollFlags="scroll|enterAlways"-->
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_custom"
@@ -30,12 +29,14 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay">
 
         <WebView
             android:id="@+id/webView"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:scrollbarStyle="outsideOverlay" />
 
     </android.support.v4.widget.NestedScrollView>
 

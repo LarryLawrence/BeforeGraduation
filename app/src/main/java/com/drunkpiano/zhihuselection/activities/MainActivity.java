@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.SectionsPagerAdapter;
@@ -96,34 +95,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (null != navigationView) {
             navigationView.setNavigationItemSelectedListener(this);
-            navigationView.getMenu().findItem(R.id.nav_favorites).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    item.setChecked(false);
-                    return false;
-                }
-            });
-            navigationView.getMenu().findItem(R.id.nav_about).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    item.setChecked(false);
-                    return false;
-                }
-            });
-            navigationView.getMenu().findItem(R.id.nav_settings).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    item.setChecked(false);
-                    return false;
-                }
-            });
-            navigationView.getMenu().findItem(R.id.nav_guide).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    item.setChecked(false);
-                    return false;
-                }
-            });
+//            navigationView.getMenu().findItem(R.id.nav_favorites).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    item.setChecked(false);
+//                    return false;
+//                }
+//            });
+//            navigationView.getMenu().findItem(R.id.nav_about).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    item.setChecked(false);
+//                    return false;
+//                }
+//            });
+//            navigationView.getMenu().findItem(R.id.nav_settings).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    item.setChecked(false);
+//                    return false;
+//                }
+//            });
+//            navigationView.getMenu().findItem(R.id.nav_guide).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    item.setChecked(false);
+//                    return false;
+//                }
+//            });
         }
     }
 
@@ -140,13 +139,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
 
             } else if (id == R.id.nav_guide) {
-                Toast.makeText(MainActivity.this, "guide", Toast.LENGTH_SHORT).show();
-
+                Intent intent = new Intent(MainActivity.this, GuideActivity.class);
+//                intent.putExtra("fragmentName","guide");
+                startActivity(intent);
             } else if (id == R.id.nav_about) {
-                Toast.makeText(MainActivity.this, "nav_slideshow", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, AnyActivity.class);
+                intent.putExtra("fragmentName","about");
+                startActivity(intent);
 
             } else if (id == R.id.nav_settings) {
+
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
+                intent.putExtra("fragmentName","settings");
                 startActivity(intent);
 
             }
