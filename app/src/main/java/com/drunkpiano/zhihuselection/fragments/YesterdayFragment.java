@@ -77,23 +77,14 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
 
-        //DB的最近更新时间
-        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        lastUpdate = settings.getString("LastUpdateYesterday", "198801010500");//defValue - Value to return if this preference does not exist.
-        lastUpdateInt = Long.parseLong(lastUpdate);
-        //现在的时间
-        currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-        currentTimeInt = Long.parseLong(currentTimeStr);
-        //网站最近更新时间,今天早上五点
-        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        System.out.println("this is yesterday oncreateView");
+        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
         Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
@@ -105,10 +96,23 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
-
+        refreshTime();
         cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//用线性显示 类似于listview
         initThisFragment(false);
         return root;
+    }
+
+    private void refreshTime(){
+        //DB的最近更新时间
+        lastUpdate = settings.getString("LastUpdateYesterday", "198801010500");//defValue - Value to return if this preference does not exist.
+        lastUpdateInt = Long.parseLong(lastUpdate);
+        //现在的时间
+        currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
+        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+        currentTimeInt = Long.parseLong(currentTimeStr);
+        //网站最近更新时间,今天早上五点
+        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "0500");
     }
 
     private void initThisFragment(boolean chongxinlianjieshishi) {
@@ -122,11 +126,13 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-            SimpleDateFormat timeWithChinese = new SimpleDateFormat("yyyy年MM月dd日 E",Locale.CHINA);
+//            SimpleDateFormat timeWithChinese = new SimpleDateFormat("yyyy年MM月dd日 E",Locale.CHINA);
+            dateWithChinese = getDate().substring(0, 4) + "年" + getDate().substring(4, 6) + "月" + getDate().substring(6, getDate().length()) + "日";
+
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("LastUpdateYesterday", time.format(Calendar.getInstance().getTime()));
-            editor.putString("YesterdayLastViewedDateChinese",timeWithChinese.format(Calendar.getInstance().getTime()));
+            editor.putString("YesterdayLastViewedDateChinese",dateWithChinese);
             editor.apply();
             System.out.println("数据库里没东西,下载.");
             //NECESSARY
@@ -134,7 +140,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             initiateDownloadToEmptyDB();
 
             //为防止自动刷新后,用户下拉刷新,需要更新下面的参数
-            lastUpdate = settings.getString("LastUpdateYesterday", "198801011700");//defValue - Value to return if this preference does not exist.
+            lastUpdate = settings.getString("LastUpdateYesterday", "198801010700");//defValue - Value to return if this preference does not exist.
             lastUpdateInt = Long.parseLong(lastUpdate);
         } else {
             //几处progressBar:
@@ -144,6 +150,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             setupList(lastViewedDateChinese);
 
 //        if(true)
+            refreshTime();
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
                 System.out.println("对应createView的时候判断出需要刷新的情况");
@@ -151,10 +158,19 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateYesterday", currentTimeStr);
                 editor.apply();
-            }
+                if(getView()!=null)
+                    Snackbar.make(getView(),"有新内容,稍等..",Snackbar.LENGTH_LONG).show();            }
         }
         cursor.close();
         dbRead.close();
+    }
+
+    @Override
+    public void onResume() {
+        initThisFragment(false);
+        System.out.println("this is yesterday onResume");
+
+        super.onResume();
     }
 
     @Override
@@ -163,11 +179,15 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                refreshTime();
+                System.out.println("currentTimeInt--------->"+currentTimeInt);
+                System.out.println("latestWebsiteUpdateTimeInt--------->"+latestWebsiteUpdateTimeInt);
+                System.out.println("lastUpdateInt--------->"+lastUpdateInt);
                 if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)
                     swipeRefresh();
                 else if (null != getView())
                 {
-                    Snackbar.make(getView(), "已是最新,「一天」栏目每天早上5:00更新", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(getView(), "已是最新, 「昨天」栏目每天早上5:00更新", Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -393,7 +413,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(Calendar.getInstance().getTime());
+//                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(Calendar.getInstance().getTime());
                 //setup List放在这里,可以保证下载完成再setup list.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -539,8 +559,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         @Override
         public void onMainItemClick(ListCellData answer) {
 
-            settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-            boolean doNotUseClient = settings.getBoolean("doNotUseClient", true);
+            SharedPreferences defaultSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
+            boolean doNotUseClient = defaultSharedPreference.getBoolean("doNotUseClient", true);
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
             if (doNotUseClient) {
                 Intent intent = new Intent(getContext(), WebViewActivity.class);

@@ -42,11 +42,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "一天";
+                return "昨天";
             case 1:
-                return "一周";
+                return "上周";
             case 2:
-                return "一月";
+                return "往年";
         }
         return null;
     }

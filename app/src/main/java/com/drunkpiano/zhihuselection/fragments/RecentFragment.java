@@ -73,31 +73,19 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     String lastViewedDateChinese;
 
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
 
-        //DB的最近更新时间
-        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
-        lastUpdateInt = Long.parseLong(lastUpdate);
-        //现在的时间
-        currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
-        currentTimeInt = Long.parseLong(currentTimeStr);
-        //网站最近更新时间,今天早上五点
-        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
@@ -120,6 +108,19 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         return root;
     }
 
+    private void refreshTime() {
+        //DB的最近更新时间
+        lastUpdate = settings.getString("LastUpdateRecent", "198801011100");//defValue - Value to return if this preference does not exist.
+        lastUpdateInt = Long.parseLong(lastUpdate);
+        //现在的时间
+        currentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
+        currentTimeStr = currentTime.format(Calendar.getInstance().getTime()).trim();
+        currentTimeInt = Long.parseLong(currentTimeStr);
+        //网站最近更新时间,今天早上五点
+        latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1100");
+    }
+
     private void initThisFragment(boolean chongxinlianjieshishi) {
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
@@ -131,11 +132,13 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
-            SimpleDateFormat timeWithChinese = new SimpleDateFormat("yyyy年MM月dd日 E",Locale.CHINA);
+//            SimpleDateFormat timeWithChinese = new SimpleDateFormat("yyyy年MM月dd日 E",Locale.CHINA);
+            dateWithChinese = getDate().substring(0, 4) + "年" + getDate().substring(4, 6) + "月" + getDate().substring(6, getDate().length()) + "日";
+
             SharedPreferences.Editor editor = settings.edit();
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
             editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
-            editor.putString("RecentLastViewedDateChinese",timeWithChinese.format(Calendar.getInstance().getTime()));
+            editor.putString("RecentLastViewedDateChinese", dateWithChinese);
             editor.apply();
             System.out.println("数据库里没东西,下载.");
             //NECESSARY
@@ -153,6 +156,10 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             setupList(lastViewedDateChinese);
 
 //        if(true)
+            refreshTime();
+            System.out.println("currentTimeInt--------->" + currentTimeInt);
+            System.out.println("latestWebsiteUpdateTimeInt--------->" + latestWebsiteUpdateTimeInt);
+            System.out.println("lastUpdateInt--------->" + lastUpdateInt);
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
                 System.out.println("对应createView的时候判断出需要刷新的情况");
@@ -160,10 +167,19 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateRecent", currentTimeStr);
                 editor.apply();
+                if (getView() != null)
+                    Snackbar.make(getView(), "有新内容,稍等..", Snackbar.LENGTH_LONG).show();
             }
         }
         cursor.close();
         dbRead.close();
+    }
+
+    @Override
+    public void onResume() {
+        initThisFragment(false);
+        System.out.println("this is recent onResume");
+        super.onResume();
     }
 
     @Override
@@ -172,10 +188,11 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                refreshTime();
                 if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)
                     swipeRefresh();
                 else if (null != getView()) {
-                    Snackbar.make(getView(), "已是最新,「一周」栏目每天中午11:00更新", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(getView(), "已是最新, 「上周」栏目每天中午11:00更新", Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -404,7 +421,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(Calendar.getInstance().getTime());
+//                dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(Calendar.getInstance().getTime());
                 //setup List放在这里,可以保证下载完成再setup list.注意,如果在这个asyncTask外面再嵌套一个asyncTask,上层的postExecute不会等这一层的执行完才执行!是两个线程了.
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -550,8 +567,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         @Override
         public void onMainItemClick(ListCellData answer) {
 
-            settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-            boolean doNotUseClient = settings.getBoolean("doNotUseClient", true);
+            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            boolean doNotUseClient = defaultSharedPreferences.getBoolean("doNotUseClient", true);
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
             if (doNotUseClient) {
                 Intent intent = new Intent(getContext(), WebViewActivity.class);
