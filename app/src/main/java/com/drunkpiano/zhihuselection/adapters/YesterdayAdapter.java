@@ -72,35 +72,15 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.card_single);
         }
-
-//        @Override
-//        public void onClick(View v) {
-//            if (mainItemClickListener != null) {
-//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
-//            }
-//        }
-
-//        private void startWebViewActivity() {
-//            Intent intent = new Intent(context, WebViewActivity.class);
-//            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
-//            intent.putExtra("title", data[getAdapterPosition()].getTitle());
-//            intent.putExtra("summary", data[getAdapterPosition()].getSummary());
-//            context.startActivity(intent);
-//        }
     }
 
     public static View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()]);
-//                            if (mainItemClickListener != null) {
-//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
+            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()] , (Integer)v.getTag());
         }
     };
 
-//    public void setOnClickListener(MainItemClickListener listener) {
-//        mainItemClickListener = listener;
-//    }
 
 
     public class DataSetViewHolderWithDate extends DataSetViewHolder {

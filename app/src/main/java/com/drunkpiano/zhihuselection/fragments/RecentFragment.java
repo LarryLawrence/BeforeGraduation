@@ -71,7 +71,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     int dbLines = 0;
     SharedPreferences settings;
     String lastViewedDateChinese;
-
+    int positionRecovery = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,9 +157,9 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
 //        if(true)
             refreshTime();
-            System.out.println("currentTimeInt--------->" + currentTimeInt);
-            System.out.println("latestWebsiteUpdateTimeInt--------->" + latestWebsiteUpdateTimeInt);
-            System.out.println("lastUpdateInt--------->" + lastUpdateInt);
+//            System.out.println("currentTimeInt--------->" + currentTimeInt);
+//            System.out.println("latestWebsiteUpdateTimeInt--------->" + latestWebsiteUpdateTimeInt);
+//            System.out.println("lastUpdateInt--------->" + lastUpdateInt);
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
                 System.out.println("对应createView的时候判断出需要刷新的情况");
@@ -168,7 +168,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 editor.putString("LastUpdateRecent", currentTimeStr);
                 editor.apply();
                 if (getView() != null)
-                    Snackbar.make(getView(), "有新内容,稍等..", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(), "「上周」栏目有新内容, 稍等..", Snackbar.LENGTH_LONG).show();
             }
         }
         cursor.close();
@@ -177,7 +177,10 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
     @Override
     public void onResume() {
-        initThisFragment(false);
+        refreshTime();
+        if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
+            initThisFragment(false);//这是为了防止用户没退出进程第二天早晨onResume的时候需要更新
+        }
         System.out.println("this is recent onResume");
         super.onResume();
     }
@@ -231,6 +234,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         Cursor myCursor = dbRead.query("recent", null, null, null, null, null, null);
         RecentAdapter recentAdapter = new RecentAdapter(getActivity(), "recent", myCursor.getCount(), dateWithChinese, callBack);
         cardsListRv.setAdapter(recentAdapter);
+        cardsListRv.scrollToPosition(positionRecovery);
+
         dbRead.close();
         myCursor.close();
     }
@@ -565,8 +570,8 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
-        public void onMainItemClick(ListCellData answer) {
-
+        public void onMainItemClick(ListCellData answer, int position) {
+            positionRecovery = position;
             SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean doNotUseClient = defaultSharedPreferences.getBoolean("doNotUseClient", true);
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);

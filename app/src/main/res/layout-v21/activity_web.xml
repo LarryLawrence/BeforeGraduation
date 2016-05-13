@@ -33,10 +33,10 @@
         <!--android:scrollbarStyle="outsideOverlay">-->
 
         <WebView
+
             android:id="@+id/webView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:scrollbarStyle="outsideOverlay" />
 
     <!--</android.support.v4.widget.NestedScrollView>-->
@@ -48,6 +48,8 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_favorite_white_24dp"
+        app:layout_anchor="@id/webView"
+        app:layout_anchorGravity="bottom|right|end"
         app:layout_behavior="com.drunkpiano.zhihuselection.utilities.ScrollingFavoriteFABBehavior" />
 
 

@@ -69,10 +69,16 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     int dbLines = 0;
     SharedPreferences settings;
     String lastViewedDateChinese;
+    LinearLayoutManager lm ;
+    private int positionRecovery;
+//    int ScrollX;
+    int ScrollY;
+
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        System.out.println("yesterday onCreate");
         super.onCreate(savedInstanceState);
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
@@ -83,6 +89,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        System.out.println("yesterday onCreateView");
+
         System.out.println("this is yesterday oncreateView");
         settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         db = new Db(getContext());
@@ -97,10 +105,42 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 R.color.swipe_color_3, R.color.swipe_color_4);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
         refreshTime();
-        cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//用线性显示 类似于listview
+         lm = new LinearLayoutManager(getContext());
+        cardsListRv.setLayoutManager(lm);//用线性显示 类似于listview
+        cardsListRv.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                System.out.println("newState-------->"+ newState);
+//                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_IDLE){
+//                    ScrollX = cardsListRv.getScrollX();
+//                    System.out.println("getScrollX----->"+ getScrollX());
+//                    Parcelable scrollState = cardsListRv.onSavedInstance()
+                    ScrollY = cardsListRv.getScrollY();
+                    System.out.println("getScrollY-------->"+ ScrollY);
+
+                }
+//                System.out.println( "positiony----->" + ScrollY);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+
+            public int getScrollYY(){
+                View c = cardsListRv.getChildAt(0);
+                if(c==null)return 0;
+                int firstVisiblePosition = cardsListRv.getVerticalScrollbarPosition();
+                int top = c.getTop();
+                return -top + firstVisiblePosition * c.getHeight() ;
+            }
+        });
         initThisFragment(false);
         return root;
     }
+
+
 
     private void refreshTime(){
         //DB的最近更新时间
@@ -132,9 +172,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("LastUpdateYesterday", time.format(Calendar.getInstance().getTime()));
-            editor.putString("YesterdayLastViewedDateChinese",dateWithChinese);
+            editor.putString("YesterdayLastViewedDateChinese", dateWithChinese);
             editor.apply();
-            System.out.println("数据库里没东西,下载.");
+//            System.out.println("数据库里没东西,下载.");
             //NECESSARY
             mSwipeRefreshLayout.setRefreshing(true);
             initiateDownloadToEmptyDB();
@@ -153,13 +193,13 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             refreshTime();
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
-                System.out.println("对应createView的时候判断出需要刷新的情况");
+//                System.out.println("对应createView的时候判断出需要刷新的情况");
                 refreshListView(getDate());
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateYesterday", currentTimeStr);
                 editor.apply();
                 if(getView()!=null)
-                    Snackbar.make(getView(),"有新内容,稍等..",Snackbar.LENGTH_LONG).show();            }
+                    Snackbar.make(getView(),"「昨天」栏目有新内容, 稍等..",Snackbar.LENGTH_LONG).show();            }
         }
         cursor.close();
         dbRead.close();
@@ -167,9 +207,10 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
 
     @Override
     public void onResume() {
-        initThisFragment(false);
-        System.out.println("this is yesterday onResume");
-
+        refreshTime();
+        if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
+            initThisFragment(false);//这是为了防止用户没退出进程第二天早晨onResume的时候需要更新
+        }        System.out.println("this is yesterday onResume");
         super.onResume();
     }
 
@@ -180,9 +221,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             @Override
             public void onRefresh() {
                 refreshTime();
-                System.out.println("currentTimeInt--------->"+currentTimeInt);
-                System.out.println("latestWebsiteUpdateTimeInt--------->"+latestWebsiteUpdateTimeInt);
-                System.out.println("lastUpdateInt--------->"+lastUpdateInt);
+//                System.out.println("currentTimeInt--------->"+currentTimeInt);
+//                System.out.println("latestWebsiteUpdateTimeInt--------->"+latestWebsiteUpdateTimeInt);
+//                System.out.println("lastUpdateInt--------->"+lastUpdateInt);
                 if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)
                     swipeRefresh();
                 else if (null != getView())
@@ -210,7 +251,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
 
         mSwipeRefreshLayout.setRefreshing(true);
         refreshListView(getDate());
-        System.out.println("正在更新..");
+//        System.out.println("正在更新..");
 
         settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
@@ -220,13 +261,24 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     }
 
     public void setupList(String dateWithChinese) {
+        System.out.println("setuplist-------111------------");
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
         Cursor myCursor = dbRead.query("yesterday", null, null, null, null, null, null);
         YesterdayAdapter yesterdayAdapter = new YesterdayAdapter(getActivity(), "yesterday", myCursor.getCount(), dateWithChinese, callBack);
         cardsListRv.setAdapter(yesterdayAdapter);
+//        cardsListRv.scrollToPosition(positionRecovery);
+//        cardsListRv.smoothScrollToPosition();
+//        lm.scrollToPositionWithOffset(3, 150);
 //        mainAdapter.setOnClickListener(this);
+        cardsListRv.post(new Runnable() {
+            @Override
+            public void run() {
+                cardsListRv.scrollTo(0,100);
+            }
+        });
+        System.out.println("setpulist------scrolly---->"+ScrollY);
         dbRead.close();
         myCursor.close();
     }
@@ -254,7 +306,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                     JSONObject
                             root = new JSONObject(builder.toString());
 
-                    System.out.println("refresh ListView-->root中的count是" + root.getInt("count"));
+//                    System.out.println("refresh ListView-->root中的count是" + root.getInt("count"));
 
                     //写入日期到database
                     db = new Db(getContext());
@@ -446,7 +498,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         cv.put("sauthorhash", data.getAuthorhash());
         cv.put("savatar", data.getAvatar());
         cv.put("svote", data.getVote());
-        System.out.println("FM title---------->" + data.getTitle());
+//        System.out.println("FM title---------->" + data.getTitle());
         String whereClause = "_id=?";
         String[] whereArgs = {String.valueOf(ids)};
         dbWrite.update(tabName, cv, whereClause, whereArgs);
@@ -469,7 +521,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         cv.put("sauthorhash", data.getAuthorhash());
         cv.put("savatar", data.getAvatar());
         cv.put("svote", data.getVote());
-        System.out.println("Bridge title---------->" + data.getTitle());
+//        System.out.println("Bridge title---------->" + data.getTitle());
 
         dbWrite.insert(tabName, null, cv);
         dbWrite.close();
@@ -557,11 +609,12 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
-        public void onMainItemClick(ListCellData answer) {
+        public void onMainItemClick(ListCellData answer , int position) {
 
             SharedPreferences defaultSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean doNotUseClient = defaultSharedPreference.getBoolean("doNotUseClient", true);
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
+            positionRecovery = position;
             if (doNotUseClient) {
                 Intent intent = new Intent(getContext(), WebViewActivity.class);
                 intent.putExtra("address", "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
@@ -597,4 +650,6 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 Snackbar.make(getView(), "时光机带你来到了" + date2, Snackbar.LENGTH_LONG).show();
         }
     }
+
+
 }

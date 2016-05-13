@@ -69,7 +69,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
     int dbLines = 0;
     SharedPreferences settings;
     String lastViewedDateChinese;
-
+    int positionRecovery = 0;
 
 
     @Override
@@ -157,7 +157,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 editor.putString("LastUpdateArchive", currentTimeStr);
                 editor.apply();
                 if(getView()!=null)
-                    Snackbar.make(getView(),"有新内容,稍等..",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(),"「往年」栏目有新内容, 稍等..",Snackbar.LENGTH_LONG).show();
             }
         }
         cursor.close();
@@ -166,8 +166,10 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
 
     @Override
     public void onResume() {
-        initThisFragment(false);
-        super.onResume();
+        refreshTime();
+        if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
+            initThisFragment(false);//这是为了防止用户没退出进程第二天早晨onResume的时候需要更新
+        }        super.onResume();
     }
 
     @Override
@@ -220,6 +222,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         Cursor myCursor = dbRead.query("archive", null, null, null, null, null, null);
         ArchiveAdapter archiveAdapter = new ArchiveAdapter(getActivity(), "archive", myCursor.getCount(), dateWithChinese, callBack);
         cardsListRv.setAdapter(archiveAdapter);
+        cardsListRv.scrollToPosition(positionRecovery);
 //        mainAdapter.setOnClickListener(this);
         dbRead.close();
         myCursor.close();
@@ -552,10 +555,12 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
-        public void onMainItemClick(ListCellData answer) {
+        public void onMainItemClick(ListCellData answer , int position) {
 
             SharedPreferences defaultSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean doNotUseClient = defaultSharedPreference.getBoolean("doNotUseClient", true);
+
+            positionRecovery = position;
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
             if (doNotUseClient) {
                 Intent intent = new Intent(getContext(), WebViewActivity.class);

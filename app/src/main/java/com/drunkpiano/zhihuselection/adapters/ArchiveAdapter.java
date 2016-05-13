@@ -92,7 +92,7 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
     public static View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()]);
+            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()] , (Integer) v.getTag());
 //                            if (mainItemClickListener != null) {
 //                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
         }

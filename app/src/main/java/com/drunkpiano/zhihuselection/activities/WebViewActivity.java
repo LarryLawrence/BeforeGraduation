@@ -203,6 +203,7 @@ public class WebViewActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(shareIntent, "分享到："));
                 break;
             case R.id.action_open_zhihu:
+                System.out.println("address------>"+address);
                 Uri uri = Uri.parse(address);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
@@ -245,7 +246,7 @@ public class WebViewActivity extends AppCompatActivity {
 //        else
 //            removeFavorite();
         dbRead.close();
-
+        myCursor.close();
         return alreadyStarred;
     }
 
