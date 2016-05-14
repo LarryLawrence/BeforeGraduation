@@ -4,8 +4,6 @@
         android:id="@+id/card_no_ele"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="2dp">
         <!--app:cardUseCompatPadding="true"-->

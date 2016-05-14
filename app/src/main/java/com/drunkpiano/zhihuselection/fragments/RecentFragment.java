@@ -607,7 +607,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             refreshListView(date);
             mSwipeRefreshLayout.setRefreshing(true);
             if (null != getView())
-                Snackbar.make(getView(), "时光机带你来到了" + date2, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), "时光机带你开往" + date2, Snackbar.LENGTH_LONG).show();
         }
     }
 }

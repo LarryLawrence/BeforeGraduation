@@ -42,6 +42,8 @@ public class WebViewActivity extends AppCompatActivity {
 
     com.gc.materialdesign.views.ProgressBarIndeterminate progressBarIndeterminate;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

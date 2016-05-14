@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.fragments.GuideFragment;
 import com.drunkpiano.zhihuselection.fragments.SettingsFragment;
-import com.drunkpiano.zhihuselection.fragments.ThirdFragment;
+import com.drunkpiano.zhihuselection.fragments.AboutFragment;
 
 public class AnyActivity extends AppCompatActivity {
     android.support.v7.widget.Toolbar toolbar;
@@ -43,13 +43,12 @@ public class AnyActivity extends AppCompatActivity {
                     .replace(R.id.any_container, new SettingsFragment())
                     .commit();
 //            toolbar.setTitle(titleName);
-
         }
         else if(fragmentName.equals("about")){
             titleName = "关于";
             toolbar.setTitle(titleName);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.any_container, new ThirdFragment())
+                    .replace(R.id.any_container, new AboutFragment())
                     .commit();
         }
         else if(fragmentName.equals("guide")) {

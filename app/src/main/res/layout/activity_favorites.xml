@@ -37,6 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="还没有内容" />
+            android:text="@string/tv_no_content" />
     </FrameLayout>
 </LinearLayout>
