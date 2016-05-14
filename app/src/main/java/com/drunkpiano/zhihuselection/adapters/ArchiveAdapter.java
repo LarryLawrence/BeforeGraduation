@@ -32,7 +32,7 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
     String dateWithChinese;
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
-    private static MainItemClickListener mainItemClickListener;
+    private  MainItemClickListener mainItemClickListener;
 
     public ArchiveAdapter(Context context, String tableName, int count, String dateWithChinese, MainItemClickListener callBack) {
         this.context = context;
@@ -40,19 +40,15 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
         this.count = count;
         this.dateWithChinese = dateWithChinese;
         this.mainItemClickListener = callBack;
-//        System.out.println("dateWithChinese----constructor--->"+this.dateWithChinese);
-
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-//            System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
         } else if (position == count-1) {
             return ITEM_WITH_END;
         } else {
-//            System.out.println("NORMAL_ITEM");
             return NORMAL_ITEM;
         }
     }
@@ -73,34 +69,14 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
             rootView = itemView.findViewById(R.id.card_single);
         }
 
-//        @Override
-//        public void onClick(View v) {
-//            if (mainItemClickListener != null) {
-//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
-//            }
-//        }
-
-//        private void startWebViewActivity() {
-//            Intent intent = new Intent(context, WebViewActivity.class);
-//            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
-//            intent.putExtra("title", data[getAdapterPosition()].getTitle());
-//            intent.putExtra("summary", data[getAdapterPosition()].getSummary());
-//            context.startActivity(intent);
-//        }
     }
 
-    public static View.OnClickListener linkListener = new View.OnClickListener() {
+    public View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()] , (Integer) v.getTag());
-//                            if (mainItemClickListener != null) {
-//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
         }
     };
-
-//    public void setOnClickListener(MainItemClickListener listener) {
-//        mainItemClickListener = listener;
-//    }
 
 
     public class DataSetViewHolderWithDate extends DataSetViewHolder {
@@ -198,7 +174,7 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
         Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
 
         while (myCursor.moveToNext()) {
-            ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4), myCursor.getString(5), myCursor.getString(6), myCursor.getString(7), myCursor.getString(8), myCursor.getString(9));
+            ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4));
             dataArrayList.add(dataCell);
         }
         myCursor.close();

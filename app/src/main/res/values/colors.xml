@@ -3,8 +3,6 @@
     <!--<color name="colorPrimary">#689F3A</color>-->
     <color name="colorPrimary">#D84436</color>
     <color name="colorPrimaryDark">#C33A29</color>
-    <!--<color name="colorPrimaryDark">#598a32</color>-->
-    <!--<color name="colorPrimaryDark">#303F9F</color>-->
     <color name="colorAccent">#628AFF</color>
     <color name="pure_bule">#0000FF</color>color>
     <color name="light_grey">#f0f0f0</color>
@@ -17,7 +15,7 @@
 
     <color name="swipe_color_1">#7CAFFF</color>
     <color name="swipe_color_2">#99CC00</color>
-    <color name="swipe_color_3">#8ABD00</color>
+    <color name="swipe_color_3">#D84436</color>
     <color name="swipe_color_4">#B6DB49</color>
     <!--<color name="swipe_color_1">#7CAF00</color>-->
 

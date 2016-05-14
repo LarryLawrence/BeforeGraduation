@@ -32,7 +32,7 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
     String dateWithChinese;
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
-    private static MainItemClickListener mainItemClickListener;
+    private MainItemClickListener mainItemClickListener;
 
     public YesterdayAdapter(Context context, String tableName, int count, String dateWithChinese, MainItemClickListener callBack) {
         this.context = context;
@@ -40,19 +40,15 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
         this.count = count;
         this.dateWithChinese = dateWithChinese;
         this.mainItemClickListener = callBack;
-//        System.out.println("dateWithChinese----constructor--->"+this.dateWithChinese);
-
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-//            System.out.println("ITEM_WITH_DATE");
             return ITEM_WITH_DATE;
         } else if (position == count-1) {
             return ITEM_WITH_END;
         } else {
-//            System.out.println("NORMAL_ITEM");
             return NORMAL_ITEM;
         }
     }
@@ -74,7 +70,7 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public static View.OnClickListener linkListener = new View.OnClickListener() {
+    public View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()] , (Integer)v.getTag());
@@ -104,8 +100,6 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
         QueryData();
         View v;
         if (viewType == NORMAL_ITEM) {//getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
-            // create a new view
-
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view, parent, false);
 //            System.out.println("inflate---->ITEM_WITH_DATE");
@@ -178,7 +172,7 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
         Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
 
         while (myCursor.moveToNext()) {
-            ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4), myCursor.getString(5), myCursor.getString(6), myCursor.getString(7), myCursor.getString(8), myCursor.getString(9));
+            ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4));
             dataArrayList.add(dataCell);
         }
         myCursor.close();

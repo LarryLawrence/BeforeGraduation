@@ -5,26 +5,15 @@ package com.drunkpiano.zhihuselection.utilities;
  */
 public class ListCellData {
     private String title = "";
-    private String time = "";
     private String summary = "";
     private String questionid = "";
     private String answerid = "";
-    private String authorname = "";
-    private String authorhash = "";
-    private String avatar = "" ;
-    private String vote = "0";
 
-    public ListCellData( String title,String time,String summary,String questionid, String answerid,
-                         String authorname, String authorhash, String avatar, String vote){
+    public ListCellData( String title, String summary, String questionid, String answerid){
         this.title = title ;
-        this.time = time ;
         this.summary = summary ;
         this.questionid = questionid ;
         this.answerid = answerid ;
-        this.authorname = authorname ;
-        this.authorhash = authorhash ;
-        this.avatar = avatar ;
-        this.vote = vote ;
     }
 
     public ListCellData(){}//2nd constructor哪里用到了
@@ -35,14 +24,6 @@ public class ListCellData {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public String getSummary() {
@@ -69,35 +50,4 @@ public class ListCellData {
         this.answerid = answerid;
     }
 
-    public String getAuthorname() {
-        return authorname;
-    }
-
-    public void setAuthorname(String authorname) {
-        this.authorname = authorname;
-    }
-
-    public String getAuthorhash() {
-        return authorhash;
-    }
-
-    public void setAuthorhash(String authorhash) {
-        this.authorhash = authorhash;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getVote() {
-        return vote;
-    }
-
-    public void setVote(String vote) {
-        this.vote = vote;
-    }
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -40,8 +41,7 @@ public class WebViewActivity extends AppCompatActivity {
     String snackMsg;
     boolean alreadyStarred = false;
 
-    com.gc.materialdesign.views.ProgressBarIndeterminate progressBarIndeterminate;
-
+    SwipeRefreshLayout webSwipeRefreshLayout;
 
 
     @Override
@@ -50,7 +50,22 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_web);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_custom);
-        progressBarIndeterminate = (com.gc.materialdesign.views.ProgressBarIndeterminate) findViewById(R.id.web_progress);
+        webSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_web);
+        if (null != webSwipeRefreshLayout) {
+            webSwipeRefreshLayout.setColorSchemeResources(
+                    R.color.swipe_color_1, R.color.swipe_color_2,
+                    R.color.swipe_color_3, R.color.swipe_color_4);
+            webSwipeRefreshLayout.setProgressViewOffset(false, 0, 60);
+            webSwipeRefreshLayout.setRefreshing(true);
+        }
+        webSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                myWebView.reload();
+            }
+        });
+
+//        progressBarIndeterminate = (com.gc.materialdesign.views.ProgressBarIndeterminate) findViewById(R.id.web_progress);
         toolbar.setTitle("答案");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
@@ -80,9 +95,11 @@ public class WebViewActivity extends AppCompatActivity {
                             }).show();
                 }
             });
-
         this.initMyWebView();
     }
+
+
+
 
     private void initMyWebView() {
         Intent intent = getIntent();
@@ -92,7 +109,6 @@ public class WebViewActivity extends AppCompatActivity {
         myWebView = (WebView) findViewById(R.id.webView);
         //scrollBar
         if (null != myWebView) {
-            System.out.println("webview scrollbar");
             myWebView.setVerticalScrollBarEnabled(true);
             myWebView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         }
@@ -127,18 +143,12 @@ public class WebViewActivity extends AppCompatActivity {
         //设置缓存模式
         //        myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         //        this.myWebView.setWebChromeClient();
-        //顺序有关系?
         if (myWebView != null)
             myWebView.loadUrl(address);
         myWebView.setWebViewClient(new myWebViewClient());
     }
 
     class myWebViewClient extends WebViewClient {
-//        @Override
-//        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-//            return super.shouldOverrideKeyEvent(view, event);
-//        }
-
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
@@ -167,7 +177,8 @@ public class WebViewActivity extends AppCompatActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            progressBarIndeterminate.setVisibility(WebView.GONE);
+//            progressBarIndeterminate.setVisibility(WebView.GONE);
+            webSwipeRefreshLayout.setRefreshing(false);
             super.onPageFinished(view, url);
         }
     }
@@ -205,13 +216,18 @@ public class WebViewActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(shareIntent, "分享到："));
                 break;
             case R.id.action_open_zhihu:
-                System.out.println("address------>"+address);
+                System.out.println("address------>" + address);
                 Uri uri = Uri.parse(address);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(uri);
                 startActivity(intent);
                 break;
+            case R.id.action_web_refresh:
+                myWebView.reload();
+                webSwipeRefreshLayout.setRefreshing(true);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

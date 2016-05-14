@@ -4,15 +4,20 @@
 
     <item
         android:id="@+id/action_share"
-        android:orderInCategory="100"
-        android:title="分享"
         android:icon="@drawable/ic_share_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/action_share"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_open_zhihu"
         android:orderInCategory="100"
-        android:title="用知乎打开"
+        android:title="@string/action_open_in_zhihu"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_web_refresh"
+        android:orderInCategory="100"
+        android:title="@string/action_web_refresh"
         app:showAsAction="never" />
 
 </menu>

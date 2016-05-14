@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -19,20 +21,30 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
         <!--app:layout_scrollFlags="scroll|enterAlways"-->
 
-        <com.gc.materialdesign.views.ProgressBarIndeterminate
-            android:id="@+id/web_progress"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent" />
+        <!--<com.gc.materialdesign.views.ProgressBarIndeterminate-->
+            <!--android:id="@+id/web_progress"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="#EDEDED" />-->
 
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/swipe_refresh_layout_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F0F0F0"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <WebView
             android:id="@+id/webView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:scrollbarStyle="outsideOverlay" />
+            android:scrollbarStyle="outsideOverlay"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_favorite"
@@ -43,5 +55,5 @@
         android:src="@drawable/ic_favorite_white_24dp"
         app:layout_behavior="com.drunkpiano.zhihuselection.utilities.ScrollingFavoriteFABBehavior" />
 
-
 </android.support.design.widget.CoordinatorLayout>
+

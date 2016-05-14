@@ -7,10 +7,10 @@
     <string name="slogan">每天三次, 看看知乎动态</string>
 
 
-    <string name="action_about">About</string>
-    <string name="dialog_ok">OK</string>
-    <string name="list_item_left_button">Left</string>
-    <string name="list_item_right_button">Right</string>
+    <!--<string name="action_about">About</string>-->
+    <!--<string name="dialog_ok">OK</string>-->
+    <!--<string name="list_item_left_button">Left</string>-->
+    <!--<string name="list_item_right_button">Right</string>-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -26,4 +26,12 @@
     <string name="tv_github"><u>github.com/LarryLawrence</u></string>
     <string name="tv_ingress">Ingress: DrunkPian0</string>
     <string name="tv_sulian">谢谢<u>@苏莉安</u>女士提供API</string>
+
+
+    <string name="action_share">分享</string>
+    <string name="action_open_in_zhihu">用知乎客户端打开</string>
+    <string name="action_web_refresh">刷新</string>
+
+
+
 </resources>

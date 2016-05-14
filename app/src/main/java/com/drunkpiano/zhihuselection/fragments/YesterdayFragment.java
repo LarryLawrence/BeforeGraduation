@@ -320,27 +320,17 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                             for (int i = 0; i < myCursor.getCount(); i++) {
                                 JSONObject jo = array.getJSONObject(i);
                                 LcData.setTitle(jo.getString("title"));
-                                LcData.setTime(jo.getString("time"));
                                 LcData.setSummary(jo.getString("summary"));
                                 LcData.setQuestionid(jo.getString("questionid"));
                                 LcData.setAnswerid(jo.getString("answerid"));
-                                LcData.setAuthorname(jo.getString("authorname"));
-                                LcData.setAuthorhash(jo.getString("authorhash"));
-                                LcData.setAvatar(jo.getString("avatar"));
-                                LcData.setVote(jo.getString("vote"));
                                 updateTables(LcData, tabName, i + 1);
                             }
                             for (int i = myCursor.getCount(); i < root.getInt("count"); i++) {
                                 JSONObject jo = array.getJSONObject(i);
                                 LcData.setTitle(jo.getString("title"));
-                                LcData.setTime(jo.getString("time"));
                                 LcData.setSummary(jo.getString("summary"));
                                 LcData.setQuestionid(jo.getString("questionid"));
                                 LcData.setAnswerid(jo.getString("answerid"));
-                                LcData.setAuthorname(jo.getString("authorname"));
-                                LcData.setAuthorhash(jo.getString("authorhash"));
-                                LcData.setAvatar(jo.getString("avatar"));
-                                LcData.setVote(jo.getString("vote"));
                                 insertToTables(LcData, tabName);
 //                            System.out.println("-------->before update");
 //                            updateTables(LcData, tabName, i + 1);
@@ -350,14 +340,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                             for (int i = 0; i < root.getInt("count"); i++) {
                                 JSONObject jo = array.getJSONObject(i);
                                 LcData.setTitle(jo.getString("title"));
-                                LcData.setTime(jo.getString("time"));
                                 LcData.setSummary(jo.getString("summary"));
                                 LcData.setQuestionid(jo.getString("questionid"));
                                 LcData.setAnswerid(jo.getString("answerid"));
-                                LcData.setAuthorname(jo.getString("authorname"));
-                                LcData.setAuthorhash(jo.getString("authorhash"));
-                                LcData.setAvatar(jo.getString("avatar"));
-                                LcData.setVote(jo.getString("vote"));
                                 updateTables(LcData, tabName, i + 1);
                             }
 
@@ -434,14 +419,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject jo = array.getJSONObject(i);
                             LcData.setTitle(jo.getString("title"));
-                            LcData.setTime(jo.getString("time"));
                             LcData.setSummary(jo.getString("summary"));
                             LcData.setQuestionid(jo.getString("questionid"));
                             LcData.setAnswerid(jo.getString("answerid"));
-                            LcData.setAuthorname(jo.getString("authorname"));
-                            LcData.setAuthorhash(jo.getString("authorhash"));
-                            LcData.setAvatar(jo.getString("avatar"));
-                            LcData.setVote(jo.getString("vote"));
 
                             insertToTables(LcData, tabName);
                         }
@@ -490,14 +470,10 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         SQLiteDatabase dbWrite = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("stitle", data.getTitle());
-        cv.put("stime", data.getTime());
         cv.put("ssummary", data.getSummary());
         cv.put("squestionid", data.getQuestionid());
         cv.put("sanswerid", data.getAnswerid());
-        cv.put("sauthorname", data.getAuthorname());
-        cv.put("sauthorhash", data.getAuthorhash());
-        cv.put("savatar", data.getAvatar());
-        cv.put("svote", data.getVote());
+
 //        System.out.println("FM title---------->" + data.getTitle());
         String whereClause = "_id=?";
         String[] whereArgs = {String.valueOf(ids)};
@@ -513,14 +489,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         SQLiteDatabase dbWrite = db.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("stitle", data.getTitle());
-        cv.put("stime", data.getTime());
         cv.put("ssummary", data.getSummary());
         cv.put("squestionid", data.getQuestionid());
         cv.put("sanswerid", data.getAnswerid());
-        cv.put("sauthorname", data.getAuthorname());
-        cv.put("sauthorhash", data.getAuthorhash());
-        cv.put("savatar", data.getAvatar());
-        cv.put("svote", data.getVote());
 //        System.out.println("Bridge title---------->" + data.getTitle());
 
         dbWrite.insert(tabName, null, cv);

@@ -198,7 +198,7 @@ public class RecentAdapter extends RecyclerView.Adapter {
         Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
 
         while (myCursor.moveToNext()) {
-            ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4), myCursor.getString(5), myCursor.getString(6), myCursor.getString(7), myCursor.getString(8), myCursor.getString(9));
+            ListCellData dataCell = new ListCellData(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3), myCursor.getString(4));
             dataArrayList.add(dataCell);
         }
         myCursor.close();
