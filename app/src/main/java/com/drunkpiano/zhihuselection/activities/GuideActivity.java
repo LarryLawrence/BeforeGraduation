@@ -13,7 +13,6 @@ import android.view.WindowManager;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.GuideAdapter;
-import com.drunkpiano.zhihuselection.utilities.DividerItemDecoration;
 
 public class GuideActivity extends AppCompatActivity {
     private GuideAdapter guideAdapter;
@@ -37,8 +36,8 @@ public class GuideActivity extends AppCompatActivity {
         rv = (RecyclerView) findViewById(R.id.guide_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(GuideActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
-        rv.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL_LIST));
+//        rv.addItemDecoration(new DividerItemDecoration(this,
+//                DividerItemDecoration.VERTICAL_LIST));
         guideAdapter = new GuideAdapter(getApplicationContext());
         rv.setAdapter(guideAdapter);
     }

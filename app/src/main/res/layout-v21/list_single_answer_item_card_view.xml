@@ -1,18 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cv_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_no_ele"
+        android:id="@+id/card_single"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_card_margin_left_right"
+        android:layout_marginRight="@dimen/main_card_margin_left_right"
+        android:layout_marginBottom="@dimen/main_card_margin_bottom"
         android:clickable="true"
-        android:layout_margin="@dimen/guide_card_margin"
+        android:stateListAnimator="@anim/touch_raise"
         android:foreground="?android:attr/selectableItemBackground"
         card_view:cardCornerRadius="0dp"
-        >
-        <!--card_view:cardElevation="2dp"-->
+        card_view:cardElevation="2dp">
         <!--app:cardUseCompatPadding="true"-->
-        <!--android:layout_marginBottom="10dp"-->
-
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -35,6 +41,7 @@
                 android:maxLines="2"
                 android:paddingBottom="4dp"
                 android:paddingTop="4dp"
+                android:text="title"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -49,3 +56,4 @@
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
+</LinearLayout>

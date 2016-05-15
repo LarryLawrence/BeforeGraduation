@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.FavoritesAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
-import com.drunkpiano.zhihuselection.utilities.DividerItemDecoration;
 import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
 public class FavoritesActivity extends AppCompatActivity implements MyItemClickListener {
@@ -57,8 +56,8 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         rv = (RecyclerView) findViewById(R.id.fav_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
-        rv.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL_LIST));
+//        rv.addItemDecoration(new DividerItemDecoration(this,
+//                DividerItemDecoration.VERTICAL_LIST));
         favoritesAdapter = new FavoritesAdapter(FavoritesActivity.this, "favorites");
         rv.setAdapter(favoritesAdapter);
         favoritesAdapter.setOnLongClickListener(this);
