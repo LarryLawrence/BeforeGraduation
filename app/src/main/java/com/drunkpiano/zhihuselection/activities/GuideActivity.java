@@ -15,12 +15,13 @@ import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.GuideAdapter;
 
 public class GuideActivity extends AppCompatActivity {
-    private GuideAdapter guideAdapter;
     Toolbar toolbar;
     RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GuideAdapter guideAdapter;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guide);
         toolbar = (Toolbar) findViewById(R.id.toolbar_guide);
@@ -36,8 +37,6 @@ public class GuideActivity extends AppCompatActivity {
         rv = (RecyclerView) findViewById(R.id.guide_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(GuideActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
-//        rv.addItemDecoration(new DividerItemDecoration(this,
-//                DividerItemDecoration.VERTICAL_LIST));
         guideAdapter = new GuideAdapter(getApplicationContext());
         rv.setAdapter(guideAdapter);
     }

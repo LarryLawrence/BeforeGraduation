@@ -47,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 /*
  * Created by DrunkPiano on 16/3/9.
  */
@@ -69,8 +68,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
     int dbLines = 0;
     SharedPreferences settings;
     String lastViewedDateChinese;
-    int positionRecovery = 0;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +96,8 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         initThisFragment(false);
         return root;
     }
-    private void refreshTime(){
+
+    private void refreshTime() {
         lastUpdate = settings.getString("LastUpdateArchive", "198801011700");//defValue - Value to return if this preference does not exist.
         lastUpdateInt = Long.parseLong(lastUpdate);
         //现在的时间
@@ -110,6 +108,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         latestWebsiteUpdateTime = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
         latestWebsiteUpdateTimeInt = Long.parseLong(latestWebsiteUpdateTime.format(Calendar.getInstance().getTime()).trim() + "1700");
     }
+
     private void initThisFragment(boolean chongxinlianjieshishi) {
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
@@ -127,10 +126,9 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
             SharedPreferences.Editor editor = settings.edit();
             //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:第一次是这里,DB为空的时候;第二次,打开后发现不为空,于是setup list并且更新;第三次,用户下拉发现可以更新
             editor.putString("LastUpdateArchive", time.format(Calendar.getInstance().getTime()));
-            editor.putString("ArchiveLastViewedDateChinese",dateWithChinese);
+            editor.putString("ArchiveLastViewedDateChinese", dateWithChinese);
 
             editor.apply();
-            System.out.println("数据库里没东西,下载.");
             //NECESSARY
             mSwipeRefreshLayout.setRefreshing(true);
             initiateDownloadToEmptyDB();
@@ -149,13 +147,12 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
             refreshTime();
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
-                System.out.println("对应createView的时候判断出需要刷新的情况");
                 refreshListView(getDate());
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateArchive", currentTimeStr);
                 editor.apply();
-                if(getView()!=null)
-                    Snackbar.make(getView(),"「往年」栏目有新内容, 稍等..",Snackbar.LENGTH_LONG).show();
+                if (getView() != null)
+                    Snackbar.make(getView(), "「往年」栏目有新内容, 稍等..", Snackbar.LENGTH_LONG).show();
             }
         }
         cursor.close();
@@ -167,7 +164,8 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         refreshTime();
         if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
             initThisFragment(false);//这是为了防止用户没退出进程第二天早晨onResume的时候需要更新
-        }        super.onResume();
+        }
+        super.onResume();
     }
 
     @Override
@@ -177,13 +175,17 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
             @Override
             public void onRefresh() {
                 refreshTime();
-                if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)
+                db = new Db(getContext());
+                SQLiteDatabase dbRead = db.getReadableDatabase();
+                Cursor cursor = dbRead.query("archive", null, null, null, null, null, null);
+
+                if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || (!cursor.moveToFirst()))
                     swipeRefresh();
-                else if (null != getView())
-                {
+                else if (null != getView()) {
                     Snackbar.make(getView(), "已是最新, 「往年」栏目每天晚上17:00更新", Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
+                cursor.close();
             }
         });
     }
@@ -204,7 +206,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
 
         mSwipeRefreshLayout.setRefreshing(true);
         refreshListView(getDate());
-        System.out.println("正在更新..");
 
         settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
@@ -220,8 +221,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         Cursor myCursor = dbRead.query("archive", null, null, null, null, null, null);
         ArchiveAdapter archiveAdapter = new ArchiveAdapter(getActivity(), "archive", myCursor.getCount(), dateWithChinese, callBack);
         cardsListRv.setAdapter(archiveAdapter);
-        cardsListRv.scrollToPosition(positionRecovery);
-//        mainAdapter.setOnClickListener(this);
         dbRead.close();
         myCursor.close();
     }
@@ -239,7 +238,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        System.out.println(line);
+//                        System.out.println(line);
                         builder.append(line);
                     }
                     br.close();
@@ -248,8 +247,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     //获取答案数量
                     JSONObject
                             root = new JSONObject(builder.toString());
-
-                    System.out.println("refresh ListView-->root中的count是" + root.getInt("count"));
 
                     //写入日期到database
                     db = new Db(getContext());
@@ -262,7 +259,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                             //1'今天数目>昨天数目, 1.update昨天数目 2.insert昨天数目~今天数目
                             for (int i = 0; i < myCursor.getCount(); i++) {
                                 JSONObject jo = array.getJSONObject(i);
-                                LcData.setTitle(jo.getString("title"));;
+                                LcData.setTitle(jo.getString("title"));
                                 LcData.setSummary(jo.getString("summary"));
                                 LcData.setQuestionid(jo.getString("questionid"));
                                 LcData.setAnswerid(jo.getString("answerid"));
@@ -275,7 +272,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                                 LcData.setQuestionid(jo.getString("questionid"));
                                 LcData.setAnswerid(jo.getString("answerid"));
                                 insertToTables(LcData, tabName);
-//                            System.out.println("-------->before update");
 //                            updateTables(LcData, tabName, i + 1);
                             }
                         } else {
@@ -299,7 +295,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
-                    System.out.println("没能转换成JSON");
                     if (null != getView())
                         Snackbar.make(getView(), "网络出了问题", Snackbar.LENGTH_INDEFINITE).setAction("刷新试试", new View.OnClickListener() {
                             @Override
@@ -320,6 +315,8 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 editor.putString("ArchiveLastViewedDateChinese", dateWithChinese);
                 editor.apply();
                 mSwipeRefreshLayout.setRefreshing(false);
+                if (null != getView())
+                    Snackbar.make(getView(), "加载完成!", Snackbar.LENGTH_LONG);
                 db.close();
                 super.onPostExecute(aVoid);
             }
@@ -341,7 +338,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        System.out.println(line);
+//                        System.out.println(line);
                         builder.append(line);
                     }
                     //读取完成,依次向上关闭连接
@@ -415,7 +412,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         cv.put("ssummary", data.getSummary());
         cv.put("squestionid", data.getQuestionid());
         cv.put("sanswerid", data.getAnswerid());
-        System.out.println("FM title---------->" + data.getTitle());
         String whereClause = "_id=?";
         String[] whereArgs = {String.valueOf(ids)};
         dbWrite.update(tabName, cv, whereClause, whereArgs);
@@ -433,7 +429,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         cv.put("ssummary", data.getSummary());
         cv.put("squestionid", data.getQuestionid());
         cv.put("sanswerid", data.getAnswerid());
-//        System.out.println("Bridge title---------->" + data.getTitle());
 
         dbWrite.insert(tabName, null, cv);
         dbWrite.close();
@@ -453,7 +448,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
 
                 Date randomDate = Utilities.randomDate("20140919", getSystemDate());
                 String randomDateStr = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(randomDate);
-                System.out.println(randomDateStr);
+//                System.out.println(randomDateStr);
                 refreshListView(randomDateStr);
                 dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(randomDate);
 
@@ -474,7 +469,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 break;
             }
             case R.id.action_refresh:
-                System.out.println("刷新");
                 if (!mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
@@ -522,12 +516,11 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
-        public void onMainItemClick(ListCellData answer , int position) {
+        public void onMainItemClick(ListCellData answer) {
 
             SharedPreferences defaultSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean doNotUseClient = defaultSharedPreference.getBoolean("doNotUseClient", true);
 
-            positionRecovery = position;
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
             if (doNotUseClient) {
                 Intent intent = new Intent(getContext(), WebViewActivity.class);
@@ -543,11 +536,15 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 startActivity(intent);
             }
         }
+
+        @Override
+        public void onEndImageClick() {
+            cardsListRv.smoothScrollToPosition(0);
+        }
     };
 
     @Override
     public void returnDate(String date, String date2) {
-//        System.out.println("here is return data----------->" + date);
         System.out.println("getDate----------->" + getDate());
 
         long one = Long.parseLong(date);

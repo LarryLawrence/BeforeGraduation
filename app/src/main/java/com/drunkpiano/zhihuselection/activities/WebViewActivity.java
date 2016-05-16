@@ -27,9 +27,10 @@ import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.Utilities;
 
-/**
+/*
  * Created by DrunkPiano on 16/4/27.
  */
+
 public class WebViewActivity extends AppCompatActivity {
     public final static String IMAGE_LOAD = "loadImagePreference";
     String address = "http://www.zhihu.com";
@@ -55,7 +56,7 @@ public class WebViewActivity extends AppCompatActivity {
             webSwipeRefreshLayout.setColorSchemeResources(
                     R.color.swipe_color_1, R.color.swipe_color_2,
                     R.color.swipe_color_3, R.color.swipe_color_4);
-            webSwipeRefreshLayout.setProgressViewOffset(false, 0, 60);
+            webSwipeRefreshLayout.setProgressViewOffset(false, 0, 10);
             webSwipeRefreshLayout.setRefreshing(true);
         }
         webSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -65,7 +66,6 @@ public class WebViewActivity extends AppCompatActivity {
             }
         });
 
-//        progressBarIndeterminate = (com.gc.materialdesign.views.ProgressBarIndeterminate) findViewById(R.id.web_progress);
         toolbar.setTitle("答案");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
@@ -99,11 +99,10 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
 
-
-
     private void initMyWebView() {
         Intent intent = getIntent();
         address = intent.getStringExtra("address");
+        System.out.println("address in webactivity" + address);
         title = intent.getStringExtra("title");
         summary = intent.getStringExtra("summary");
         myWebView = (WebView) findViewById(R.id.webView);
@@ -135,7 +134,7 @@ public class WebViewActivity extends AppCompatActivity {
                 case "never":
                     loadIMG = false;
             }
-            System.out.println("setBlockNetworkImage---------------->" + loadImage + "-------" + loadIMG);
+//            System.out.println("setBlockNetworkImage---------------->" + loadImage + "-------" + loadIMG);
             myWebView.getSettings().setBlockNetworkImage(!loadIMG);
         }
         //启动缓存
@@ -145,6 +144,7 @@ public class WebViewActivity extends AppCompatActivity {
         //        this.myWebView.setWebChromeClient();
         if (myWebView != null)
             myWebView.loadUrl(address);
+        System.out.println("setBlockNetworkImage---------------->" + address);
         myWebView.setWebViewClient(new myWebViewClient());
     }
 
@@ -152,14 +152,15 @@ public class WebViewActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-            //添加评论页监听
-            //intent://questions/37120133/#Intent;scheme=zhihu;package=com.zhihu.android;end
-            String containMsg = address.substring(11, address.length());
-            System.out.println("url------------->" + url);
-            System.out.println("containsMsg-------1------->" + containMsg);
-
+            //http://www.zhihu.com/?next=%2Fquestion%2F45968097%2Fanswer%2F100778963
+//            if(url.contains("?next="))
+//            {
+//                url = url.replace("%2F", "/");
+//                System.out.println("first replace"+url);
+//                url = url.replace("?next=/","");
+//                System.out.println("second replace"+url);
+//            }
             if (url.contains("intent://questions/") && url.contains("com.zhihu.android")) {
-                System.out.print("contains-------2------->" + containMsg);
                 Uri uri = Uri.parse(address);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
@@ -167,12 +168,11 @@ public class WebViewActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-            if (url.contains("comment")) {
-                toolbar.setTitle("评论");
-
-            }
+//            if (url.contains("comment")) {
+//                toolbar.setTitle("评论");
+//            }
             view.loadUrl(url);
-            return true;
+            return false;
         }
 
         @Override

@@ -12,8 +12,8 @@
     <dimen name="text_margin">16dp</dimen>
 
     <dimen name="guide_card_margin">2dp</dimen>
-    <dimen name="main_card_margin_bottom">8dp</dimen>
-    <dimen name="main_card_margin_left_right">4dp</dimen>
+    <dimen name="main_card_margin_bottom">2dp</dimen>
+    <dimen name="main_card_margin_left_right">2dp</dimen>
     <dimen name="about_card_margin">10dp</dimen>
 
 

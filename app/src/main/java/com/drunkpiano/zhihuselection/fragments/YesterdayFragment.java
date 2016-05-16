@@ -69,16 +69,14 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     int dbLines = 0;
     SharedPreferences settings;
     String lastViewedDateChinese;
-    LinearLayoutManager lm ;
-    private int positionRecovery;
-//    int ScrollX;
+    LinearLayoutManager lm;
+    //    int ScrollX;
     int ScrollY;
-
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        System.out.println("yesterday onCreate");
+//        System.out.println("yesterday onCreate");
         super.onCreate(savedInstanceState);
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
@@ -89,9 +87,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        System.out.println("yesterday onCreateView");
+//        System.out.println("yesterday onCreateView");
 
-        System.out.println("this is yesterday oncreateView");
+//        System.out.println("this is yesterday oncreateView");
         settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
@@ -105,44 +103,14 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 R.color.swipe_color_3, R.color.swipe_color_4);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
         refreshTime();
-         lm = new LinearLayoutManager(getContext());
+        lm = new LinearLayoutManager(getContext());
         cardsListRv.setLayoutManager(lm);//用线性显示 类似于listview
-        cardsListRv.addOnScrollListener(new RecyclerView.OnScrollListener(){
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                System.out.println("newState-------->"+ newState);
-//                super.onScrollStateChanged(recyclerView, newState);
-                if(newState == RecyclerView.SCROLL_STATE_IDLE){
-//                    ScrollX = cardsListRv.getScrollX();
-//                    System.out.println("getScrollX----->"+ getScrollX());
-//                    Parcelable scrollState = cardsListRv.onSavedInstance()
-                    ScrollY = cardsListRv.getScrollY();
-                    System.out.println("getScrollY-------->"+ ScrollY);
-
-                }
-//                System.out.println( "positiony----->" + ScrollY);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-
-            public int getScrollYY(){
-                View c = cardsListRv.getChildAt(0);
-                if(c==null)return 0;
-                int firstVisiblePosition = cardsListRv.getVerticalScrollbarPosition();
-                int top = c.getTop();
-                return -top + firstVisiblePosition * c.getHeight() ;
-            }
-        });
         initThisFragment(false);
         return root;
     }
 
 
-
-    private void refreshTime(){
+    private void refreshTime() {
         //DB的最近更新时间
         lastUpdate = settings.getString("LastUpdateYesterday", "198801010500");//defValue - Value to return if this preference does not exist.
         lastUpdateInt = Long.parseLong(lastUpdate);
@@ -163,6 +131,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         while (cursor.moveToNext())//其实可以不用这样计算行数,直接用cursor.getCount;
             dbLines++;
         if (!cursor.moveToFirst()) {
+
             //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
             SharedPreferences settings = getContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
@@ -198,8 +167,9 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateYesterday", currentTimeStr);
                 editor.apply();
-                if(getView()!=null)
-                    Snackbar.make(getView(),"「昨天」栏目有新内容, 稍等..",Snackbar.LENGTH_LONG).show();            }
+                if (getView() != null)
+                    Snackbar.make(getView(), "「昨天」栏目有新内容, 稍等..", Snackbar.LENGTH_LONG).show();
+            }
         }
         cursor.close();
         dbRead.close();
@@ -210,7 +180,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         refreshTime();
         if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
             initThisFragment(false);//这是为了防止用户没退出进程第二天早晨onResume的时候需要更新
-        }        System.out.println("this is yesterday onResume");
+        }
+//        System.out.println("this is yesterday onResume");
         super.onResume();
     }
 
@@ -221,16 +192,17 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             @Override
             public void onRefresh() {
                 refreshTime();
-//                System.out.println("currentTimeInt--------->"+currentTimeInt);
-//                System.out.println("latestWebsiteUpdateTimeInt--------->"+latestWebsiteUpdateTimeInt);
-//                System.out.println("lastUpdateInt--------->"+lastUpdateInt);
-                if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)
+                db = new Db(getContext());
+                SQLiteDatabase dbRead = db.getReadableDatabase();
+                Cursor cursor = dbRead.query("yesterday", null, null, null, null, null, null);
+
+                if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || (!cursor.moveToFirst()))
                     swipeRefresh();
-                else if (null != getView())
-                {
+                else if (null != getView()) {
                     Snackbar.make(getView(), "已是最新, 「昨天」栏目每天早上5:00更新", Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
+                cursor.close();
             }
         });
     }
@@ -261,7 +233,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     }
 
     public void setupList(String dateWithChinese) {
-        System.out.println("setuplist-------111------------");
+//        System.out.println("setuplist-------111------------");
         cardsListRv.setItemAnimator(new DefaultItemAnimator());
         db = new Db(getContext());
         SQLiteDatabase dbRead = db.getReadableDatabase();
@@ -275,10 +247,10 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
         cardsListRv.post(new Runnable() {
             @Override
             public void run() {
-                cardsListRv.scrollTo(0,100);
+                cardsListRv.scrollTo(0, 100);
             }
         });
-        System.out.println("setpulist------scrolly---->"+ScrollY);
+//        System.out.println("setpulist------scrolly---->" + ScrollY);
         dbRead.close();
         myCursor.close();
     }
@@ -296,7 +268,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        System.out.println(line);
+//                        System.out.println(line);
                         builder.append(line);
                     }
                     br.close();
@@ -356,7 +328,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
-                    System.out.println("没能转换成JSON");
+//                    System.out.println("没能转换成JSON");
                     if (null != getView())
                         Snackbar.make(getView(), "网络出了问题", Snackbar.LENGTH_INDEFINITE).setAction("刷新试试", new View.OnClickListener() {
                             @Override
@@ -377,6 +349,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 editor.putString("YesterdayLastViewedDateChinese", dateWithChinese);
                 editor.apply();
                 mSwipeRefreshLayout.setRefreshing(false);
+                if (null != getView())
+                    Snackbar.make(getView(), "加载完成!", Snackbar.LENGTH_LONG);
                 db.close();
                 super.onPostExecute(aVoid);
             }
@@ -398,7 +372,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        System.out.println(line);
+//                        System.out.println(line);
                         builder.append(line);
                     }
                     //读取完成,依次向上关闭连接
@@ -511,7 +485,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 //返回20140919到今天的随机一天
                 Date randomDate = Utilities.randomDate("20140919", getSystemDate());
                 String randomDateStr = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(randomDate);
-                System.out.println(randomDateStr);
+//                System.out.println(randomDateStr);
                 refreshListView(randomDateStr);
                 dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(randomDate);
 
@@ -532,7 +506,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 break;
             }
             case R.id.action_refresh:
-                System.out.println("刷新");
+//                System.out.println("刷新");
                 if (!mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
@@ -580,15 +554,15 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
-        public void onMainItemClick(ListCellData answer , int position) {
+        public void onMainItemClick(ListCellData answer) {
 
             SharedPreferences defaultSharedPreference = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean doNotUseClient = defaultSharedPreference.getBoolean("doNotUseClient", true);
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
-            positionRecovery = position;
             if (doNotUseClient) {
                 Intent intent = new Intent(getContext(), WebViewActivity.class);
                 intent.putExtra("address", "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
+//                System.out.println("answer.getQuestionid()----->" + answer.getQuestionid() + ",,,answer.getAnswerid()------>;" + answer.getAnswerid() + "\nans-*->" + "http://www.zhihu.com/question/" + answer.getQuestionid() + "/answer/" + answer.getAnswerid());
                 intent.putExtra("title", answer.getTitle());
                 intent.putExtra("summary", answer.getSummary());
                 startActivity(intent);
@@ -600,12 +574,17 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 startActivity(intent);
             }
         }
+
+        @Override
+        public void onEndImageClick() {
+            cardsListRv.smoothScrollToPosition(0);
+        }
     };
 
     @Override
     public void returnDate(String date, String date2) {
 //        System.out.println("here is return data----------->" + date);
-        System.out.println("getDate----------->" + getDate());
+//        System.out.println("getDate----------->" + getDate());
 
         long one = Long.parseLong(date);
         if (one < 20140919) {

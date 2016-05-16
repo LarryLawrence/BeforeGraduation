@@ -16,7 +16,6 @@ public class GuideAdapter extends RecyclerView.Adapter {
     Context context;
     private final LayoutInflater mLayoutInflater;
 
-
     public GuideAdapter(Context context) {
         this.context = context;
         mLayoutInflater = LayoutInflater.from(context);
@@ -24,13 +23,8 @@ public class GuideAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        addData();
-        return new GuideViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_no_elevation_guide, parent, false));
-//        View v = LayoutInflater.from(parent.getContext())
-//                .inflate(R.layout.list_single_answer_item_card_view, parent, false);
-//        return new GuideViewHolder(v);
+            return new GuideViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_no_elevation_guide, parent, false));
     }
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         GuideViewHolder gv = (GuideViewHolder) holder;
@@ -38,14 +32,14 @@ public class GuideAdapter extends RecyclerView.Adapter {
         String info = "";
         switch (position) {
             case 0:
-                title = "Q: 这是一个什么样的APP？";
-                info = "A: 这是一个精选知乎答案的APP,每天挑选一些热门答案推荐给你。数据来源是@苏莉安的「看知乎」。";
+                title = "Q: 这个APP是干什么用的？";
+                info = "A: 这是一个精选知乎答案的APP，每天挑选一些热门答案推荐给你。它只是挑选了一些知乎的答案列表，把大家引导到知乎的网页端或客户端去。\n   数据的来源是@苏莉安的「看知乎」。";
                 break;
             case 1:
                 title = "Q: 每天的三篇推荐都是什么内容？";
-                info = "A: 凌晨5点发布「昨天」，也就是前一天发表的热门答案；\n" +
-                        "   中午11点发布「上周」，也就是之前7天内发表、但没在任何一篇「昨天」中推荐过的答案；\n" +
-                        "   傍晚17点发布「往年」，也就是随机挑选了整个知乎历史上的精华内容。\n";
+                info = "A: 凌晨5点发布「昨天」，是前一天发表的热门答案；\n" +
+                        "   中午11点发布「上周」，是之前7天内发表、但没在任何一篇「昨天」中推荐过的答案；\n" +
+                        "   傍晚17点发布「往年」，随机挑选了整个知乎历史上的精华内容。";
                 break;
             case 2:
                 title = "Q: 推荐的依据是什么？";
@@ -56,24 +50,28 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 info = "A: 是的,每次点击会随机来到2014年9月19日到今天之间的某一天。";
                 break;
             case 4:
-                title = "Q: 阅读页面中的链接打不开？";
-                info = "A: 默认禁用了JavaScript,这样的话页面上很多元素会失效,但阅读起来更清爽。可以在设置中开启。";
+                title = "Q: 有时候点进去之后会提示登录？";
+                info = "A: Android WebView的loadUrl()函数有时候会把原本正确的地址转换成urlEncode编码，这似乎是Android源码的问题，目前我还没有找到解决办法。出现这种情况时，烦请移驾右上角「使用知乎客户端打开」。";
                 break;
             case 5:
                 title = "Q: 如何在知乎APP中打开答案？";
-                info = "A: 可以在应用内阅读的时候在右上角菜单选择用知乎打开;也可以在设置中选择默认打开方式。";
+                info = "A: 可以在应用内阅读的时候在右上角菜单选择用知乎打开; 也可以在设置中选择默认打开方式。";
                 break;
             case 6:
-                title = "Q: 有时候点进去之后会提示登录？";
-                info = "A: 这种情况一般是问题或答案比较敏感,被修改或删除了。可以在右上角选择「用知乎查看」。";
+                title = "Q: 页面中的链接点了没反应？";
+                info = "A: 默认禁用了答案页的JavaScript，这样的话页面上很多元素会失效，但阅读起来更清爽。可以在设置中选择开启/关闭。";
                 break;
             case 7:
-                title = "Q: 获取数据的速度好像有点慢,是不是加载了很多东西？";
-                info = "A: 连接kanzhihu.com的速度确实不够快,但加载答案列表的数据量很小,是纯文字,每次大约30KB。连接建立之后,再次加载的速度会变快。";
+                title = "Q: 获取数据的速度好像有点慢，是不是加载了很多东西？";
+                info = "A: 连接kanzhihu.com的速度确实不够快，但加载答案列表的数据量很小，是纯文字，每次大约30KB。4G网络下首次建立连接大约需要8秒，连接建立之后，再次加载的速度只需要不到1秒。";
                 break;
             case 8:
-                title = "Q: 软件的作者是谁?";
-                info = "A: 在「关于」页面可以找到,欢迎发邮件给我。";
+                title = "Q: 答案页底部的奇怪符号是什么?";
+                info = "A: 是乐谱中的「四分休止符」，拿来表示结束用的，哈哈。";
+                break;
+            case 9:
+                title = "Q: 开发者是谁?";
+                info = "A: 在「关于」页面可以找到，欢迎发邮件给我。";
                 break;
         }
         gv.title.setText(title);
@@ -82,7 +80,7 @@ public class GuideAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return 9;
+        return 10;
     }
 
 

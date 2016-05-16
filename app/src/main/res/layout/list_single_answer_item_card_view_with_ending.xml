@@ -11,8 +11,8 @@
     <include layout="@layout/list_single_answer_item_card_view" />
 
     <ImageView
-        android:id="@+id/imgAdapter"
-        android:contentDescription="八分休止符"
+        android:id="@+id/endingImgAdapter"
+        android:contentDescription="四分休止符"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"

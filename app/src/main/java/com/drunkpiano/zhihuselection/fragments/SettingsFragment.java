@@ -10,17 +10,13 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.utilities.MarketUtils;
-import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
     public final static String No_ZhIHU_KEY = "doNotUseClient";
     public final static String NO_JS_KEY = "disableJavascript";
     public final static String IMAGE_LOAD = "loadImagePreference";
-    public final static String GRADE_ME = "gradeMe";
     public final static String MAIL_ME = "mailMe";
 
     SwitchPreference doNotUseClient;
@@ -34,17 +30,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         doNotUseClient = (SwitchPreference) findPreference(No_ZhIHU_KEY);
         disableJavascript = (SwitchPreference) findPreference(NO_JS_KEY);
         loadImagePreference = (ListPreference) findPreference(IMAGE_LOAD);
-        findPreference(GRADE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                if (Utilities.isAppInstalled(getActivity(), "com.android.vending"))
-                    MarketUtils.launchAppDetail("com.drunkpiano.zhihuselection", "com.android.vending", getActivity());
-                else
-                    Toast.makeText(getActivity(), "您没有安装Play商店,仍然谢谢您的支持!", Toast.LENGTH_LONG).show();
-
-                return true;
-            }
-        });
         findPreference(MAIL_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

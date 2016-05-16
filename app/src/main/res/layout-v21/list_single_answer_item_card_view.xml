@@ -41,7 +41,6 @@
                 android:maxLines="2"
                 android:paddingBottom="4dp"
                 android:paddingTop="4dp"
-                android:text="title"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -49,6 +48,7 @@
                 android:id="@+id/info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.1"
                 android:ellipsize="end"
                 android:maxLines="3"
                 android:paddingTop="4dp"

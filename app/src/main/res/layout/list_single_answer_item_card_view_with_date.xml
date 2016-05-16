@@ -10,7 +10,6 @@
 
     <TextView
         android:id="@+id/date_show"
-        android:text="上次看到的内容"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10.0dip"

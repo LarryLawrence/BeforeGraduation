@@ -29,14 +29,14 @@
         android:title="其他">
         <Preference
             android:defaultValue="true"
-            android:key="gradeMe"
-            android:summary="五星好评吧"
-            android:title="参与Google Play的评价" />
-
-        <Preference
-            android:defaultValue="true"
             android:key="mailMe"
-            android:summary="写邮件给我"
+            android:summary="写一封邮件给我"
             android:title="你说的我都放在心上" />
     </PreferenceCategory>
 </PreferenceScreen>
+
+<!--<Preference-->
+<!--android:defaultValue="true"-->
+<!--android:key="gradeMe"-->
+<!--android:summary="五星好评吧"-->
+<!--android:title="参与Google Play的评价" />-->

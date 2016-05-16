@@ -8,6 +8,7 @@ import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -74,10 +75,15 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
     public View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()] , (Integer) v.getTag());
+            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()]);
         }
     };
-
+    public View.OnClickListener endingImageListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mainItemClickListener.onEndImageClick();
+        }
+    };
 
     public class DataSetViewHolderWithDate extends DataSetViewHolder {
         TextView date;
@@ -89,8 +95,10 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
     }
 
     public class DataSetViewHolderWithEnd extends DataSetViewHolder {
+        ImageView endingImage;
         public DataSetViewHolderWithEnd(View itemView) {
             super(itemView);
+            endingImage = (ImageView)itemView.findViewById(R.id.endingImgAdapter);
         }
     }
 
@@ -145,6 +153,7 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
             ((DataSetViewHolderWithEnd) holder).info.setText(data[position].getSummary());
             ((DataSetViewHolderWithEnd) holder).rootView.setTag(position);
             ((DataSetViewHolderWithEnd) holder).rootView.setOnClickListener(linkListener);
+            ((DataSetViewHolderWithEnd) holder).endingImage.setOnClickListener(endingImageListener);
         }
 
         else if (holder instanceof DataSetViewHolder) {

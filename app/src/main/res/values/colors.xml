@@ -15,12 +15,13 @@
 
     <color name="swipe_color_1">#7CAFFF</color>
     <color name="swipe_color_2">#99CC00</color>
-    <color name="swipe_color_3">#D84436</color>
+    <color name="swipe_color_3">#FFBBC4</color>
     <color name="swipe_color_4">#B6DB49</color>
     <!--<color name="swipe_color_1">#7CAF00</color>-->
 
     <color name="black">#000000</color>
-    <color name="almost_black">#242424</color>
+    <color name="almost_black">#292929</color>
+
 
 
 

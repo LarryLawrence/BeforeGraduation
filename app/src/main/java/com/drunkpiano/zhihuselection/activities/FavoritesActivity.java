@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,8 +57,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         rv = (RecyclerView) findViewById(R.id.fav_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
-//        rv.addItemDecoration(new DividerItemDecoration(this,
-//                DividerItemDecoration.VERTICAL_LIST));
         favoritesAdapter = new FavoritesAdapter(FavoritesActivity.this, "favorites");
         rv.setAdapter(favoritesAdapter);
         favoritesAdapter.setOnLongClickListener(this);
@@ -97,6 +96,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 //            @Override
 //            public void onClick(DialogInterface dialog, int which) {
         favoritesAdapter.remove(position);
+        Snackbar.make(rv,"已移除",Snackbar.LENGTH_SHORT).show();
 //
 //            }
 //        }).setNegativeButton("不用", new)

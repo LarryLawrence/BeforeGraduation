@@ -8,6 +8,7 @@ import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,9 +19,10 @@ import com.drunkpiano.zhihuselection.utilities.MainItemClickListener;
 
 import java.util.ArrayList;
 
-/**
+/*
  * Created by DrunkPiano on 16/4/24.
  */
+
 public class YesterdayAdapter extends RecyclerView.Adapter {
     private static final int NORMAL_ITEM = 0;
     private static final int ITEM_WITH_DATE = 1;
@@ -73,7 +75,13 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
     public View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()] , (Integer)v.getTag());
+            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()]);
+        }
+    };
+    public View.OnClickListener endingImgeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mainItemClickListener.onEndImageClick();
         }
     };
 
@@ -89,8 +97,10 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
     }
 
     public class DataSetViewHolderWithEnd extends DataSetViewHolder {
+        ImageView endingImage;
         public DataSetViewHolderWithEnd(View itemView) {
             super(itemView);
+            endingImage = (ImageView)itemView.findViewById(R.id.endingImgAdapter);
         }
     }
 
@@ -143,6 +153,8 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
             ((DataSetViewHolderWithEnd) holder).info.setText(data[position].getSummary());
             ((DataSetViewHolderWithEnd) holder).rootView.setTag(position);
             ((DataSetViewHolderWithEnd) holder).rootView.setOnClickListener(linkListener);
+            ((DataSetViewHolderWithEnd) holder).endingImage.setOnClickListener(endingImgeListener);
+
         }
 
         else if (holder instanceof DataSetViewHolder) {

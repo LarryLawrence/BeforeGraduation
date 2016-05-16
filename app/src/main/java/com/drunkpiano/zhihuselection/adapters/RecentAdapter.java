@@ -8,6 +8,7 @@ import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,7 +33,7 @@ public class RecentAdapter extends RecyclerView.Adapter {
     String dateWithChinese;
     ArrayList<ListCellData> dataArrayList = new ArrayList<>();
     public Context context;
-    private static MainItemClickListener mainItemClickListener;
+    private MainItemClickListener mainItemClickListener;
 
     public RecentAdapter(Context context, String tableName, int count, String dateWithChinese, MainItemClickListener callBack) {
         this.context = context;
@@ -72,36 +73,20 @@ public class RecentAdapter extends RecyclerView.Adapter {
             info = (TextView) itemView.findViewById(R.id.info);
             rootView = itemView.findViewById(R.id.card_single);
         }
-
-//        @Override
-//        public void onClick(View v) {
-//            if (mainItemClickListener != null) {
-//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
-//            }
-//        }
-
-//        private void startWebViewActivity() {
-//            Intent intent = new Intent(context, WebViewActivity.class);
-//            intent.putExtra("address", "http://www.zhihu.com/question/" + data[getAdapterPosition()].getQuestionid() + "/answer/" + data[getAdapterPosition()].getAnswerid());
-//            intent.putExtra("title", data[getAdapterPosition()].getTitle());
-//            intent.putExtra("summary", data[getAdapterPosition()].getSummary());
-//            context.startActivity(intent);
-//        }
     }
 
-    public static View.OnClickListener linkListener = new View.OnClickListener() {
+    public View.OnClickListener linkListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()], (Integer) v.getTag());
-//                            if (mainItemClickListener != null) {
-//                mainItemClickListener.onMainItemClick(data[getAdapterPosition()]);
+            mainItemClickListener.onMainItemClick(data[(Integer) v.getTag()]);
         }
     };
-
-//    public void setOnClickListener(MainItemClickListener listener) {
-//        mainItemClickListener = listener;
-//    }
-
+    public View.OnClickListener endingImageListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mainItemClickListener.onEndImageClick();
+        }
+    };
 
     public class DataSetViewHolderWithDate extends DataSetViewHolder {
         TextView date;
@@ -113,8 +98,10 @@ public class RecentAdapter extends RecyclerView.Adapter {
     }
 
     public class DataSetViewHolderWithEnd extends DataSetViewHolder {
+        ImageView endingImage;
         public DataSetViewHolderWithEnd(View itemView) {
             super(itemView);
+            endingImage = (ImageView)itemView.findViewById(R.id.endingImgAdapter);
         }
     }
 
@@ -169,6 +156,8 @@ public class RecentAdapter extends RecyclerView.Adapter {
             ((DataSetViewHolderWithEnd) holder).info.setText(data[position].getSummary());
             ((DataSetViewHolderWithEnd) holder).rootView.setTag(position);
             ((DataSetViewHolderWithEnd) holder).rootView.setOnClickListener(linkListener);
+            ((DataSetViewHolderWithEnd) holder).endingImage.setOnClickListener(endingImageListener);
+
         }
 
         else if (holder instanceof DataSetViewHolder) {

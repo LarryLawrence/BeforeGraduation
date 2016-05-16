@@ -192,12 +192,17 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             @Override
             public void onRefresh() {
                 refreshTime();
-                if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)
+                db = new Db(getContext());
+                SQLiteDatabase dbRead = db.getReadableDatabase();
+                Cursor cursor = dbRead.query("recent", null, null, null, null, null, null);
+
+                if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt)|| (!cursor.moveToFirst()))
                     swipeRefresh();
                 else if (null != getView()) {
                     Snackbar.make(getView(), "已是最新, 「上周」栏目每天中午11:00更新", Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
+                cursor.close();
             }
         });
     }
@@ -218,7 +223,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
         mSwipeRefreshLayout.setRefreshing(true);
         refreshListView(getDate());
-//        System.out.println("正在更新..");
 
         settings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         //第二次更新LastUpdate的SP,在下拉后决定刷新的时候
@@ -253,7 +257,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        System.out.println(line);
+//                        System.out.println(line);
                         builder.append(line);
                     }
                     br.close();
@@ -264,7 +268,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                             root = new JSONObject(builder.toString());
 
 //                    numCount = root.getInt("count");
-                    System.out.println("refresh ListView-->root中的count是" + root.getInt("count"));
 
                     //写入日期到database
                     db = new Db(getContext());
@@ -291,7 +294,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                                 LcData.setQuestionid(jo.getString("questionid"));
                                 LcData.setAnswerid(jo.getString("answerid"));
                                 insertToTables(LcData, tabName);
-//                            System.out.println("-------->before update");
 //                            updateTables(LcData, tabName, i + 1);
                             }
                         } else {
@@ -309,14 +311,12 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                                 deleteDBLines(tabName, i);
 
                         }
-                        System.out.println("numCount----->" + numCount + ";array.length()--->" + array.length() + "myCursor.getCount()" + myCursor.getCount());
                     }
                     dbRead.close();
                     myCursor.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
-                    System.out.println("没能转换成JSON");
                     if (null != getView())
                         Snackbar.make(getView(), "网络出了问题", Snackbar.LENGTH_INDEFINITE).setAction("刷新试试", new View.OnClickListener() {
                             @Override
@@ -331,13 +331,14 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                System.out.println("refresh   4   postExecute```````,numCount= " + numCount);
                 dateWithChinese = dateStr.substring(0, 4) + "年" + dateStr.substring(4, 6) + "月" + dateStr.substring(6, dateStr.length()) + "日";
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("RecentLastViewedDateChinese", dateWithChinese);
                 editor.apply();
                 setupList(dateWithChinese);
                 mSwipeRefreshLayout.setRefreshing(false);
+                if (null != getView())
+                    Snackbar.make(getView(), "加载完成!", Snackbar.LENGTH_LONG);
                 db.close();
                 super.onPostExecute(aVoid);
             }
@@ -359,7 +360,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-                        System.out.println(line);
+//                        System.out.println(line);
                         builder.append(line);
                     }
                     //读取完成,依次向上关闭连接
@@ -433,7 +434,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         cv.put("ssummary", data.getSummary());
         cv.put("squestionid", data.getQuestionid());
         cv.put("sanswerid", data.getAnswerid());
-        System.out.println("FM title---------->" + data.getTitle());
         String whereClause = "_id=?";
         String[] whereArgs = {String.valueOf(ids)};
         dbWrite.update(tabName, cv, whereClause, whereArgs);
@@ -451,7 +451,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         cv.put("ssummary", data.getSummary());
         cv.put("squestionid", data.getQuestionid());
         cv.put("sanswerid", data.getAnswerid());
-        System.out.println("Bridge title---------->" + data.getTitle());
 
         dbWrite.insert(tabName, null, cv);
         dbWrite.close();
@@ -470,7 +469,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 //返回20140919到今天的随机一天
                 Date randomDate = Utilities.randomDate("20140919", getSystemDate());
                 String randomDateStr = new SimpleDateFormat("yyyyMMdd", Locale.CHINA).format(randomDate);
-                System.out.println(randomDateStr);
                 refreshListView(randomDateStr);
                 dateWithChinese = new SimpleDateFormat("yyyy年M月d日 E", Locale.CHINA).format(randomDate);
 
@@ -491,7 +489,6 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 break;
             }
             case R.id.action_refresh:
-                System.out.println("刷新");
                 if (!mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
@@ -539,8 +536,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     private MainItemClickListener callBack = new MainItemClickListener() {
 
         @Override
-        public void onMainItemClick(ListCellData answer, int position) {
-            positionRecovery = position;
+        public void onMainItemClick(ListCellData answer) {
             SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             boolean doNotUseClient = defaultSharedPreferences.getBoolean("doNotUseClient", true);
 //            boolean disableJavascript = settings.getBoolean("disableJavascript", true);
@@ -558,11 +554,15 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 startActivity(intent);
             }
         }
+
+        @Override
+        public void onEndImageClick() {
+            cardsListRv.smoothScrollToPosition(0);
+        }
     };
 
     @Override
     public void returnDate(String date, String date2) {
-//        System.out.println("here is return data----------->" + date);
         System.out.println("getDate----------->" + getDate());
 
         long one = Long.parseLong(date);
