@@ -10,9 +10,9 @@
             android:title="不使用知乎客户端打开答案" />
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="disableJavascript"
-            android:summary="让网页中的链接等元素失效以获取纯粹的阅读体验"
+            android:summary="禁用网页中的JavaScript元素(包括超链接)"
             android:title="禁用网页中的JavaScript" />
 
         <ListPreference
@@ -27,6 +27,12 @@
 
     <PreferenceCategory
         android:title="其他">
+
+        <Preference
+            android:defaultValue="true"
+            android:key="gradeMe"
+            android:summary="五星好评吧"
+            android:title="参与Google Play的评价" />
         <Preference
             android:defaultValue="true"
             android:key="mailMe"
@@ -35,8 +41,4 @@
     </PreferenceCategory>
 </PreferenceScreen>
 
-<!--<Preference-->
-<!--android:defaultValue="true"-->
-<!--android:key="gradeMe"-->
-<!--android:summary="五星好评吧"-->
-<!--android:title="参与Google Play的评价" />-->
+

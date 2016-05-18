@@ -58,8 +58,8 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 info = "A: 可以在应用内阅读的时候在右上角菜单选择用知乎打开; 也可以在设置中选择默认打开方式。";
                 break;
             case 6:
-                title = "Q: 页面中的链接点了没反应？";
-                info = "A: 默认禁用了答案页的JavaScript，这样的话页面上很多元素会失效，但阅读起来更清爽。可以在设置中选择开启/关闭。";
+                title = "Q: 怎么回到历史上具体的某一天?";
+                info = "A: 点击右上角菜单中的「回到过去」。";
                 break;
             case 7:
                 title = "Q: 获取数据的速度好像有点慢，是不是加载了很多东西？";
@@ -67,11 +67,11 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 break;
             case 8:
                 title = "Q: 答案页底部的奇怪符号是什么?";
-                info = "A: 是乐谱中的「四分休止符」，拿来表示结束用的，哈哈。";
+                info = "A: 是乐谱中的「四分休止符」，拿来表示结束用的，哈哈。点击它可以回到页面顶端。";
                 break;
             case 9:
                 title = "Q: 开发者是谁?";
-                info = "A: 在「关于」页面可以找到，欢迎发邮件给我。";
+                info = "A: 在「关于」页面可以找到，欢迎发邮件给我。\n\nv1.0版本发布当天收到了很多酷安网的朋友们的的鼓励，也有几位朋友给我提了宝贵意见 我都有采纳，在此谢谢各位啦。";
                 break;
         }
         gv.title.setText(title);

@@ -69,9 +69,6 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
     int dbLines = 0;
     SharedPreferences settings;
     String lastViewedDateChinese;
-    LinearLayoutManager lm;
-    //    int ScrollX;
-    int ScrollY;
 
 
     @Override
@@ -103,8 +100,11 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 R.color.swipe_color_3, R.color.swipe_color_4);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
         refreshTime();
-        lm = new LinearLayoutManager(getContext());
-        cardsListRv.setLayoutManager(lm);//用线性显示 类似于listview
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        cardsListRv.setLayoutManager(llm);
+//        lm = new LinearLayoutManager(getContext());
+//        cardsListRv.setLayoutManager(lm);//用线性显示 类似于listview
         initThisFragment(false);
         return root;
     }
@@ -244,12 +244,12 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
 //        cardsListRv.smoothScrollToPosition();
 //        lm.scrollToPositionWithOffset(3, 150);
 //        mainAdapter.setOnClickListener(this);
-        cardsListRv.post(new Runnable() {
-            @Override
-            public void run() {
-                cardsListRv.scrollTo(0, 100);
-            }
-        });
+//        cardsListRv.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                cardsListRv.scrollTo(0, 100);
+//            }
+//        });
 //        System.out.println("setpulist------scrolly---->" + ScrollY);
         dbRead.close();
         myCursor.close();

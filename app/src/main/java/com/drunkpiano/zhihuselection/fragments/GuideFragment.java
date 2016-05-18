@@ -2,6 +2,7 @@ package com.drunkpiano.zhihuselection.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,9 @@ public class GuideFragment extends Fragment {
         View v = inflater.inflate(R.layout.activity_favorites, container, false);
         rv = (RecyclerView) v.findViewById(R.id.fav_cards_list);//在v里面找
         GuideAdapter guideAdapter = new GuideAdapter(getContext());
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        rv.setLayoutManager(llm);
         rv.setAdapter(guideAdapter);
         return v ;
     }

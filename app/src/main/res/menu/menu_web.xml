@@ -15,9 +15,16 @@
         android:title="@string/action_open_in_zhihu"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_web_add_to_fav"
+        android:orderInCategory="100"
+        android:title="@string/action_web_add_to_fav"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_web_refresh"
         android:orderInCategory="100"
         android:title="@string/action_web_refresh"
         app:showAsAction="never" />
+
+
 
 </menu>

@@ -1,11 +1,17 @@
 package com.drunkpiano.zhihuselection.utilities;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.drunkpiano.zhihuselection.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -34,7 +40,6 @@ public class Utilities {
         }
         return false;
     }
-
     public static boolean isWifi(Context mContext) {
         ConnectivityManager connectivityManager = (ConnectivityManager) mContext
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -44,6 +49,15 @@ public class Utilities {
             return true;
         }
         return false;
+    }
+
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
     }
 
     //    Date randomDate = randomDate("2010-09-20", "2010-09-21");
@@ -57,7 +71,7 @@ public class Utilities {
                 return null;
             }
             long date = random(start.getTime(), end.getTime());
-            System.out.println("long date------>" + date);
+            System.out.println("long date------>"+ date);
             return new Date(date);
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,6 +86,19 @@ public class Utilities {
             return random(begin, end);
         }
         return rtn;
+    }
+
+    public static boolean isAppInstalled( Context context, String packageName )
+    {
+        final PackageManager packageManager = context.getPackageManager();
+        // 获取所有已安装程序的包信息
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+        for ( int i = 0; i < pinfo.size(); i++ )
+        {
+            if(pinfo.get(i).packageName.equalsIgnoreCase(packageName))
+                return true;
+        }
+        return false;
     }
 
 }

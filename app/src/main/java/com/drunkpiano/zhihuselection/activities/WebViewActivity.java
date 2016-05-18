@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +21,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.utilities.Db;
@@ -41,22 +41,22 @@ public class WebViewActivity extends AppCompatActivity {
     Db db;
     String snackMsg;
     boolean alreadyStarred = false;
-
     SwipeRefreshLayout webSwipeRefreshLayout;
+    LinearLayout linearLayout ;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
-
+        linearLayout = (LinearLayout)findViewById(R.id.web_ll);
         toolbar = (Toolbar) findViewById(R.id.toolbar_custom);
         webSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout_web);
         if (null != webSwipeRefreshLayout) {
             webSwipeRefreshLayout.setColorSchemeResources(
                     R.color.swipe_color_1, R.color.swipe_color_2,
                     R.color.swipe_color_3, R.color.swipe_color_4);
-            webSwipeRefreshLayout.setProgressViewOffset(false, 0, 10);
+            webSwipeRefreshLayout.setProgressViewOffset(false, 20, 80);
             webSwipeRefreshLayout.setRefreshing(true);
         }
         webSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -74,27 +74,30 @@ public class WebViewActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
-        if (fab != null)
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    boolean i = favoriteItemPressed();
-                    if (!i)
-                        snackMsg = "收藏成功";
-                    else
-                        snackMsg = "已经收藏过这一条";
-                    Snackbar.make(view, snackMsg, Snackbar.LENGTH_SHORT)
-                            .setAction("撤销收藏", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    System.out.println("撤销收藏");
-                                    removeFavorite();
-                                    // Perform anything for the action selected
-                                }
-                            }).show();
-                }
-            });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
+//        if (fab != null)
+//            fab.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    boolean i = favoriteItemPressed();
+//                    if (!i)
+//                        snackMsg = "收藏成功";
+//                    else
+//                        snackMsg = "已经收藏过这一条";
+//                    Snackbar.make(view, snackMsg, Snackbar.LENGTH_SHORT)
+//                            .setAction("撤销收藏", new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    System.out.println("撤销收藏");
+//                                    removeFavorite();
+//                                    // Perform anything for the action selected
+//                                }
+//                            }).show();
+//                }
+//            });
+
+
+
         this.initMyWebView();
     }
 
@@ -113,7 +116,7 @@ public class WebViewActivity extends AppCompatActivity {
         }
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean disableJavascript = settings.getBoolean("disableJavascript", true);
+        boolean disableJavascript = settings.getBoolean("disableJavascript", false);
         String loadImage = settings.getString(IMAGE_LOAD, "always");
         boolean loadIMG = true;
         if (myWebView != null) {
@@ -222,6 +225,23 @@ public class WebViewActivity extends AppCompatActivity {
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(uri);
                 startActivity(intent);
+                break;
+
+            case R.id.action_web_add_to_fav:
+                boolean i = favoriteItemPressed();
+                if (!i)
+                    snackMsg = "收藏成功";
+                else
+                    snackMsg = "已经收藏过这一条";
+                Snackbar.make(linearLayout, snackMsg, Snackbar.LENGTH_SHORT)
+                        .setAction("撤销收藏", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                System.out.println("撤销收藏");
+                                removeFavorite();
+                                // Perform anything for the action selected
+                            }
+                        }).show();
                 break;
             case R.id.action_web_refresh:
                 myWebView.reload();

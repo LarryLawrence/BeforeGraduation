@@ -92,7 +92,10 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 R.color.swipe_color_3, R.color.swipe_color_4);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, 100);
 
-        cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//用线性显示 类似于listview
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        cardsListRv.setLayoutManager(llm);
+//        cardsListRv.setLayoutManager(new LinearLayoutManager(getContext()));//用线性显示 类似于listview
         initThisFragment(false);
         return root;
     }

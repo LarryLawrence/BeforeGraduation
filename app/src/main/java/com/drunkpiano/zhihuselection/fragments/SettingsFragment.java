@@ -9,14 +9,18 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
+import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
     public final static String No_ZhIHU_KEY = "doNotUseClient";
     public final static String NO_JS_KEY = "disableJavascript";
     public final static String IMAGE_LOAD = "loadImagePreference";
+    public final static String GRADE_ME = "gradeMe";
     public final static String MAIL_ME = "mailMe";
 
     SwitchPreference doNotUseClient;
@@ -30,6 +34,17 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         doNotUseClient = (SwitchPreference) findPreference(No_ZhIHU_KEY);
         disableJavascript = (SwitchPreference) findPreference(NO_JS_KEY);
         loadImagePreference = (ListPreference) findPreference(IMAGE_LOAD);
+        findPreference(GRADE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                if (Utilities.isAppInstalled(getActivity(), "com.android.vending"))
+                    launchAppDetail("com.drunkpiano.zhihuselection", "com.android.vending", getActivity());
+                else
+                    Toast.makeText(getActivity(), "您没有安装Play商店,仍然谢谢您的支持!", Toast.LENGTH_LONG).show();
+
+                return true;
+            }
+        });
         findPreference(MAIL_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -46,7 +61,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Setup the initial values
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
         doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端打开所有答案");
-        disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, true) ? "让网页中的链接等元素失效以获取纯粹的阅读体验" : "开启后页面中的链接会被激活");
+        disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "若开启Javascript,页面中的链接会被激活" : "若关闭Javascript,页面中的链接会失效");
 
         String i = sharedPreferences.getString(IMAGE_LOAD, "always");
         switch (i){
@@ -79,7 +94,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端打开所有答案");
 
         } else if (key.equals(NO_JS_KEY)) {
-            disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, true) ? "让网页中的链接等元素失效以获取纯粹的阅读体验" : "开启后页面中的链接会被激活");
+            disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "若开启Javascript,页面中的链接会被激活" : "若关闭Javascript,页面中的链接会失效");
         } else if (key.equals(IMAGE_LOAD)){
             String i = sharedPreferences.getString(IMAGE_LOAD, "always");
             switch (i){
@@ -113,5 +128,21 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         data.putExtra(Intent.EXTRA_TEXT, "");
         data.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(data);
+    }
+
+    public static void launchAppDetail(String appPkg, String marketPkg , Context context) {
+        try {
+            if (TextUtils.isEmpty(appPkg))
+                return;
+            Uri uri = Uri.parse("market://details?id=" + appPkg);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            if (!TextUtils.isEmpty(marketPkg))
+                intent.setPackage(marketPkg);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            AppUtils.getAppContext().startActivity(intent);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
