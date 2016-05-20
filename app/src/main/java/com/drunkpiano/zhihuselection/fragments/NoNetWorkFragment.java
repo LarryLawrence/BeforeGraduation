@@ -13,7 +13,7 @@ import com.drunkpiano.zhihuselection.R;
  * Created by DrunkPiano on 16/4/26.
  * 是否有必要加一个下拉刷新
  */
-public class NoNetWorkFragment extends Fragment {
+public class NoNetworkFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -23,7 +23,7 @@ public class NoNetWorkFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.no_network_layout, container, false);
+        View root = inflater.inflate(R.layout.fragment_no_network, container, false);
         return root;
     }
 }

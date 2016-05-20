@@ -17,9 +17,8 @@
 
     <string name="tv_no_content">还没有内容</string>
 
-
     <string name="tv_app_name">「知乎每日精选」</string>
-    <string name="tv_version">v1.1 (May 2016)</string>
+    <string name="tv_version">v1.1.1 (May 2016)</string>
     <string name="tv_author">- About Author -</string>
     <string name="tv_zhihuan"><u>知乎: 知还</u></string>
     <string name="tv_mail">lcconan@gmail.com</string>
@@ -33,6 +32,8 @@
     <string name="action_web_add_to_fav">添加到收藏</string>
     <string name="action_web_refresh">刷新</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

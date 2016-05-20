@@ -1,12 +1,15 @@
 package com.drunkpiano.zhihuselection.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.drunkpiano.zhihuselection.fragments.ArchiveFragment;
+import com.drunkpiano.zhihuselection.fragments.NoNetworkFragment;
 import com.drunkpiano.zhihuselection.fragments.RecentFragment;
 import com.drunkpiano.zhihuselection.fragments.YesterdayFragment;
+import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -14,8 +17,11 @@ import com.drunkpiano.zhihuselection.fragments.YesterdayFragment;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    public SectionsPagerAdapter(FragmentManager fm) {
+    Context context;
+
+    public SectionsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
@@ -23,15 +29,24 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return new YesterdayFragment();
+                if (Utilities.isNetworkAvailable(context))
+                    return new YesterdayFragment();
+                else
+                    return new NoNetworkFragment();
             case 1:
-                return new RecentFragment();
+                if (Utilities.isNetworkAvailable(context))
+                    return new RecentFragment();
+                else
+                    return new NoNetworkFragment();
             case 2:
-                return new ArchiveFragment();
-
+                if (Utilities.isNetworkAvailable(context))
+                    return new ArchiveFragment();
+                else
+                    return new NoNetworkFragment();
         }
         return null;
     }
+
     @Override
     public int getCount() {
         // Show 3 total pages.

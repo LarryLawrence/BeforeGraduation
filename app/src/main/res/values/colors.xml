@@ -23,6 +23,9 @@
     <color name="almost_black">#292929</color>
 
 
-
+    <color name="colorPrimaryNight">#263238</color>
+    <color name="colorPrimaryNightDark">#263238</color>
+    <color name="CardBackgroundNight">#38474f</color>
+    <color name="colorAccentNight">#628AFF</color>
 
 </resources>

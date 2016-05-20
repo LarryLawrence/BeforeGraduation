@@ -71,7 +71,7 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 break;
             case 9:
                 title = "Q: 开发者是谁?";
-                info = "A: 在「关于」页面可以找到，欢迎发邮件给我。\n\nv1.0版本发布当天收到了很多酷安网的朋友们的的鼓励，也有几位朋友给我提了宝贵意见 我都有采纳，在此谢谢各位啦。";
+                info = "A: 在「关于」页面可以找到，有任何问题或建议都可以发邮件给我。谢谢支持!";
                 break;
         }
         gv.title.setText(title);

@@ -3,11 +3,8 @@ package com.drunkpiano.zhihuselection.utilities;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-import com.drunkpiano.zhihuselection.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,11 +28,10 @@ public class Utilities {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
             if (info != null && info.isConnected()) {
                 if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    System.out.println("当前网络是连接的当前网络是连接的当前网络是连接的当前网络是连接的");
+//                    System.out.println("当前网络是连接的当前网络是连接的当前网络是连接的当前网络是连接的");
                     return true;
                 }
-                System.out.println("网络不可用网络不可用网络不可用网络不可用网络不可用网络不可用");
-
+//                System.out.println("网络不可用网络不可用网络不可用网络不可用网络不可用网络不可用");
             }
         }
         return false;
@@ -49,15 +45,6 @@ public class Utilities {
             return true;
         }
         return false;
-    }
-
-    public static int getToolbarHeight(Context context) {
-        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
-                new int[]{R.attr.actionBarSize});
-        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
-        styledAttributes.recycle();
-
-        return toolbarHeight;
     }
 
     //    Date randomDate = randomDate("2010-09-20", "2010-09-21");

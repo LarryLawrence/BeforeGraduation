@@ -19,13 +19,11 @@ import android.view.WindowManager;
 
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.SectionsPagerAdapter;
-import com.drunkpiano.zhihuselection.utilities.Utilities;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String PREFS_NAME = "MyPrefsFile";
-    public static boolean netWorkAvailable = false;
-
+    //    public static boolean netWorkAvailable = false;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), getApplicationContext());
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         if (null != mViewPager)
@@ -75,14 +73,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("FirstLaunch", false);
             editor.apply();
-            System.out.println("first launch");
-        } else {
-            System.out.println("not first launch");
+//            System.out.println("first launch");
         }
-        if (Utilities.isNetworkAvailable(MainActivity.this)) {
-            netWorkAvailable = true;
-            System.out.println("有网络有网络有网络有网络有网络有网络有网络");
-        }
+
+//        try {
+//            PackageInfo pi = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
+//            versionCode = pi.versionCode;
+//            if (versionCode < 3) {
+//                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+//                SharedPreferences.Editor editor = sharedPref.edit();
+//                editor.putBoolean("", false);
+
+//            Boolean user_thisVersion_first = settings.getBoolean("ThisVersionFirstLaunch", true);
+//            if (user_thisVersion_first) {
+//                SharedPreferences.Editor editor = settings.edit();
+//                editor.putBoolean("ThisVersionFirstLaunch", false);
+//                editor.apply();
+//            }
+//            }
+//            System.out.println("versionCODE----->" + versionCode);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -95,34 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (null != navigationView) {
             navigationView.setNavigationItemSelectedListener(this);
-//            navigationView.getMenu().findItem(R.id.nav_favorites).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    item.setChecked(false);
-//                    return false;
-//                }
-//            });
-//            navigationView.getMenu().findItem(R.id.nav_about).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    item.setChecked(false);
-//                    return false;
-//                }
-//            });
-//            navigationView.getMenu().findItem(R.id.nav_settings).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    item.setChecked(false);
-//                    return false;
-//                }
-//            });
-//            navigationView.getMenu().findItem(R.id.nav_guide).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    item.setChecked(false);
-//                    return false;
-//                }
-//            });
         }
     }
 
@@ -144,13 +129,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             } else if (id == R.id.nav_about) {
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
-                intent.putExtra("fragmentName","about");
+                intent.putExtra("fragmentName", "about");
                 startActivity(intent);
 
             } else if (id == R.id.nav_settings) {
 
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
-                intent.putExtra("fragmentName","settings");
+                intent.putExtra("fragmentName", "settings");
                 startActivity(intent);
 
             }
@@ -162,11 +147,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        if (null != drawer)
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
     }
 
 }

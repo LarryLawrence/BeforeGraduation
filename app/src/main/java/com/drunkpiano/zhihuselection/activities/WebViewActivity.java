@@ -74,30 +74,6 @@ public class WebViewActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_favorite);
-//        if (fab != null)
-//            fab.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    boolean i = favoriteItemPressed();
-//                    if (!i)
-//                        snackMsg = "收藏成功";
-//                    else
-//                        snackMsg = "已经收藏过这一条";
-//                    Snackbar.make(view, snackMsg, Snackbar.LENGTH_SHORT)
-//                            .setAction("撤销收藏", new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    System.out.println("撤销收藏");
-//                                    removeFavorite();
-//                                    // Perform anything for the action selected
-//                                }
-//                            }).show();
-//                }
-//            });
-
-
-
         this.initMyWebView();
     }
 
@@ -105,7 +81,7 @@ public class WebViewActivity extends AppCompatActivity {
     private void initMyWebView() {
         Intent intent = getIntent();
         address = intent.getStringExtra("address");
-        System.out.println("address in webactivity" + address);
+//        System.out.println("address in webactivity" + address);
         title = intent.getStringExtra("title");
         summary = intent.getStringExtra("summary");
         myWebView = (WebView) findViewById(R.id.webView);
@@ -121,14 +97,14 @@ public class WebViewActivity extends AppCompatActivity {
         boolean loadIMG = true;
         if (myWebView != null) {
             myWebView.getSettings().setJavaScriptEnabled(!disableJavascript);
-            System.out.println("disableJavascript---------------->" + disableJavascript);
-
+//            System.out.println("disableJavascript---------------->" + disableJavascript);
             switch (loadImage) {
                 case "always":
                     loadIMG = true;
                     break;
                 case "ifWifi": {
-                    if (Utilities.isNetworkAvailable(getApplicationContext()) && Utilities.isWifi(getApplicationContext()))
+                    if (Utilities.isWifi(getApplicationContext()))
+//                    if (Utilities.isNetworkAvailable(getApplicationContext()) && Utilities.isWifi(getApplicationContext()))
                         loadIMG = true;
                     else
                         loadIMG = false;
@@ -140,6 +116,7 @@ public class WebViewActivity extends AppCompatActivity {
 //            System.out.println("setBlockNetworkImage---------------->" + loadImage + "-------" + loadIMG);
             myWebView.getSettings().setBlockNetworkImage(!loadIMG);
         }
+
         //启动缓存
         //        myWebView.getSettings().setAppCacheEnabled(true);
         //设置缓存模式
@@ -147,7 +124,7 @@ public class WebViewActivity extends AppCompatActivity {
         //        this.myWebView.setWebChromeClient();
         if (myWebView != null)
             myWebView.loadUrl(address);
-        System.out.println("setBlockNetworkImage---------------->" + address);
+//        System.out.println("setBlockNetworkImage---------------->" + address);
         myWebView.setWebViewClient(new myWebViewClient());
     }
 
@@ -163,6 +140,18 @@ public class WebViewActivity extends AppCompatActivity {
 //                url = url.replace("?next=/","");
 //                System.out.println("second replace"+url);
 //            }
+         if(url.contains("?next=")) {
+             Snackbar.make(linearLayout,"时光机的WebView没有办法解析这条回答；用知乎客户端打开应该可以看到。",Snackbar.LENGTH_INDEFINITE).setAction("好的，用知乎客户端查看这条答案", new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     Uri uri = Uri.parse(address);
+                     Intent intent = new Intent();
+                     intent.setAction(Intent.ACTION_VIEW);
+                     intent.setData(uri);
+                     startActivity(intent);
+                 }
+             }).show();
+         }
             if (url.contains("intent://questions/") && url.contains("com.zhihu.android")) {
                 Uri uri = Uri.parse(address);
                 Intent intent = new Intent();
@@ -219,7 +208,7 @@ public class WebViewActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(shareIntent, "分享到："));
                 break;
             case R.id.action_open_zhihu:
-                System.out.println("address------>" + address);
+//                System.out.println("address------>" + address);
                 Uri uri = Uri.parse(address);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
@@ -297,7 +286,7 @@ public class WebViewActivity extends AppCompatActivity {
         cv.put("saddress", address);
         dbWrite.insert("favorites", null, cv);
         dbWrite.close();
-        System.out.println("收藏成功------>" + address);
+//        System.out.println("收藏成功------>" + address);
     }
 
     private void removeFavorite() {

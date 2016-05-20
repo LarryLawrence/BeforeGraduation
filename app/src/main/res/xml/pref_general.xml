@@ -7,12 +7,12 @@
             android:defaultValue="true"
             android:key="doNotUseClient"
             android:summary="开启以使浏览更平滑"
-            android:title="不使用知乎客户端打开答案" />
+            android:title="不使用知乎客户端查看答案" />
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="disableJavascript"
-            android:summary="禁用网页中的JavaScript元素(包括超链接)"
+            android:summary="禁用网页中的JavaScript元素(比如超链接)"
             android:title="禁用网页中的JavaScript" />
 
         <ListPreference
@@ -32,7 +32,7 @@
             android:defaultValue="true"
             android:key="gradeMe"
             android:summary="五星好评吧"
-            android:title="参与Google Play的评价" />
+            android:title="参与应用商店的评价" />
         <Preference
             android:defaultValue="true"
             android:key="mailMe"

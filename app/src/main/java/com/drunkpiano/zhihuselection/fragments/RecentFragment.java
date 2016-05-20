@@ -143,7 +143,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             editor.putString("LastUpdateRecent", time.format(Calendar.getInstance().getTime()));
             editor.putString("RecentLastViewedDateChinese", dateWithChinese);
             editor.apply();
-            System.out.println("数据库里没东西,下载.");
+//            System.out.println("数据库里没东西,下载.");
             //NECESSARY
             mSwipeRefreshLayout.setRefreshing(true);
             initiateDownloadToEmptyDB();
@@ -165,7 +165,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 //            System.out.println("lastUpdateInt--------->" + lastUpdateInt);
             if ((currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
                 mSwipeRefreshLayout.setRefreshing(true);
-                System.out.println("对应createView的时候判断出需要刷新的情况");
+//                System.out.println("对应createView的时候判断出需要刷新的情况");
                 refreshListView(getDate());
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("LastUpdateRecent", currentTimeStr);
@@ -184,7 +184,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         if (currentTimeInt > latestWebsiteUpdateTimeInt && lastUpdateInt < latestWebsiteUpdateTimeInt) {
             initThisFragment(false);//这是为了防止用户没退出进程第二天早晨onResume的时候需要更新
         }
-        System.out.println("this is recent onResume");
+//        System.out.println("this is recent onResume");
         super.onResume();
     }
 
@@ -480,7 +480,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
                 editor.apply();
 
                 if (null != getView())
-                    Snackbar.make(getView(), "时光机带你降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(), "时光机带您降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;
             case R.id.action_date_picker: {
@@ -566,7 +566,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
 
     @Override
     public void returnDate(String date, String date2) {
-        System.out.println("getDate----------->" + getDate());
+//        System.out.println("getDate----------->" + getDate());
 
         long one = Long.parseLong(date);
         if (one < 20140919) {
@@ -579,7 +579,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
             refreshListView(date);
             mSwipeRefreshLayout.setRefreshing(true);
             if (null != getView())
-                Snackbar.make(getView(), "时光机带你开往" + date2, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), "时光机带您开往" + date2, Snackbar.LENGTH_LONG).show();
         }
     }
 }

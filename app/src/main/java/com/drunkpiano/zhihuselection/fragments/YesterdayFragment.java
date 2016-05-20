@@ -494,7 +494,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 editor.apply();
 
                 if (null != getView())
-                    Snackbar.make(getView(), "时光机带你降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getView(), "时光机带您降落在 : " + dateWithChinese + "", Snackbar.LENGTH_LONG).show();
                 mSwipeRefreshLayout.setRefreshing(true);
                 break;
             case R.id.action_date_picker: {
@@ -597,7 +597,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             refreshListView(date);
             mSwipeRefreshLayout.setRefreshing(true);
             if (null != getView())
-                Snackbar.make(getView(), "时光机带你开往" + date2, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), "时光机带您开往" + date2, Snackbar.LENGTH_LONG).show();
         }
     }
 

@@ -22,7 +22,8 @@ public class AnyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_any);
         toolbar = (Toolbar) findViewById(R.id.any_toolbar);
-        toolbar.setTitle("答案");
+        if (null != toolbar)
+            toolbar.setTitle("答案");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
@@ -32,7 +33,7 @@ public class AnyActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
         String fragmentName = intent.getStringExtra("fragmentName");
-        String titleName ;
+        String titleName;
         toolbar.setTitle("你好");
 
         if (fragmentName.equals("settings")) {
@@ -43,15 +44,13 @@ public class AnyActivity extends AppCompatActivity {
                     .replace(R.id.any_container, new SettingsFragment())
                     .commit();
 //            toolbar.setTitle(titleName);
-        }
-        else if(fragmentName.equals("about")){
+        } else if (fragmentName.equals("about")) {
             titleName = "关于";
             toolbar.setTitle(titleName);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.any_container, new AboutFragment())
                     .commit();
-        }
-        else if(fragmentName.equals("guide")) {
+        } else if (fragmentName.equals("guide")) {
             titleName = "指南";
             toolbar.setTitle(titleName);//这个一定放在fragment transaction之前..
 

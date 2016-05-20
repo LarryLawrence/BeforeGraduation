@@ -60,8 +60,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onResume();
         // Setup the initial values
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-        doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端打开所有答案");
-        disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "若开启Javascript,页面中的链接会被激活" : "若关闭Javascript,页面中的链接会失效");
+        doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端查看所有答案");
+        disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "未启用Javascript(页面中的链接失效)" : "已启用Javascript(页面中的链接激活)");
 
         String i = sharedPreferences.getString(IMAGE_LOAD, "always");
         switch (i){
@@ -91,10 +91,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
         if (key.equals(No_ZhIHU_KEY)) {
-            doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端打开所有答案");
+            doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端查看所有答案");
 
         } else if (key.equals(NO_JS_KEY)) {
-            disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "若开启Javascript,页面中的链接会被激活" : "若关闭Javascript,页面中的链接会失效");
+            disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "未启用Javascript(页面中的链接失效)" : "已启用Javascript(页面中的链接激活)");
         } else if (key.equals(IMAGE_LOAD)){
             String i = sharedPreferences.getString(IMAGE_LOAD, "always");
             switch (i){
@@ -136,8 +136,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 return;
             Uri uri = Uri.parse("market://details?id=" + appPkg);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            if (!TextUtils.isEmpty(marketPkg))
-                intent.setPackage(marketPkg);
+//            if (!TextUtils.isEmpty(marketPkg))
+//                intent.setPackage(marketPkg);//注释掉这一句,也就不指定应用商店名称,变成implicit intent
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            AppUtils.getAppContext().startActivity(intent);
             context.startActivity(intent);
