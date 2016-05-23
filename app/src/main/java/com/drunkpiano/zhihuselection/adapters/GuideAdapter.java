@@ -47,7 +47,7 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 break;
             case 3:
                 title = "Q: 主页右上角的「时光机」按钮是随机到某一天的吗?";
-                info = "A: 是的,每次点击会随机来到2014年9月19日到今天之间的某一天。";
+                info = "A: 是的，每次点击会随机来到2014年9月19日到今天之间的某一天。";
                 break;
             case 4:
                 title = "Q: 有时候点进去之后会提示登录？";
@@ -67,11 +67,11 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 break;
             case 8:
                 title = "Q: 答案页底部的奇怪符号是什么?";
-                info = "A: 是乐谱中的「四分休止符」，拿来表示结束用的，哈哈。点击它可以回到页面顶端。";
+                info = "A: 是乐谱中的「四分休止符」。点击它可以回到页面顶端。";
                 break;
             case 9:
                 title = "Q: 开发者是谁?";
-                info = "A: 在「关于」页面可以找到，有任何问题或建议都可以发邮件给我。谢谢支持!";
+                info = "A: 在「关于」页面可以找到，有任何问题或建议都可以给我私信/写邮件。谢谢支持!";
                 break;
         }
         gv.title.setText(title);

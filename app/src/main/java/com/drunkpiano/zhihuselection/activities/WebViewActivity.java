@@ -131,7 +131,7 @@ public class WebViewActivity extends AppCompatActivity {
     class myWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
+        webSwipeRefreshLayout.setRefreshing(true);//重定向答案的时候
             //http://www.zhihu.com/?next=%2Fquestion%2F45968097%2Fanswer%2F100778963
 //            if(url.contains("?next="))
 //            {
@@ -141,7 +141,7 @@ public class WebViewActivity extends AppCompatActivity {
 //                System.out.println("second replace"+url);
 //            }
          if(url.contains("?next=")) {
-             Snackbar.make(linearLayout,"时光机的WebView没有办法解析这条回答；用知乎客户端打开应该可以看到。",Snackbar.LENGTH_INDEFINITE).setAction("好的，用知乎客户端查看这条答案", new View.OnClickListener() {
+             Snackbar.make(linearLayout,"时光机的WebView没法解析这条回答；用知乎客户端打开应该可以看到。",Snackbar.LENGTH_INDEFINITE).setAction("好的，用知乎客户端查看", new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {
                      Uri uri = Uri.parse(address);

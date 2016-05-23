@@ -76,27 +76,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            System.out.println("first launch");
         }
 
-//        try {
-//            PackageInfo pi = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
-//            versionCode = pi.versionCode;
-//            if (versionCode < 3) {
-//                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-//                SharedPreferences.Editor editor = sharedPref.edit();
-//                editor.putBoolean("", false);
-
-//            Boolean user_thisVersion_first = settings.getBoolean("ThisVersionFirstLaunch", true);
-//            if (user_thisVersion_first) {
-//                SharedPreferences.Editor editor = settings.edit();
-//                editor.putBoolean("ThisVersionFirstLaunch", false);
-//                editor.apply();
-//            }
-//            }
-//            System.out.println("versionCODE----->" + versionCode);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

@@ -256,41 +256,22 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     SQLiteDatabase dbRead = db.getInstance(getContext()).getReadableDatabase();
                     Cursor myCursor = dbRead.query("archive", null, null, null, null, null, null);
                     if (myCursor.moveToFirst()) {
+
+                        SQLiteDatabase dbForDrop = db.getWritableDatabase();
+                        dbForDrop.execSQL("DELETE FROM archive");
+                        dbForDrop.execSQL("CREATE TABLE IF NOT EXISTS archive (_id integer primary key autoincrement,stitle text,ssummary text,squestionid text,sanswerid text)");
+                        dbForDrop.execSQL("UPDATE sqlite_sequence SET seq = 0 WHERE name = 'archive';");
+                        dbForDrop.close();
+
                         JSONArray array = root.getJSONArray("answers");//获取数组
                         ListCellData LcData = new ListCellData();
-                        if (root.getInt("count") >= myCursor.getCount()) {
-                            //1'今天数目>昨天数目, 1.update昨天数目 2.insert昨天数目~今天数目
-                            for (int i = 0; i < myCursor.getCount(); i++) {
-                                JSONObject jo = array.getJSONObject(i);
-                                LcData.setTitle(jo.getString("title"));
-                                LcData.setSummary(jo.getString("summary"));
-                                LcData.setQuestionid(jo.getString("questionid"));
-                                LcData.setAnswerid(jo.getString("answerid"));
-                                updateTables(LcData, tabName, i + 1);
-                            }
-                            for (int i = myCursor.getCount(); i < root.getInt("count"); i++) {
-                                JSONObject jo = array.getJSONObject(i);
-                                LcData.setTitle(jo.getString("title"));
-                                LcData.setSummary(jo.getString("summary"));
-                                LcData.setQuestionid(jo.getString("questionid"));
-                                LcData.setAnswerid(jo.getString("answerid"));
-                                insertToTables(LcData, tabName);
-//                            updateTables(LcData, tabName, i + 1);
-                            }
-                        } else {
-                            //2'今天数目<昨天数目, 2.update今天数目 2.delete今天数目~昨天数目
-                            for (int i = 0; i < root.getInt("count"); i++) {
-                                JSONObject jo = array.getJSONObject(i);
-                                LcData.setTitle(jo.getString("title"));
-                                LcData.setSummary(jo.getString("summary"));
-                                LcData.setQuestionid(jo.getString("questionid"));
-                                LcData.setAnswerid(jo.getString("answerid"));
-                                updateTables(LcData, tabName, i + 1);
-                            }
-
-                            for (int i = root.getInt("count"); i < myCursor.getCount(); i++)
-                                deleteDBLines(tabName, i);
-
+                        for (int i = 0; i < root.getInt("count"); i++) {
+                            JSONObject jo = array.getJSONObject(i);
+                            LcData.setTitle(jo.getString("title"));
+                            LcData.setSummary(jo.getString("summary"));
+                            LcData.setQuestionid(jo.getString("questionid"));
+                            LcData.setAnswerid(jo.getString("answerid"));
+                            insertToTables(LcData, tabName);
                         }
                     }
                     dbRead.close();
@@ -395,32 +376,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
             }
         }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/archive");//读今天的
 //    }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160405" + "/archive");//读今天的
-    }
-
-    public void deleteDBLines(String tabName, int ids) {
-        db = new Db(getContext());
-        SQLiteDatabase dbWrite = db.getWritableDatabase();
-        String whereClause = "_id=?";
-        String[] whereArgs = {String.valueOf(ids)};
-        dbWrite.delete(tabName, whereClause, whereArgs);//没有cv
-        dbWrite.close();
-    }
-
-    public void updateTables(ListCellData data, String tabName, int ids) {
-        db = new Db(getContext());
-        //WRITE
-        SQLiteDatabase dbWrite = db.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("stitle", data.getTitle());
-        cv.put("ssummary", data.getSummary());
-        cv.put("squestionid", data.getQuestionid());
-        cv.put("sanswerid", data.getAnswerid());
-        String whereClause = "_id=?";
-        String[] whereArgs = {String.valueOf(ids)};
-        dbWrite.update(tabName, cv, whereClause, whereArgs);
-
-        dbWrite.close();
-
     }
 
     public void insertToTables(ListCellData data, String tabName) {

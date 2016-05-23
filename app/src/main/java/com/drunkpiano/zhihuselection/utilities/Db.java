@@ -26,7 +26,6 @@ public class Db extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS yesterday (_id integer primary key autoincrement,stitle text,ssummary text,squestionid text,sanswerid text)");
         db.execSQL("CREATE TABLE IF NOT EXISTS recent    (_id integer primary key autoincrement,stitle text,ssummary text,squestionid text,sanswerid text)");
         db.execSQL("CREATE TABLE IF NOT EXISTS archive   (_id integer primary key autoincrement,stitle text,ssummary text,squestionid text,sanswerid text)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS linger    (_id integer primary key autoincrement,stitle text,ssummary text,squestionid text,sanswerid text)");
         db.execSQL("CREATE TABLE IF NOT EXISTS favorites    (_id integer primary key autoincrement,stitle text, ssummary text, saddress text)");
 
 //        db.execSQL("CREATE TABLE IF NOT EXISTS DatesAlreadyInView    (_id integer primary key autoincrement,sYesterdayDate text,sRecentDate text,sArchiveDate text)");
