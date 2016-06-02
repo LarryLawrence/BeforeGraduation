@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -75,6 +76,7 @@ public class WebViewActivity extends AppCompatActivity {
         }
 
         this.initMyWebView();
+//        myWebView.scrollTo(0, 600);
     }
 
 
@@ -115,13 +117,14 @@ public class WebViewActivity extends AppCompatActivity {
             }
 //            System.out.println("setBlockNetworkImage---------------->" + loadImage + "-------" + loadIMG);
             myWebView.getSettings().setBlockNetworkImage(!loadIMG);
+//            myWebView.addJavascriptInterface();
         }
 
-        //启动缓存
-        //        myWebView.getSettings().setAppCacheEnabled(true);
-        //设置缓存模式
-        //        myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        //        this.myWebView.setWebChromeClient();
+//        启动缓存
+                myWebView.getSettings().setAppCacheEnabled(true);
+//        设置缓存模式
+                myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+
         if (myWebView != null)
             myWebView.loadUrl(address);
 //        System.out.println("setBlockNetworkImage---------------->" + address);
@@ -172,6 +175,7 @@ public class WebViewActivity extends AppCompatActivity {
 //            progressBarIndeterminate.setVisibility(WebView.GONE);
             webSwipeRefreshLayout.setRefreshing(false);
             super.onPageFinished(view, url);
+
         }
     }
 

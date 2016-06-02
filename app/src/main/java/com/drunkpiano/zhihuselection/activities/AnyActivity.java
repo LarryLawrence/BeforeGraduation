@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016.
+ * com.drunkpiano.zhihuselection.activities.AnyActivity
+ * version 1.1.2
+ * DrunkPiano All Rights Reserved
+ */
 package com.drunkpiano.zhihuselection.activities;
 
 import android.content.Intent;
@@ -14,6 +20,7 @@ import com.drunkpiano.zhihuselection.fragments.GuideFragment;
 import com.drunkpiano.zhihuselection.fragments.SettingsFragment;
 import com.drunkpiano.zhihuselection.fragments.AboutFragment;
 
+/* The Activity for holding some certain fragments.*/
 public class AnyActivity extends AppCompatActivity {
     android.support.v7.widget.Toolbar toolbar;
 
@@ -38,12 +45,11 @@ public class AnyActivity extends AppCompatActivity {
 
         if (fragmentName.equals("settings")) {
             titleName = "设置";
-            toolbar.setTitle(titleName);//这个一定放在fragment transaction之前..
+            toolbar.setTitle(titleName);//这个一定放在fragment transaction之前
 
             getFragmentManager().beginTransaction()
                     .replace(R.id.any_container, new SettingsFragment())
                     .commit();
-//            toolbar.setTitle(titleName);
         } else if (fragmentName.equals("about")) {
             titleName = "关于";
             toolbar.setTitle(titleName);
@@ -52,15 +58,13 @@ public class AnyActivity extends AppCompatActivity {
                     .commit();
         } else if (fragmentName.equals("guide")) {
             titleName = "指南";
-            toolbar.setTitle(titleName);//这个一定放在fragment transaction之前..
+            toolbar.setTitle(titleName);//这个一定放在fragment transaction之前
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.any_container, new GuideFragment())
                     .commit();
         }
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
