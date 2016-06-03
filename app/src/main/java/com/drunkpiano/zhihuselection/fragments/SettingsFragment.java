@@ -11,12 +11,10 @@ import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.drunkpiano.zhihuselection.R;
-import com.drunkpiano.zhihuselection.utilities.Utilities;
 
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     public final static String No_ZhIHU_KEY = "doNotUseClient";
     public final static String NO_JS_KEY = "disableJavascript";
     public final static String IMAGE_LOAD = "loadImagePreference";
@@ -26,6 +24,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     SwitchPreference doNotUseClient;
     SwitchPreference disableJavascript;
     ListPreference loadImagePreference;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -37,11 +36,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         findPreference(GRADE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (Utilities.isAppInstalled(getActivity(), "com.android.vending"))
-                    launchAppDetail("com.drunkpiano.zhihuselection", "com.android.vending", getActivity());
-                else
-                    Toast.makeText(getActivity(), "您没有安装Play商店,仍然谢谢您的支持!", Toast.LENGTH_LONG).show();
-
+                //                if (Utilities.isAppInstalled(getActivity(), "com.android.vending"))
+                launchAppDetail("com.drunkpiano.zhihuselection", getActivity());
+                //                else
+                //                    Toast.makeText(getActivity(), "您没有安装Play商店,仍然谢谢您的支持!", Toast.LENGTH_LONG).show();
                 return true;
             }
         });
@@ -52,7 +50,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 return true;
             }
         });
-
     }
 
     @Override
@@ -64,7 +61,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "未启用Javascript(页面中的链接失效)" : "已启用Javascript(页面中的链接激活)");
 
         String i = sharedPreferences.getString(IMAGE_LOAD, "always");
-        switch (i){
+        switch (i) {
             case "always":
                 loadImagePreference.setSummary("始终载入图片");
                 break;
@@ -75,7 +72,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 loadImagePreference.setSummary("从不加载图片");
                 break;
         }
-
         // Set up a listener whenever a key changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -89,36 +85,37 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-        if (key.equals(No_ZhIHU_KEY)) {
-            doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端查看所有答案");
-
-        } else if (key.equals(NO_JS_KEY)) {
-            disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "未启用Javascript(页面中的链接失效)" : "已启用Javascript(页面中的链接激活)");
-        } else if (key.equals(IMAGE_LOAD)){
-            String i = sharedPreferences.getString(IMAGE_LOAD, "always");
-            switch (i){
-                case "always":
-                    loadImagePreference.setSummary("始终载入图片");
-                    break;
-                case "ifWifi":
-                    loadImagePreference.setSummary("仅在WiFi环境下载入图片");
-                    break;
-                case "never":
-                    loadImagePreference.setSummary("从不加载图片");
-                    break;
-            }
+        switch (key) {
+            case No_ZhIHU_KEY:
+                doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true)
+                        ? "开启以使浏览更平滑" : "关闭以使用知乎客户端查看所有答案");
+                break;
+            case NO_JS_KEY:
+                disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false)
+                        ? "未启用Javascript(页面中的链接失效)"
+                        : "已启用Javascript(页面中的链接激活)");
+                break;
+            case IMAGE_LOAD:
+                String i = sharedPreferences.getString(IMAGE_LOAD, "always");
+                switch (i) {
+                    case "always":
+                        loadImagePreference.setSummary("始终载入图片");
+                        break;
+                    case "ifWifi":
+                        loadImagePreference.setSummary("仅在WiFi环境下载入图片");
+                        break;
+                    case "never":
+                        loadImagePreference.setSummary("从不加载图片");
+                        break;
+                }
+                break;
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == android.R.id.home || super.onOptionsItemSelected(item);
     }
 
     public static void mailMe(Context context) {
@@ -130,16 +127,16 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         context.startActivity(data);
     }
 
-    public static void launchAppDetail(String appPkg, String marketPkg , Context context) {
+    public static void launchAppDetail(String appPkg, Context context) {
         try {
             if (TextUtils.isEmpty(appPkg))
                 return;
             Uri uri = Uri.parse("market://details?id=" + appPkg);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//            if (!TextUtils.isEmpty(marketPkg))
-//                intent.setPackage(marketPkg);//注释掉这一句,也就不指定应用商店名称,变成implicit intent
+            //            if (!TextUtils.isEmpty(marketPkg))
+            //                intent.setPackage(marketPkg);//注释掉这一句,也就不指定应用商店名称,变成implicit intent
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            AppUtils.getAppContext().startActivity(intent);
+            //            AppUtils.getAppContext().startActivity(intent);
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();

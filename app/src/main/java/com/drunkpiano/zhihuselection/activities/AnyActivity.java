@@ -5,7 +5,6 @@
  * DrunkPiano All Rights Reserved
  */
 package com.drunkpiano.zhihuselection.activities;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,13 +15,13 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import com.drunkpiano.zhihuselection.R;
+import com.drunkpiano.zhihuselection.fragments.AboutFragment;
 import com.drunkpiano.zhihuselection.fragments.GuideFragment;
 import com.drunkpiano.zhihuselection.fragments.SettingsFragment;
-import com.drunkpiano.zhihuselection.fragments.AboutFragment;
 
 /* The Activity for holding some certain fragments.*/
 public class AnyActivity extends AppCompatActivity {
-    android.support.v7.widget.Toolbar toolbar;
+    private android.support.v7.widget.Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,28 +42,33 @@ public class AnyActivity extends AppCompatActivity {
         String titleName;
         toolbar.setTitle("你好");
 
-        if (fragmentName.equals("settings")) {
-            titleName = "设置";
-            toolbar.setTitle(titleName);//这个一定放在fragment transaction之前
+        switch (fragmentName) {
+            case "settings":
+                titleName = "设置";
+                toolbar.setTitle(titleName);//这个一定放在fragment transaction之前
 
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.any_container, new SettingsFragment())
-                    .commit();
-        } else if (fragmentName.equals("about")) {
-            titleName = "关于";
-            toolbar.setTitle(titleName);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.any_container, new AboutFragment())
-                    .commit();
-        } else if (fragmentName.equals("guide")) {
-            titleName = "指南";
-            toolbar.setTitle(titleName);//这个一定放在fragment transaction之前
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.any_container, new SettingsFragment())
+                        .commit();
+                break;
+            case "about":
+                titleName = "关于";
+                toolbar.setTitle(titleName);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.any_container, new AboutFragment())
+                        .commit();
+                break;
+            case "guide":
+                titleName = "指南";
+                toolbar.setTitle(titleName);//这个一定放在fragment transaction之前
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.any_container, new GuideFragment())
-                    .commit();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.any_container, new GuideFragment())
+                        .commit();
+                break;
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -73,8 +77,6 @@ public class AnyActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 }

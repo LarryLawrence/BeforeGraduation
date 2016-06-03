@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016.
+ * com.drunkpiano.zhihuselection.activities.FavoriteActivity
+ * version 1.1.2
+ * DrunkPiano All Rights Reserved
+ */
 package com.drunkpiano.zhihuselection.activities;
 
 import android.database.Cursor;
@@ -22,17 +28,18 @@ import com.drunkpiano.zhihuselection.adapters.FavoritesAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
+/*The Activity for displaying user's favorite items.*/
 public class FavoritesActivity extends AppCompatActivity implements MyItemClickListener {
     private FavoritesAdapter favoritesAdapter;
-    Toolbar toolbar;
-    RecyclerView rv;
-    Db db;
-    FrameLayout frameLayout;
+    private RecyclerView rv;
+    private Db db;
+    private FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
+        Toolbar toolbar;
         toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
         frameLayout = (FrameLayout) findViewById(R.id.fav_text);
         if (toolbar != null) {
@@ -48,12 +55,9 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         SQLiteDatabase dbRead = db.getInstance(getApplicationContext()).getReadableDatabase();
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
         if (myCursor.getCount() != 0) {
-//            setContentView(R.layout.activity_favorites);
             frameLayout.setVisibility(View.INVISIBLE);
         }
         myCursor.close();
-
-
         rv = (RecyclerView) findViewById(R.id.fav_cards_list);
         rv.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
         rv.setItemAnimator(new DefaultItemAnimator());
@@ -70,7 +74,8 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        int id = item.getItemId();//局部变量和第一条语句之前 空行
+
         switch (id) {
             case android.R.id.home:
                 onBackPressed();
@@ -80,7 +85,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
                 SQLiteDatabase dbRead = db.getInstance(getApplicationContext()).getReadableDatabase();
                 Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
                 int num = myCursor.getCount();
-                System.out.println("getCount--------->" + num);
                 for (int i = 0; i < num; i++)
                     onInterfaceItemLongClick(0);
                 myCursor.close();
@@ -91,14 +95,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 
     @Override
     public void onInterfaceItemLongClick(int position) {
-
-//        new android.support.v7.app.AlertDialog.Builder(this).setMessage("移除这一条").setPositiveButton("好的", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
         favoritesAdapter.remove(position);
-        Snackbar.make(rv,"已移除",Snackbar.LENGTH_SHORT).show();
-//
-//            }
-//        }).setNegativeButton("不用", new)
+        Snackbar.make(rv, "已移除", Snackbar.LENGTH_SHORT).show();
     }
 }
