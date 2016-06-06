@@ -1,4 +1,12 @@
-package com.drunkpiano.zhihuselection.utilities;
+/*
+ * The fragment to show the archive page.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fixed to accord it with standard coding disciplines.
+ */
+
+package com.drunkpiano.zhihuselection.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -10,9 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-/**
- * Created by DrunkPiano on 16/5/11.
- */
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
     TheListener listener;

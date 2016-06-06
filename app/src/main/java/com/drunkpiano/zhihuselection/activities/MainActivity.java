@@ -1,3 +1,11 @@
+/*
+ * The MainActivity.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.activities;
 
 import android.content.Intent;
@@ -20,7 +28,8 @@ import android.view.WindowManager;
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.SectionsPagerAdapter;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String PREFS_NAME = "MyPrefsFile";
     //    public static boolean netWorkAvailable = false;
@@ -73,14 +82,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("FirstLaunch", false);
             editor.apply();
-//            System.out.println("first launch");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         if (null != drawer)
-//        drawer.setDrawerListener(toggle);
             drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -101,22 +108,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (id == R.id.nav_favorites) {
                 Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
                 startActivity(intent);
-
             } else if (id == R.id.nav_guide) {
                 Intent intent = new Intent(MainActivity.this, GuideActivity.class);
-//                intent.putExtra("fragmentName","guide");
                 startActivity(intent);
             } else if (id == R.id.nav_about) {
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
                 intent.putExtra("fragmentName", "about");
                 startActivity(intent);
-
             } else if (id == R.id.nav_settings) {
-
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
                 intent.putExtra("fragmentName", "settings");
                 startActivity(intent);
-
             }
             drawer.closeDrawer(GravityCompat.START);
         }

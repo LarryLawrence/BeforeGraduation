@@ -1,3 +1,11 @@
+/*
+ * This Activity is for displaying user guides.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.activities;
 
 import android.graphics.Color;
@@ -10,38 +18,33 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
-
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.adapters.GuideAdapter;
 
 public class GuideActivity extends AppCompatActivity {
-    Toolbar toolbar;
-    RecyclerView rv;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        GuideAdapter guideAdapter;
-
         super.onCreate(savedInstanceState);
+        GuideAdapter guideAdapter = new GuideAdapter(getApplicationContext());
+        android.support.v7.widget.Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_guide);
+
         setContentView(R.layout.activity_guide);
-        toolbar = (Toolbar) findViewById(R.id.toolbar_guide);
-        if (toolbar != null) {
-            toolbar.setTitle("指南");
-            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        if (mToolbar != null) {
+            mToolbar.setTitle("指南");
+            mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         }
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
-        rv = (RecyclerView) findViewById(R.id.guide_cards_list);
-        rv.setLayoutManager(new LinearLayoutManager(GuideActivity.this));
-        rv.setItemAnimator(new DefaultItemAnimator());
-        guideAdapter = new GuideAdapter(getApplicationContext());
-        rv.setAdapter(guideAdapter);
+        mRecyclerView = (RecyclerView) findViewById(R.id.guide_cards_list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(GuideActivity.this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(guideAdapter);
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

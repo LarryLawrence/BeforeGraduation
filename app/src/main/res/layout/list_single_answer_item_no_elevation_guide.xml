@@ -35,8 +35,8 @@
             android:id="@+id/info"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.2"
             android:ellipsize="end"
+            android:lineSpacingMultiplier="1.2"
             android:paddingTop="4dp"
             android:textColor="@color/almost_black" />
 

@@ -1,3 +1,11 @@
+/*
+ * The Utility file.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fixed to accord it with standard coding disciplines.
+ */
+
 package com.drunkpiano.zhihuselection.utilities;
 
 import android.content.Context;
@@ -11,9 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by DrunkPiano on 16/3/17.
- */
 public class Utilities {
     /**
      * 检测当的网络（WLAN、3G/2G）状态
@@ -28,10 +33,8 @@ public class Utilities {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
             if (info != null && info.isConnected()) {
                 if (info.getState() == NetworkInfo.State.CONNECTED) {
-//                    System.out.println("当前网络是连接的当前网络是连接的当前网络是连接的当前网络是连接的");
                     return true;
                 }
-//                System.out.println("网络不可用网络不可用网络不可用网络不可用网络不可用网络不可用");
             }
         }
         return false;
@@ -53,6 +56,7 @@ public class Utilities {
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
             Date start = format.parse(beginDate);//构造开始日期
             Date end = format.parse(endDate);//构造结束日期
+
             //getTime()表示返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
             if (start.getTime() >= end.getTime()) {
                 return null;
@@ -78,6 +82,7 @@ public class Utilities {
     public static boolean isAppInstalled( Context context, String packageName )
     {
         final PackageManager packageManager = context.getPackageManager();
+
         // 获取所有已安装程序的包信息
         List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
         for ( int i = 0; i < pinfo.size(); i++ )

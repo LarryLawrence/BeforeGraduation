@@ -1,8 +1,13 @@
+/*
+ * A data structure to store complex data.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fixed to accord it with standard coding disciplines.
+ */
+
 package com.drunkpiano.zhihuselection.utilities;
 
-/**
- * Created by DrunkPiano on 16/3/15.
- */
 public class ListCellData {
     private String title = "";
     private String summary = "";

@@ -1,3 +1,11 @@
+/*
+ * This adapter is used for displaying the guide recyclerView.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.adapters;
 
 import android.content.Context;
@@ -9,22 +17,21 @@ import android.widget.TextView;
 
 import com.drunkpiano.zhihuselection.R;
 
-/**
- * Created by DrunkPiano on 16/5/12.
- */
 public class GuideAdapter extends RecyclerView.Adapter {
-    Context context;
+    protected Context mContext;
     private final LayoutInflater mLayoutInflater;
 
-    public GuideAdapter(Context context) {
-        this.context = context;
-        mLayoutInflater = LayoutInflater.from(context);
+    public GuideAdapter(Context mContext) {
+        this.mContext = mContext;
+        mLayoutInflater = LayoutInflater.from(mContext);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new GuideViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_no_elevation_guide, parent, false));
+            return new GuideViewHolder(mLayoutInflater.inflate
+                    (R.layout.list_single_answer_item_no_elevation_guide, parent, false));
     }
+    
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         GuideViewHolder gv = (GuideViewHolder) holder;
@@ -71,7 +78,7 @@ public class GuideAdapter extends RecyclerView.Adapter {
                 break;
             case 9:
                 title = "Q: 开发者是谁?";
-                info = "A: 在「关于」页面可以找到，有任何问题或建议都可以给我私信/写邮件。谢谢支持!";
+                info = "A: 在「关于」页面可以找到，有任何问题或建议都可以给我私信/写邮件。谢谢:)";
                 break;
         }
         gv.title.setText(title);
@@ -82,7 +89,6 @@ public class GuideAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return 10;
     }
-
 
     public class GuideViewHolder extends RecyclerView.ViewHolder {
         TextView title;

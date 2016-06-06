@@ -1,3 +1,11 @@
+/*
+ * This adapter is used for displaying the favorite viewpager.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.adapters;
 
 import android.content.Context;
@@ -18,85 +26,78 @@ import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
 import java.util.ArrayList;
 
-/**
- * Created by DrunkPiano on 16/5/3.
- */
 public class FavoritesAdapter extends RecyclerView.Adapter {
-
     private static final int NORMAL_ITEM = 0;
     private static final int ITEM_WITH_DATE = 1;
-    ListCellDataSimplified[] data;
-    Db db;
-    SQLiteDatabase dbRead;
-    SQLiteDatabase dbWrite;
-    String tableName;
-    int count;
+    private ListCellDataSimplified[] mData;
+    private Db mDb;
+    private String mTableName;
+    private int mCount;
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
-    ArrayList<ListCellDataSimplified> dataArrayList = new ArrayList<>();
-    MyItemClickListener mLongClickListener;
+    private ArrayList<ListCellDataSimplified> mDataArrayList = new ArrayList<>();
+    private MyItemClickListener mLongClickListener;
 
-    public FavoritesAdapter(Context context, String tableName) {
+    public FavoritesAdapter(Context context, String mTableName) {
         mContext = context;
-        this.tableName = tableName;
+        SQLiteDatabase dbRead = mDb.getInstance(mContext).getReadableDatabase();
+        this.mTableName = mTableName;
         mLayoutInflater = LayoutInflater.from(context);
-        System.out.println("this is favorite constructor");
-
-        db = new Db(mContext);
-        dbRead = db.getInstance(mContext).getReadableDatabase();
-        Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
-        count = myCursor.getCount();
+        mDb = new Db(mContext);
+        Cursor myCursor = dbRead.query(mTableName, null, null, null, null, null, null);
+        mCount = myCursor.getCount();
         myCursor.close();
         dbRead.close();
     }
 
     public void remove(int position) {
-//        System.out.println("remove postion------>"+ position + "---"+ dataArrayList.get(position).getTitle());
-        dataArrayList.remove(count - 1 - position);
+        SQLiteDatabase dbWrite;
+        mDataArrayList.remove(mCount - 1 - position);
         notifyItemRemoved(position);
-        db = new Db(mContext);
-        dbWrite = db.getInstance(mContext).getWritableDatabase();
+        mDb = new Db(mContext);
+        dbWrite = mDb.getInstance(mContext).getWritableDatabase();
         String whereClause = "saddress=?";
-        String[] whereArgs = {data[count - 1 - position].getAddress()};
+        String[] whereArgs = {mData[mCount - 1 - position].getAddress()};
         dbWrite.delete("favorites", whereClause, whereArgs);//没有cv
         dbWrite.close();
-        count--;
-
+        mCount--;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QueryData();
-//        if (viewType == NORMAL_ITEM)
-        //原本想要用在MainAdapter上面的,写在了这个Adapter上面..所以取消If
-        return new NormalTextViewHolder(mLayoutInflater.inflate(R.layout.list_single_answer_item_no_elevation, parent, false));
-//        else
-//            return new NormalTextViewHolderWithDate(mLayoutInflater.inflate(R.layout.list_single_answer_item_card_view_with_date, parent, false));
+        return new NormalTextViewHolder(mLayoutInflater.inflate
+                (R.layout.list_single_answer_item_no_elevation, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (data.length <= 0)
+        if (mData.length <= 0)
             return;
         if (holder instanceof NormalTextViewHolder) {
             NormalTextViewHolder vh1 = (NormalTextViewHolder) holder;
-            vh1.title.setText(data[count - 1 - position].getTitle());
-            vh1.info.setText(data[count - 1 - position].getSummary());
+            vh1.title.setText(mData[mCount - 1 - position].getTitle());
+            vh1.info.setText(mData[mCount - 1 - position].getSummary());
         } else {
-            NormalTextViewHolderWithDate vh2 = (NormalTextViewHolderWithDate) holder;
-            vh2.date.setText("2015年11月11日");
-            vh2.title.setText(data[count - 1 - position].getTitle());
-            vh2.info.setText(data[count - 1 - position].getSummary());
+            NormalTextViewHolderWithDate vh2;
+            try {
+                vh2 = (NormalTextViewHolderWithDate) holder;
+                vh2.date.setText("2015年11月11日");
+                vh2.title.setText(mData[mCount - 1 - position].getTitle());
+                vh2.info.setText(mData[mCount - 1 - position].getSummary());
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-//        return dataArrayList == null ? 0 : dataArrayList.size();
-        return count;
+        return mCount;
     }
 
-    public class NormalTextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class NormalTextViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener, View.OnLongClickListener {
 
         TextView title;
         TextView info;
@@ -115,15 +116,14 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, WebViewActivity.class);
-            intent.putExtra("address", data[count - 1 - getAdapterPosition()].getAddress());
-            intent.putExtra("title", data[count - 1 - getAdapterPosition()].getTitle());
-            intent.putExtra("summary", data[count - 1 - getAdapterPosition()].getSummary());
+            intent.putExtra("address", mData[mCount - 1 - getAdapterPosition()].getAddress());
+            intent.putExtra("title", mData[mCount - 1 - getAdapterPosition()].getTitle());
+            intent.putExtra("summary", mData[mCount - 1 - getAdapterPosition()].getSummary());
             mContext.startActivity(intent);
         }
 
         @Override
         public boolean onLongClick(View v) {
-//            remove(getAdapterPosition());
             if (mLongClickListener != null) {
                 mLongClickListener.onInterfaceItemLongClick(getAdapterPosition());
             }
@@ -153,23 +153,22 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
     }
 
     public boolean QueryData() {
-        System.out.println("this is favorite queryData");
-
-        db = new Db(mContext);
-        SQLiteDatabase dbRead = db.getInstance(mContext).getReadableDatabase();
-        Cursor myCursor = dbRead.query(tableName, null, null, null, null, null, null);
-        count = myCursor.getCount();
+        mDb = new Db(mContext);
+        SQLiteDatabase dbRead = mDb.getInstance(mContext).getReadableDatabase();
+        Cursor myCursor = dbRead.query(mTableName, null, null, null, null, null, null);
+        mCount = myCursor.getCount();
         //myCursor默认是在first位置的
         while (myCursor.moveToNext()) {
-            ListCellDataSimplified dataCell = new ListCellDataSimplified(myCursor.getString(1), myCursor.getString(2), myCursor.getString(3));
-            dataArrayList.add(dataCell);
+            ListCellDataSimplified dataCell = new ListCellDataSimplified(myCursor.getString(1),
+                    myCursor.getString(2), myCursor.getString(3));
+            mDataArrayList.add(dataCell);
         }
         myCursor.close();
         dbRead.close();
-        data = new ListCellDataSimplified[count];
-        for (int i = 0; i < count; i++) {
-            data[i] = dataArrayList.get(i);
+        mData = new ListCellDataSimplified[mCount];
+        for (int i = 0; i < mCount; i++) {
+            mData[i] = mDataArrayList.get(i);
         }
-        return (count != 0);
+        return (mCount != 0);
     }
 }

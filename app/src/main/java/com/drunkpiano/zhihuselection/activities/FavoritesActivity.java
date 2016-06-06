@@ -1,9 +1,11 @@
 /*
- * Copyright (c) 2016.
- * com.drunkpiano.zhihuselection.activities.FavoriteActivity
- * version 1.1.2
- * DrunkPiano All Rights Reserved
+ * This Activity is for displaying user's favorite items.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
  */
+
 package com.drunkpiano.zhihuselection.activities;
 
 import android.database.Cursor;
@@ -28,12 +30,10 @@ import com.drunkpiano.zhihuselection.adapters.FavoritesAdapter;
 import com.drunkpiano.zhihuselection.utilities.Db;
 import com.drunkpiano.zhihuselection.utilities.MyItemClickListener;
 
-/*The Activity for displaying user's favorite items.*/
 public class FavoritesActivity extends AppCompatActivity implements MyItemClickListener {
-    private FavoritesAdapter favoritesAdapter;
-    private RecyclerView rv;
-    private Db db;
-    private FrameLayout frameLayout;
+    private FavoritesAdapter mFavoritesAdapter;
+    private RecyclerView mRecyclerView;
+    private Db mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +41,9 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
         setContentView(R.layout.activity_favorites);
         Toolbar toolbar;
         toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
-        frameLayout = (FrameLayout) findViewById(R.id.fav_text);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.fav_text);
         if (toolbar != null) {
-            toolbar.setTitle("收藏夹");
+            toolbar.setTitle(getApplicationContext().getString(R.string.toolbar_activity_favorite));
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         }
         setSupportActionBar(toolbar);
@@ -51,19 +51,20 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
-        db = new Db(getApplicationContext());
-        SQLiteDatabase dbRead = db.getInstance(getApplicationContext()).getReadableDatabase();
+        mDb = new Db(getApplicationContext());
+        SQLiteDatabase dbRead = mDb.getInstance(getApplicationContext()).getReadableDatabase();
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
         if (myCursor.getCount() != 0) {
-            frameLayout.setVisibility(View.INVISIBLE);
+            if (null != frameLayout)
+                frameLayout.setVisibility(View.INVISIBLE);
         }
         myCursor.close();
-        rv = (RecyclerView) findViewById(R.id.fav_cards_list);
-        rv.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
-        rv.setItemAnimator(new DefaultItemAnimator());
-        favoritesAdapter = new FavoritesAdapter(FavoritesActivity.this, "favorites");
-        rv.setAdapter(favoritesAdapter);
-        favoritesAdapter.setOnLongClickListener(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.fav_cards_list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mFavoritesAdapter = new FavoritesAdapter(FavoritesActivity.this, "favorites");
+        mRecyclerView.setAdapter(mFavoritesAdapter);
+        mFavoritesAdapter.setOnLongClickListener(this);
     }
 
     @Override
@@ -81,11 +82,12 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
                 onBackPressed();
                 break;
             case R.id.action_clear_fav:
-                db = new Db(getApplicationContext());
-                SQLiteDatabase dbRead = db.getInstance(getApplicationContext()).getReadableDatabase();
+                mDb = new Db(getApplicationContext());
+                SQLiteDatabase dbRead = mDb.getInstance(getApplicationContext()).getReadableDatabase();
                 Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
                 int num = myCursor.getCount();
                 for (int i = 0; i < num; i++)
+                    //永远删除首位的item
                     onInterfaceItemLongClick(0);
                 myCursor.close();
                 break;
@@ -95,7 +97,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 
     @Override
     public void onInterfaceItemLongClick(int position) {
-        favoritesAdapter.remove(position);
-        Snackbar.make(rv, "已移除", Snackbar.LENGTH_SHORT).show();
+        mFavoritesAdapter.remove(position);
+        Snackbar.make(mRecyclerView, "已移除", Snackbar.LENGTH_SHORT).show();
     }
 }

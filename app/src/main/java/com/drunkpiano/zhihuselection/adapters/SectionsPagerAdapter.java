@@ -1,3 +1,11 @@
+/*
+ * This adapter is used for distribute all 3 view pagers.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.adapters;
 
 import android.content.Context;
@@ -16,30 +24,28 @@ import com.drunkpiano.zhihuselection.utilities.Utilities;
  * one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private Context mContext;
 
-    Context context;
-
-    public SectionsPagerAdapter(FragmentManager fm, Context context) {
+    public SectionsPagerAdapter(FragmentManager fm, Context mContext) {
         super(fm);
-        this.context = context;
+        this.mContext = mContext;
     }
 
     @Override
     public Fragment getItem(int position) {
-
         switch (position) {
             case 0:
-                if (Utilities.isNetworkAvailable(context))
+                if (Utilities.isNetworkAvailable(mContext))
                     return new YesterdayFragment();
                 else
                     return new NoNetworkFragment();
             case 1:
-                if (Utilities.isNetworkAvailable(context))
+                if (Utilities.isNetworkAvailable(mContext))
                     return new RecentFragment();
                 else
                     return new NoNetworkFragment();
             case 2:
-                if (Utilities.isNetworkAvailable(context))
+                if (Utilities.isNetworkAvailable(mContext))
                     return new ArchiveFragment();
                 else
                     return new NoNetworkFragment();

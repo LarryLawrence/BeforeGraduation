@@ -12,12 +12,12 @@
 
     <ImageView
         android:id="@+id/endingImgAdapter"
-        android:contentDescription="四分休止符"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:maxHeight="40dp"
         android:adjustViewBounds="true"
+        android:contentDescription="四分休止符"
+        android:maxHeight="40dp"
         android:src="@drawable/end_sign" />
 
 

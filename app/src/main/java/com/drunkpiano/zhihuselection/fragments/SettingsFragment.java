@@ -1,3 +1,11 @@
+/*
+ * This settings fragment.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.fragments;
 
 import android.content.Context;
@@ -14,36 +22,35 @@ import android.view.MenuItem;
 
 import com.drunkpiano.zhihuselection.R;
 
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    public final static String No_ZhIHU_KEY = "doNotUseClient";
-    public final static String NO_JS_KEY = "disableJavascript";
-    public final static String IMAGE_LOAD = "loadImagePreference";
+public class SettingsFragment extends PreferenceFragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public final static String No_ZhIHU_KEY = "mDoNotUseClient";
+    public final static String NO_JS_KEY = "mDisableJavascript";
+    public final static String IMAGE_LOAD = "mLoadImagePreference";
     public final static String GRADE_ME = "gradeMe";
     public final static String MAIL_ME = "mailMe";
-
-    SwitchPreference doNotUseClient;
-    SwitchPreference disableJavascript;
-    ListPreference loadImagePreference;
+    private SwitchPreference mDoNotUseClient;
+    private SwitchPreference mDisableJavascript;
+    private ListPreference mLoadImagePreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
-        doNotUseClient = (SwitchPreference) findPreference(No_ZhIHU_KEY);
-        disableJavascript = (SwitchPreference) findPreference(NO_JS_KEY);
-        loadImagePreference = (ListPreference) findPreference(IMAGE_LOAD);
-        findPreference(GRADE_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //                if (Utilities.isAppInstalled(getActivity(), "com.android.vending"))
-                launchAppDetail("com.drunkpiano.zhihuselection", getActivity());
-                //                else
-                //                    Toast.makeText(getActivity(), "您没有安装Play商店,仍然谢谢您的支持!", Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
-        findPreference(MAIL_ME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        mDoNotUseClient = (SwitchPreference) findPreference(No_ZhIHU_KEY);
+        mDisableJavascript = (SwitchPreference) findPreference(NO_JS_KEY);
+        mLoadImagePreference = (ListPreference) findPreference(IMAGE_LOAD);
+        findPreference(GRADE_ME).setOnPreferenceClickListener
+                (new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        launchAppDetail("com.drunkpiano.zhihuselection", getActivity());
+                        return true;
+                    }
+                });
+        findPreference(MAIL_ME).setOnPreferenceClickListener
+                (new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 mailMe(getActivity());
@@ -57,21 +64,26 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onResume();
         // Setup the initial values
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-        doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true) ? "开启以使浏览更平滑" : "关闭以使用知乎客户端查看所有答案");
-        disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false) ? "未启用Javascript(页面中的链接失效)" : "已启用Javascript(页面中的链接激活)");
+        mDoNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true)
+                ? "开启以使浏览更平滑"
+                : "关闭以使用知乎客户端查看所有答案");
+        mDisableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false)
+                ? "未启用Javascript(页面中的链接失效)"
+                : "已启用Javascript(页面中的链接激活)");
 
         String i = sharedPreferences.getString(IMAGE_LOAD, "always");
         switch (i) {
             case "always":
-                loadImagePreference.setSummary("始终载入图片");
+                mLoadImagePreference.setSummary("始终载入图片");
                 break;
             case "ifWifi":
-                loadImagePreference.setSummary("仅在WiFi环境下载入图片");
+                mLoadImagePreference.setSummary("仅在WiFi环境下载入图片");
                 break;
             case "never":
-                loadImagePreference.setSummary("从不加载图片");
+                mLoadImagePreference.setSummary("从不加载图片");
                 break;
         }
+
         // Set up a listener whenever a key changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -79,6 +91,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onPause() {
         super.onPause();
+
         // Unregister the listener whenever a key changes
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
@@ -87,11 +100,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case No_ZhIHU_KEY:
-                doNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true)
-                        ? "开启以使浏览更平滑" : "关闭以使用知乎客户端查看所有答案");
+                mDoNotUseClient.setSummary(sharedPreferences.getBoolean(No_ZhIHU_KEY, true)
+                        ? "开启以使浏览更平滑"
+                        : "关闭以使用知乎客户端查看所有答案");
                 break;
             case NO_JS_KEY:
-                disableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false)
+                mDisableJavascript.setSummary(sharedPreferences.getBoolean(NO_JS_KEY, false)
                         ? "未启用Javascript(页面中的链接失效)"
                         : "已启用Javascript(页面中的链接激活)");
                 break;
@@ -99,13 +113,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 String i = sharedPreferences.getString(IMAGE_LOAD, "always");
                 switch (i) {
                     case "always":
-                        loadImagePreference.setSummary("始终载入图片");
+                        mLoadImagePreference.setSummary("始终载入图片");
                         break;
                     case "ifWifi":
-                        loadImagePreference.setSummary("仅在WiFi环境下载入图片");
+                        mLoadImagePreference.setSummary("仅在WiFi环境下载入图片");
                         break;
                     case "never":
-                        loadImagePreference.setSummary("从不加载图片");
+                        mLoadImagePreference.setSummary("从不加载图片");
                         break;
                 }
                 break;
@@ -133,10 +147,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 return;
             Uri uri = Uri.parse("market://details?id=" + appPkg);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            //            if (!TextUtils.isEmpty(marketPkg))
-            //                intent.setPackage(marketPkg);//注释掉这一句,也就不指定应用商店名称,变成implicit intent
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //            AppUtils.getAppContext().startActivity(intent);
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();

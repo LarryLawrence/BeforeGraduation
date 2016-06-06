@@ -27,5 +27,9 @@
     <string name="action_web_add_to_fav">添加到收藏</string>
     <string name="action_web_refresh">刷新</string>
 
+    <string name="toolbar_activity_answer">答案</string>
+    <string name="toolbar_activity_favorite">收藏夹</string>
+
+
 
 </resources>

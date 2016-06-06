@@ -1,3 +1,12 @@
+/*
+ * The fragment to show the archive page.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fixed to accord it with standard coding disciplines.
+ */
+
+
 package com.drunkpiano.zhihuselection.fragments;
 
 import android.os.Bundle;
@@ -9,17 +18,11 @@ import android.view.ViewGroup;
 
 import com.drunkpiano.zhihuselection.R;
 
-/**
- * Created by DrunkPiano on 16/4/26.
- * 是否有必要加一个下拉刷新
- */
 public class NoNetworkFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

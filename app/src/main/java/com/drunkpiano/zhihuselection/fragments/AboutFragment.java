@@ -1,3 +1,11 @@
+/*
+ * This adapter is used for displaying the archive viewpager.
+ * @author DrunkPiano
+ * @version 1.1.2
+ * Modifying History:
+ * Modifier: DrunkPiano, June 3rd 2016, fix it to accord with standard coding disciplines;
+ */
+
 package com.drunkpiano.zhihuselection.fragments;
 
 import android.content.Intent;
@@ -20,39 +28,35 @@ import android.widget.TextView;
 
 import com.drunkpiano.zhihuselection.R;
 
-/**
- * Created by DrunkPiano on 16/3/10.
- */
 public class AboutFragment extends Fragment {
-    TextView tv_zhihu;
-    TextView tv_github;
-    TextView tv_sulian;
-    ImageView iv_icon;
+    TextView mTextViewZhihu;
+    TextView mTextViewGitHub;
+    TextView mTextViewSuLiAn;
+    ImageView mImageViewIcon;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_about, container, false);
 
-        iv_icon = (ImageView) rootView.findViewById(R.id.about_image_icon);
+        mImageViewIcon = (ImageView) rootView.findViewById(R.id.about_image_icon);
         final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_logo);
-//        LinearInterpolator lir = new LinearInterpolator();
-//        anim.setInterpolator(lir);
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                iv_icon.startAnimation(anim);
+                mImageViewIcon.startAnimation(anim);
             }
         }, 1000);   //1秒
-        iv_icon.setOnClickListener(new View.OnClickListener() {
+        mImageViewIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iv_icon.startAnimation(anim);
+                mImageViewIcon.startAnimation(anim);
             }
         });
 
-        tv_zhihu = (TextView) rootView.findViewById(R.id.tv_zhihuan);
-        tv_zhihu.setOnClickListener(new View.OnClickListener() {
+        mTextViewZhihu = (TextView) rootView.findViewById(R.id.tv_zhihuan);
+        mTextViewZhihu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse("https://www.zhihu.com/people/larry-lawrence");
@@ -63,9 +67,8 @@ public class AboutFragment extends Fragment {
             }
         });
 
-
-        tv_github = (TextView) rootView.findViewById(R.id.tv_github);
-        tv_github.setOnClickListener(new View.OnClickListener() {
+        mTextViewGitHub = (TextView) rootView.findViewById(R.id.tv_github);
+        mTextViewGitHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse("https://github.com/LarryLawrence");
@@ -76,12 +79,13 @@ public class AboutFragment extends Fragment {
             }
         });
 
-        tv_sulian = (TextView) rootView.findViewById(R.id.tv_sulian);
-        SpannableStringBuilder builder = new SpannableStringBuilder(tv_sulian.getText().toString());
+        mTextViewSuLiAn = (TextView) rootView.findViewById(R.id.tv_sulian);
+        SpannableStringBuilder builder =
+                new SpannableStringBuilder(mTextViewSuLiAn.getText().toString());
         ForegroundColorSpan blueSpan = new ForegroundColorSpan(Color.BLUE);
         builder.setSpan(blueSpan, 2, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tv_sulian.setText(builder);
-        tv_sulian.setOnClickListener(new View.OnClickListener() {
+        mTextViewSuLiAn.setText(builder);
+        mTextViewSuLiAn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse("https://www.zhihu.com/people/aton");
@@ -93,7 +97,6 @@ public class AboutFragment extends Fragment {
         });
         return rootView;
     }
-
 }
 
 
