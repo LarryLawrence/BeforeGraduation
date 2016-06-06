@@ -9,29 +9,29 @@
 package com.drunkpiano.zhihuselection.utilities;
 
 public class ListCellDataSimplified {
-    private String title;
-    private String summary;
-    private String address;
+    private String mTitle;
+    private String mSummary;
+    private String mAddress;
 
-    public ListCellDataSimplified(String title, String summary, String address) {
-        this.title = title;
-        this.summary = summary;
-        this.address = address;
+    public ListCellDataSimplified(String mTitle, String mSummary, String mAddress) {
+        this.mTitle = mTitle;
+        this.mSummary = mSummary;
+        this.mAddress = mAddress;
     }
 
     public String getSummary() {
-        return summary;
+        return mSummary;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
     }
 
     public String getAddress() {
-        return address;
+        return mAddress;
     }
 }

@@ -68,7 +68,7 @@ public class WebViewActivity extends AppCompatActivity {
             }
         });
         if (null != toolbar) {
-            toolbar.setTitle("答案");
+            toolbar.setTitle(getApplicationContext().getString(R.string.toolbar_activity_answer));
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         }
         setSupportActionBar(toolbar);
@@ -111,12 +111,13 @@ public class WebViewActivity extends AppCompatActivity {
             }
             myWebView.getSettings().setBlockNetworkImage(!loadIMG);
         }
-//        启动缓存
+        //        启动缓存
         myWebView.getSettings().setAppCacheEnabled(true);
-//        设置缓存模式
+        //        设置缓存模式
         myWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        if (myWebView != null)
+        if (myWebView != null) {
             myWebView.loadUrl(mAddress);
+        }
         myWebView.setWebViewClient(new myWebViewClient());
     }
 
@@ -124,6 +125,7 @@ public class WebViewActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             mWebSwipeRefreshLayout.setRefreshing(true);//重定向答案的时候
+
             //http://www.zhihu.com/?next=%2Fquestion%2F45968097%2Fanswer%2F100778963
 //            if(url.contains("?next="))
 //            {
@@ -133,18 +135,21 @@ public class WebViewActivity extends AppCompatActivity {
 //                System.out.println("second replace"+url);
 //            }
             if (url.contains("?next=")) {
-                Snackbar.make(mLinearLayout, "时光机的WebView没法解析这条回答；用知乎客户端打开应该可以看到。",
+                Snackbar.make(mLinearLayout, getApplicationContext()
+                                .getString(R.string.snack_bar_open_in_zhihu),
                         Snackbar.LENGTH_INDEFINITE)
-                        .setAction("好的，用知乎客户端查看", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Uri uri = Uri.parse(mAddress);
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    }
-                }).show();
+                        .setAction(getApplicationContext()
+                                        .getString(R.string.snack_bar_open_in_zhihu_ok),
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Uri uri = Uri.parse(mAddress);
+                                        Intent intent = new Intent();
+                                        intent.setAction(Intent.ACTION_VIEW);
+                                        intent.setData(uri);
+                                        startActivity(intent);
+                                    }
+                                }).show();
             }
             if (url.contains("intent://questions/") && url.contains("com.zhihu.android")) {
                 Uri uri = Uri.parse(mAddress);
@@ -204,25 +209,24 @@ public class WebViewActivity extends AppCompatActivity {
                 break;
             case R.id.action_web_add_to_fav:
                 boolean i = favoriteItemPressed();
-                if (!i)
-                    snackMsg = "收藏成功";
-                else
-                    snackMsg = "已经收藏过这一条";
+                if (!i) {
+                    snackMsg = getApplicationContext().getString(R.string.snack_bar_add_to_fav_success);
+                } else
+                    snackMsg = getApplicationContext().getString(R.string.snack_bar_already_added_to_fav);
                 Snackbar.make(mLinearLayout, snackMsg, Snackbar.LENGTH_SHORT)
-                        .setAction("撤销收藏", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                System.out.println("撤销收藏");
-                                removeFavorite();
-                                // Perform anything for the action selected
-                            }
-                        }).show();
+                        .setAction(getApplicationContext()
+                                        .getString(R.string.snack_bar_already_undo_add_to_fav),
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        removeFavorite();
+                                    }
+                                }).show();
                 break;
             case R.id.action_web_refresh:
                 myWebView.reload();
                 mWebSwipeRefreshLayout.setRefreshing(true);
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -241,9 +245,11 @@ public class WebViewActivity extends AppCompatActivity {
                 break;
             }
         }
+
         //空表的时候必定添加
-        if (!mAlreadyStarred)
+        if (!mAlreadyStarred) {
             addFavorite();
+        }
         dbRead.close();
         myCursor.close();
         return mAlreadyStarred;

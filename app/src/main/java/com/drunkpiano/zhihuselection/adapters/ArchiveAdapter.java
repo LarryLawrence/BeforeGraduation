@@ -112,7 +112,7 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
         View v;
         if (viewType == NORMAL_ITEM) {
 
-            //getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewholder
+            //getItemViewType----->传viewType给onCreateVIewHolder,holder再inflate.然后bindViewHolder
             // create a new view
             v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_single_answer_item_card_view, parent, false);
@@ -195,8 +195,6 @@ public class ArchiveAdapter extends RecyclerView.Adapter {
             for (int i = 0; i < mCount; i++) {
                 data[i] = mDataArrayList.get(i);
             }
-        } else {
-            System.out.println("访问网络失败了");
         }
         return (mCount != 0);
     }

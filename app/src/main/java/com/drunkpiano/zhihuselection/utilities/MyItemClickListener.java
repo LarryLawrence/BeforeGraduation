@@ -10,5 +10,4 @@ package com.drunkpiano.zhihuselection.utilities;
 
 public interface MyItemClickListener {
     void onInterfaceItemLongClick(int position);
-
 }

@@ -51,12 +51,12 @@ public class SettingsFragment extends PreferenceFragment
                 });
         findPreference(MAIL_ME).setOnPreferenceClickListener
                 (new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                mailMe(getActivity());
-                return true;
-            }
-        });
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        mailMe(getActivity());
+                        return true;
+                    }
+                });
     }
 
     @Override
@@ -143,8 +143,9 @@ public class SettingsFragment extends PreferenceFragment
 
     public static void launchAppDetail(String appPkg, Context context) {
         try {
-            if (TextUtils.isEmpty(appPkg))
+            if (TextUtils.isEmpty(appPkg)) {
                 return;
+            }
             Uri uri = Uri.parse("market://details?id=" + appPkg);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

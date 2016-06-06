@@ -75,6 +75,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println("2nd frag");
+
         // Notify the system to allow an options menu for this fragment.
         setHasOptionsMenu(true);
     }
@@ -90,6 +91,7 @@ public class RecentFragment extends Fragment implements DatePickerFragment.TheLi
         myCursor.close();
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         mCardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
+
         //is getView() available? or do I need to inflate a view.
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(

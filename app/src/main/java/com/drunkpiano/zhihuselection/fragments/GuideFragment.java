@@ -40,6 +40,6 @@ public class GuideFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
         mRecyclerView.setAdapter(guideAdapter);
-        return v ;
+        return v;
     }
 }

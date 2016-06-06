@@ -29,6 +29,24 @@
 
     <string name="toolbar_activity_answer">答案</string>
     <string name="toolbar_activity_favorite">收藏夹</string>
+    <string name="toolbar_activity_settings">设置</string>
+    <string name="toolbar_activity_about">关于</string>
+    <string name="toolbar_activity_guide">指南</string>
+
+    <string name="snack_bar_already_removed">已移除</string>
+    <string name="snack_bar_open_in_zhihu">时光机的WebView没法解析这条回答；用知乎客户端打开应该可以看到。</string>
+    <string name="snack_bar_open_in_zhihu_ok">好的，用知乎客户端查看</string>
+    <string name="snack_bar_add_to_fav_success">收藏成功</string>
+    <string name="snack_bar_already_added_to_fav">已经收藏过这一条</string>
+    <string name="snack_bar_already_undo_add_to_fav">撤销收藏</string>
+    <string name="page_last_read">上次看到这里</string>
+    <string name="archive_updating">「往年」栏目有新内容, 稍等..</string>
+    <string name="archive_already_latest">已是最新, 「往年」栏目每天晚上17:00更新</string>
+
+    <string name="text_yesterday">昨天</string>
+    <string name="text_recent">上周</string>
+    <string name="text_archive">往年</string>
+
 
 
 

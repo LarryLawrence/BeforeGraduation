@@ -89,7 +89,9 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         myCursor.close();
         View root = inflater.inflate(R.layout.fragment_card_layout, container, false);
         mCardsListRv = (RecyclerView) root.findViewById(R.id.cards_list);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);//is getView() available? or do I need to inflate a view.
+
+        //is getView() available? or do I need to inflate a view.
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
@@ -101,7 +103,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
     }
 
     private void refreshTime() {
-        mLastUpdate = mSettings.getString("LastUpdateArchive", "198801011700");//defValue - Value to return if this preference does not exist.
+        mLastUpdate = mSettings.getString("LastUpdateArchive", "198801011700");
         mLastUpdateInt = Long.parseLong(mLastUpdate);
         //现在的时间
         mCurrentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
@@ -120,6 +122,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
 
         while (cursor.moveToNext())//其实可以不用这样计算行数,直接用cursor.getCount;
             if (!cursor.moveToFirst()) {
+
                 //数据库中没有数据.那么,1.记录更新数据库的时间 2.下载数据
                 SharedPreferences mSettings = getContext().
                         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -127,10 +130,12 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 mDateWithChinese = getDate().substring(0, 4) + "年" + getDate().substring(4, 6)
                         + "月" + getDate().substring(6, getDate().length()) + "日";
                 SharedPreferences.Editor editor = mSettings.edit();
-                //LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:
-                // 第一次是这里,DB为空的时候;
-                // 第二次,打开后发现不为空,于是setup list并且更新;
-                // 第三次,用户下拉发现可以更新
+
+                /*LastUpdate的SharedPreferences只需要三次写入,对应三种需要刷新list的情况:
+                 * 第一次是这里,DB为空的时候;
+                 * 第二次,打开后发现不为空,于是setup list并且更新;
+                 第三次,用户下拉发现可以更新
+                 */
                 editor.putString("LastUpdateArchive", time.format(Calendar.getInstance().getTime()));
                 editor.putString("ArchiveLastViewedDateChinese", mDateWithChinese);
 
@@ -138,14 +143,16 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                 mSwipeRefreshLayout.setRefreshing(true);
                 initiateDownloadToEmptyDB();
                 //为防止自动刷新后,用户下拉刷新,需要更新下面的参数
-                mLastUpdate = mSettings.getString("LastUpdateArchive", "198801011700");//defValue - Value to return if this preference does not exist.
+                mLastUpdate = mSettings.getString("LastUpdateArchive", "198801011700");
                 mLastUpdateInt = Long.parseLong(mLastUpdate);
             } else {
+
                 //几处progressBar:
                 //1.onCreateView发现数据库没内容时   正常 （pb在第一个card上）
                 //2.onCreateView发现内容需要更新时   正常 （pb紧贴tab--->改成了find之后统一set）
                 String lastViewedDateChinese
-                        = mSettings.getString("ArchiveLastViewedDateChinese", "上次看到这里");//defValue - Value to return if this preference does not exist.
+                        = mSettings.getString("ArchiveLastViewedDateChinese",
+                        getContext().getString(R.string.page_last_read));
                 setupList(lastViewedDateChinese);
 
 //        if(true)
@@ -157,9 +164,10 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     SharedPreferences.Editor editor = mSettings.edit();
                     editor.putString("LastUpdateArchive", mCurrentTimeStr);
                     editor.apply();
-                    if (getView() != null)
-                        Snackbar.make(getView(), "「往年」栏目有新内容, 稍等..",
+                    if (getView() != null) {
+                        Snackbar.make(getView(), getContext().getString(R.string.archive_updating),
                                 Snackbar.LENGTH_LONG).show();
+                    }
                 }
             }
         cursor.close();
@@ -191,7 +199,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                         && mLastUpdateInt < mLatestWebsiteUpdateTimeInt) || (!cursor.moveToFirst()))
                     swipeRefresh();
                 else if (null != getView()) {
-                    Snackbar.make(getView(), "已是最新, 「往年」栏目每天晚上17:00更新",
+                    Snackbar.make(getView(), getContext().getString(R.string.archive_already_latest),
                             Snackbar.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
@@ -251,7 +259,6 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-//                        System.out.println(line);
                         builder.append(line);
                     }
                     br.close();
@@ -328,13 +335,13 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
                     URL url = new URL(params[0]);
                     URLConnection connection = url.openConnection();
                     InputStream is = connection.getInputStream();
+
                     //IS可指定字符集,所以这是一个字节到字符的转换
                     InputStreamReader isr = new InputStreamReader(is, "utf-8");
                     BufferedReader br = new BufferedReader(isr);
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-//                        System.out.println(line);
                         builder.append(line);
                     }
                     //读取完成,依次向上关闭连接

@@ -200,8 +200,6 @@ public class YesterdayAdapter extends RecyclerView.Adapter {
             for (int i = 0; i < mCount; i++) {
                 mData[i] = mDataArrayList.get(i);
             }
-        } else {
-            System.out.println("访问网络失败了");
         }
         return (mCount != 0);
     }

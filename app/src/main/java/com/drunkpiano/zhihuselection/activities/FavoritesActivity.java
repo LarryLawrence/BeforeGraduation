@@ -39,9 +39,11 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
-        Toolbar toolbar;
-        toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
+
+        mDb = new Db(getApplicationContext());
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.fav_text);
+
         if (toolbar != null) {
             toolbar.setTitle(getApplicationContext().getString(R.string.toolbar_activity_favorite));
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -51,12 +53,12 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
-        mDb = new Db(getApplicationContext());
         SQLiteDatabase dbRead = mDb.getInstance(getApplicationContext()).getReadableDatabase();
         Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
         if (myCursor.getCount() != 0) {
-            if (null != frameLayout)
+            if (null != frameLayout) {
                 frameLayout.setVisibility(View.INVISIBLE);
+            }
         }
         myCursor.close();
         mRecyclerView = (RecyclerView) findViewById(R.id.fav_cards_list);
@@ -87,6 +89,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
                 Cursor myCursor = dbRead.query("favorites", null, null, null, null, null, null);
                 int num = myCursor.getCount();
                 for (int i = 0; i < num; i++)
+
                     //永远删除首位的item
                     onInterfaceItemLongClick(0);
                 myCursor.close();
@@ -98,6 +101,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
     @Override
     public void onInterfaceItemLongClick(int position) {
         mFavoritesAdapter.remove(position);
-        Snackbar.make(mRecyclerView, "已移除", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(mRecyclerView, getApplicationContext().getString(R.string.snack_bar_already_removed), Snackbar.LENGTH_SHORT).show();
     }
 }

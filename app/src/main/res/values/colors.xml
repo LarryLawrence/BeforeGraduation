@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="colorPrimary">#689F3A</color>-->
+    <!--模块_含义_颜色-->
     <color name="colorPrimary">#D84436</color>
     <color name="colorPrimaryDark">#C33A29</color>
     <color name="colorAccent">#628AFF</color>
@@ -21,7 +21,6 @@
 
     <color name="black">#000000</color>
     <color name="almost_black">#292929</color>
-
 
     <color name="colorPrimaryNight">#263238</color>
     <color name="colorPrimaryNightDark">#263238</color>

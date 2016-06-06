@@ -39,6 +39,12 @@ public class Utilities {
         }
         return false;
     }
+
+    /**
+     *
+     * @param mContext Context
+     * @return true代表当前在wifi环境
+     */
     public static boolean isWifi(Context mContext) {
         ConnectivityManager connectivityManager = (ConnectivityManager) mContext
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -50,18 +56,23 @@ public class Utilities {
         return false;
     }
 
-    //    Date randomDate = randomDate("2010-09-20", "2010-09-21");
+    /**
+     *
+     * @param beginDate 起始日期
+     * @param endDate 结束日期
+     * @return 随机的一个Date
+     */
     public static Date randomDate(String beginDate, String endDate) {
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
             Date start = format.parse(beginDate);//构造开始日期
             Date end = format.parse(endDate);//构造结束日期
+            long date = random(start.getTime(), end.getTime());
 
             //getTime()表示返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
             if (start.getTime() >= end.getTime()) {
                 return null;
             }
-            long date = random(start.getTime(), end.getTime());
             System.out.println("long date------>"+ date);
             return new Date(date);
         } catch (Exception e) {
@@ -72,6 +83,7 @@ public class Utilities {
 
     private static long random(long begin, long end) {
         long rtn = begin + (long) (Math.random() * (end - begin));
+
         //如果返回的是开始时间和结束时间，则递归调用本函数查找随机值
         if (rtn == begin || rtn == end) {
             return random(begin, end);
@@ -84,10 +96,10 @@ public class Utilities {
         final PackageManager packageManager = context.getPackageManager();
 
         // 获取所有已安装程序的包信息
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
-        for ( int i = 0; i < pinfo.size(); i++ )
+        List<PackageInfo> pInfo = packageManager.getInstalledPackages(0);
+        for ( int i = 0; i < pInfo.size(); i++ )
         {
-            if(pinfo.get(i).packageName.equalsIgnoreCase(packageName))
+            if(pInfo.get(i).packageName.equalsIgnoreCase(packageName))
                 return true;
         }
         return false;

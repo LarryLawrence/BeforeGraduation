@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.fragments.ArchiveFragment;
 import com.drunkpiano.zhihuselection.fragments.NoNetworkFragment;
 import com.drunkpiano.zhihuselection.fragments.RecentFragment;
@@ -35,20 +36,23 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                if (Utilities.isNetworkAvailable(mContext))
+                if (Utilities.isNetworkAvailable(mContext)) {
                     return new YesterdayFragment();
-                else
+                } else {
                     return new NoNetworkFragment();
+                }
             case 1:
-                if (Utilities.isNetworkAvailable(mContext))
+                if (Utilities.isNetworkAvailable(mContext)) {
                     return new RecentFragment();
-                else
+                } else {
                     return new NoNetworkFragment();
+                }
             case 2:
-                if (Utilities.isNetworkAvailable(mContext))
+                if (Utilities.isNetworkAvailable(mContext)) {
                     return new ArchiveFragment();
-                else
+                } else {
                     return new NoNetworkFragment();
+                }
         }
         return null;
     }
@@ -63,11 +67,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "昨天";
+                return mContext.getString(R.string.text_yesterday);
             case 1:
-                return "上周";
+                return mContext.getString(R.string.text_recent);
             case 2:
-                return "往年";
+                return mContext.getString(R.string.text_archive);
         }
         return null;
     }

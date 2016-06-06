@@ -10,7 +10,6 @@ package com.drunkpiano.zhihuselection.utilities;
 
 public interface MainItemClickListener {
 
-    //这个position起初是用来scrollToPosition的,后来发现不精确
     void onMainItemClick(ListCellData answer);
     void onEndImageClick();
 }

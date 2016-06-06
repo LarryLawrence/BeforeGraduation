@@ -28,10 +28,10 @@ public class GuideAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new GuideViewHolder(mLayoutInflater.inflate
-                    (R.layout.list_single_answer_item_no_elevation_guide, parent, false));
+        return new GuideViewHolder(mLayoutInflater.inflate
+                (R.layout.list_single_answer_item_no_elevation_guide, parent, false));
     }
-    
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         GuideViewHolder gv = (GuideViewHolder) holder;

@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(Color.parseColor("#14000000"));
+
             //setStatusBarColor在v21/styles.xml中设置了（其实无需设置,因为可以沿用5.0以下配色）
             getWindow().setNavigationBarColor(Color.parseColor("#C33A29"));
         }
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), getApplicationContext());
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         if (null != mViewPager)
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity
             tabLayout.setupWithViewPager(mViewPager);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        Boolean user_first = settings.getBoolean("FirstLaunch", true);//defValue - Value to return if this preference does not exist.
+        Boolean user_first = settings.getBoolean("FirstLaunch", true);
         if (user_first) {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("FirstLaunch", false);
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
+
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
 
@@ -113,11 +116,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             } else if (id == R.id.nav_about) {
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
-                intent.putExtra("fragmentName", "about");
+                intent.putExtra("EXTRA_FRAGMENT_NAME", "about");
                 startActivity(intent);
             } else if (id == R.id.nav_settings) {
                 Intent intent = new Intent(MainActivity.this, AnyActivity.class);
-                intent.putExtra("fragmentName", "settings");
+                intent.putExtra("EXTRA_FRAGMENT_NAME", "settings");
                 startActivity(intent);
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -128,12 +131,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (null != drawer)
+        if (null != drawer) {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
                 super.onBackPressed();
             }
+        }
     }
-
 }

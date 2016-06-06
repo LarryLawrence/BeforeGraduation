@@ -1,5 +1,5 @@
 /*
- * This adapter is used for displaying the archive viewpager.
+ * This adapter is used for displaying the about fragment.
  * @author DrunkPiano
  * @version 1.1.2
  * Modifying History:
@@ -41,7 +41,7 @@ public class AboutFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_about, container, false);
 
         mImageViewIcon = (ImageView) rootView.findViewById(R.id.about_image_icon);
-        final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_logo);
+        final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.logo_anim_rotate);
 
         new Handler().postDelayed(new Runnable() {
             public void run() {

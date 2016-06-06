@@ -161,7 +161,6 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
             mLastViewedDateChinese = mSettings.getString("YesterdayLastViewedDateChinese", "上次看到这里");
             setupList(mLastViewedDateChinese);
 
-//        if(true)
             refreshTime();
             if ((mCurrentTimeInt > mLatestWebsiteUpdateTimeInt
                     && mLastUpdateInt < mLatestWebsiteUpdateTimeInt) || chongxinlianjieshishi) {
@@ -265,7 +264,6 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = br.readLine()) != null) {
-//                        System.out.println(line);
                         builder.append(line);
                     }
                     br.close();
@@ -302,7 +300,7 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
-                    if (null != getView())
+                    if (null != getView()) {
                         Snackbar.make(getView(), "网络出了问题", Snackbar.LENGTH_INDEFINITE).
                                 setAction("刷新试试", new View.OnClickListener() {
                                     @Override
@@ -310,7 +308,8 @@ public class YesterdayFragment extends Fragment implements DatePickerFragment.Th
                                         initThisFragment(true);
                                     }
                                 }).show();
-                    e.printStackTrace();
+                        e.printStackTrace();
+                    }
                 }
                 return null;
             }

@@ -18,7 +18,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="四分休止符"
         android:maxHeight="40dp"
-        android:src="@drawable/end_sign" />
+        android:src="@drawable/end_sign_normal" />
 
 
 </LinearLayout>

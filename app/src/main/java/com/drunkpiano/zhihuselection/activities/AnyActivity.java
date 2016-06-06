@@ -16,19 +16,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
+
 import com.drunkpiano.zhihuselection.R;
 import com.drunkpiano.zhihuselection.fragments.AboutFragment;
 import com.drunkpiano.zhihuselection.fragments.GuideFragment;
 import com.drunkpiano.zhihuselection.fragments.SettingsFragment;
 
 public class AnyActivity extends AppCompatActivity {
-    private android.support.v7.widget.Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_any);
-        mToolbar = (Toolbar) findViewById(R.id.any_toolbar);
+        android.support.v7.widget.Toolbar mToolbar = (Toolbar) findViewById(R.id.any_toolbar);
+        String titleName;
+
         if (null != mToolbar)
             mToolbar.setTitle(getApplicationContext().getString(R.string.toolbar_activity_answer));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -39,28 +41,33 @@ public class AnyActivity extends AppCompatActivity {
             mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(mToolbar);
         Intent intent = getIntent();
-        String fragmentName = intent.getStringExtra("fragmentName");
-        String titleName;
+        String fragmentName = intent.getStringExtra("EXTRA_FRAGMENT_NAME");
 
         switch (fragmentName) {
             case "settings":
-                titleName = "设置";
-                mToolbar.setTitle(titleName);//这个一定放在fragment transaction之前
+                titleName = getApplicationContext().getString(R.string.toolbar_activity_settings);
+                if (null != mToolbar) {
+                    mToolbar.setTitle(titleName);
+                }
 
                 getFragmentManager().beginTransaction()
                         .replace(R.id.any_container, new SettingsFragment())
                         .commit();
                 break;
             case "about":
-                titleName = "关于";
-                mToolbar.setTitle(titleName);
+                titleName = getApplicationContext().getString(R.string.toolbar_activity_about);
+                if (null != mToolbar) {
+                    mToolbar.setTitle(titleName);
+                }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.any_container, new AboutFragment())
                         .commit();
                 break;
             case "guide":
-                titleName = "指南";
-                mToolbar.setTitle(titleName);//这个一定放在fragment transaction之前
+                titleName = getApplicationContext().getString(R.string.toolbar_activity_guide);
+                if (null != mToolbar) {
+                    mToolbar.setTitle(titleName);
+                }
 
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.any_container, new GuideFragment())

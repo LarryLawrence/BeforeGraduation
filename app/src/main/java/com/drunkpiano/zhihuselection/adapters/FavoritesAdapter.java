@@ -72,8 +72,9 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (mData.length <= 0)
+        if (mData.length <= 0) {
             return;
+        }
         if (holder instanceof NormalTextViewHolder) {
             NormalTextViewHolder vh1 = (NormalTextViewHolder) holder;
             vh1.title.setText(mData[mCount - 1 - position].getTitle());
@@ -146,10 +147,11 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0)
+        if (position == 0) {
             return ITEM_WITH_DATE;
-        else
+        } else {
             return NORMAL_ITEM;
+        }
     }
 
     public boolean QueryData() {
@@ -157,6 +159,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter {
         SQLiteDatabase dbRead = mDb.getInstance(mContext).getReadableDatabase();
         Cursor myCursor = dbRead.query(mTableName, null, null, null, null, null, null);
         mCount = myCursor.getCount();
+
         //myCursor默认是在first位置的
         while (myCursor.moveToNext()) {
             ListCellDataSimplified dataCell = new ListCellDataSimplified(myCursor.getString(1),

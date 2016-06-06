@@ -14,7 +14,7 @@
         android:layout_marginRight="@dimen/main_card_margin_left_right"
         android:layout_marginBottom="@dimen/main_card_margin_bottom"
         android:clickable="true"
-        android:stateListAnimator="@anim/touch_raise"
+        android:stateListAnimator="@anim/anim_touch_raise"
         android:foreground="?android:attr/selectableItemBackground"
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="2dp">

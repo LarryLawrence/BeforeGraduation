@@ -9,50 +9,50 @@
 package com.drunkpiano.zhihuselection.utilities;
 
 public class ListCellData {
-    private String title = "";
-    private String summary = "";
-    private String questionid = "";
-    private String answerid = "";
+    private String mTitle = "";
+    private String mSummary = "";
+    private String mQuestionId = "";
+    private String mAnswerId = "";
 
-    public ListCellData( String title, String summary, String questionid, String answerid){
-        this.title = title ;
-        this.summary = summary ;
-        this.questionid = questionid ;
-        this.answerid = answerid ;
+    public ListCellData( String mTitle, String mSummary, String mQuestionId, String mAnswerId){
+        this.mTitle = mTitle ;
+        this.mSummary = mSummary ;
+        this.mQuestionId = mQuestionId ;
+        this.mAnswerId = mAnswerId ;
     }
 
     public ListCellData(){}//2nd constructor哪里用到了
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
     }
 
     public String getSummary() {
-        return summary;
+        return mSummary;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setSummary(String mSummary) {
+        this.mSummary = mSummary;
     }
 
     public String getQuestionid() {
-        return questionid;
+        return mQuestionId;
     }
 
-    public void setQuestionid(String questionid) {
-        this.questionid = questionid;
+    public void setQuestionid(String mQuestionId) {
+        this.mQuestionId = mQuestionId;
     }
 
     public String getAnswerid() {
-        return answerid;
+        return mAnswerId;
     }
 
-    public void setAnswerid(String answerid) {
-        this.answerid = answerid;
+    public void setAnswerid(String mAnswerId) {
+        this.mAnswerId = mAnswerId;
     }
 
 }
