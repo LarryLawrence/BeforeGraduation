@@ -213,7 +213,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
     private void swipeRefresh() {
         //DB的最近更新时间
         mSettings = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        mLastUpdate = mSettings.getString("LastUpdateArchive", "19880101700");//defValue - Value to return if this preference does not exist.
+        mLastUpdate = mSettings.getString("LastUpdateArchive", "19880101700");
         mLastUpdateInt = Long.parseLong(mLastUpdate);
         //现在的时间
         mCurrentTime = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
@@ -234,7 +234,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         editor.apply();
     }
 
-    public void setupList(String mDateWithChinese) {
+    private void setupList(String mDateWithChinese) {
         mCardsListRv.setItemAnimator(new DefaultItemAnimator());
         mDb = new Db(getContext());
         SQLiteDatabase dbRead = mDb.getReadableDatabase();
@@ -246,7 +246,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         myCursor.close();
     }
 
-    public void refreshListView(final String dateStr) {
+    private void refreshListView(final String dateStr) {
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
@@ -327,7 +327,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
 //            }.execute("http://api.kanzhihu.com/getpostanswers/" + "20160404" + "/archive");//读今天的
     }
 
-    public void initiateDownloadToEmptyDB() {
+    private void initiateDownloadToEmptyDB() {
         new AsyncTask<String, Void, Void>() {
             @Override
             protected Void doInBackground(String... params) {
@@ -395,7 +395,7 @@ public class ArchiveFragment extends Fragment implements DatePickerFragment.TheL
         }.execute("http://api.kanzhihu.com/getpostanswers/" + getDate() + "/archive");//读今天的
     }
 
-    public void insertToTables(ListCellData data, String mTabName) {
+    private void insertToTables(ListCellData data, String mTabName) {
         mDb = new Db(getContext());
         //WRITE
         SQLiteDatabase dbWrite = mDb.getWritableDatabase();

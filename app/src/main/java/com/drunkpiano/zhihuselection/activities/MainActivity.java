@@ -31,7 +31,7 @@ import com.drunkpiano.zhihuselection.adapters.SectionsPagerAdapter;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String PREFS_NAME = "MyPrefsFile";
+    private static final String PREFS_NAME = "MyPrefsFile";
     //    public static boolean netWorkAvailable = false;
 
     /**

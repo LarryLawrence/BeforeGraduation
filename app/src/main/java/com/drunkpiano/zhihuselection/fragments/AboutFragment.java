@@ -29,17 +29,16 @@ import android.widget.TextView;
 import com.drunkpiano.zhihuselection.R;
 
 public class AboutFragment extends Fragment {
-    TextView mTextViewZhihu;
-    TextView mTextViewGitHub;
-    TextView mTextViewSuLiAn;
-    ImageView mImageViewIcon;
+    private ImageView mImageViewIcon;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_about, container, false);
-
+        TextView mTextViewZhihu = (TextView) rootView.findViewById(R.id.tv_zhihuan);
+        TextView mTextViewGitHub = (TextView) rootView.findViewById(R.id.tv_github);
+        TextView mTextViewSuLiAn = (TextView) rootView.findViewById(R.id.tv_sulian);
         mImageViewIcon = (ImageView) rootView.findViewById(R.id.about_image_icon);
         final Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.logo_anim_rotate);
 
@@ -55,7 +54,6 @@ public class AboutFragment extends Fragment {
             }
         });
 
-        mTextViewZhihu = (TextView) rootView.findViewById(R.id.tv_zhihuan);
         mTextViewZhihu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +65,6 @@ public class AboutFragment extends Fragment {
             }
         });
 
-        mTextViewGitHub = (TextView) rootView.findViewById(R.id.tv_github);
         mTextViewGitHub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +76,6 @@ public class AboutFragment extends Fragment {
             }
         });
 
-        mTextViewSuLiAn = (TextView) rootView.findViewById(R.id.tv_sulian);
         SpannableStringBuilder builder =
                 new SpannableStringBuilder(mTextViewSuLiAn.getText().toString());
         ForegroundColorSpan blueSpan = new ForegroundColorSpan(Color.BLUE);

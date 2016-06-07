@@ -42,6 +42,7 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
 
         mDb = new Db(getApplicationContext());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_fav);
+        mRecyclerView = (RecyclerView) findViewById(R.id.fav_cards_list);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.fav_text);
 
         if (toolbar != null) {
@@ -61,7 +62,6 @@ public class FavoritesActivity extends AppCompatActivity implements MyItemClickL
             }
         }
         myCursor.close();
-        mRecyclerView = (RecyclerView) findViewById(R.id.fav_cards_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(FavoritesActivity.this));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mFavoritesAdapter = new FavoritesAdapter(FavoritesActivity.this, "favorites");

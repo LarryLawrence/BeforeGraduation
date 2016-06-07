@@ -9,19 +9,20 @@
 package com.drunkpiano.zhihuselection.utilities;
 
 public class ListCellData {
-    private String mTitle = "";
-    private String mSummary = "";
-    private String mQuestionId = "";
-    private String mAnswerId = "";
+    private String mTitle;
+    private String mSummary;
+    private String mQuestionId;
+    private String mAnswerId;
 
-    public ListCellData( String mTitle, String mSummary, String mQuestionId, String mAnswerId){
-        this.mTitle = mTitle ;
-        this.mSummary = mSummary ;
-        this.mQuestionId = mQuestionId ;
-        this.mAnswerId = mAnswerId ;
+    public ListCellData(String mTitle, String mSummary, String mQuestionId, String mAnswerId) {
+        this.mTitle = mTitle;
+        this.mSummary = mSummary;
+        this.mQuestionId = mQuestionId;
+        this.mAnswerId = mAnswerId;
     }
 
-    public ListCellData(){}//2nd constructor哪里用到了
+    public ListCellData() {
+    }
 
     public String getTitle() {
         return mTitle;
